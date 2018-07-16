@@ -1,2 +1,9 @@
 language: node_js
 node_js: node
+deploy:
+  provider: heroku
+  api_key:
+    secure: LZ+jfjhOnQuqsUI7tFrThtO8rmraCniKrI6ZHQ/5sVlc64x5NZdwa+elr1seNzaxAI40zrdQttbYCHBXy8ly35cz1sylQ6SXjpGVi3QF+9HLPGuqPUgiDyYhjtXkIdKmUO1gH+v4K7++nfp0pAYh+zPzfI/3qXJJjl2XBh2crTBVwy+o/DaOSVo/+UJjvNM6egiBAXQy+X60I8j5CeCc52iXobCqQh+Q9vWjstpzV4OwbGoMiMKvYuEII0JxCiAELFcs0d7q99OBQ3FS9BPB4NxNG9IjvR0cK0PnBV8kUXC1oWIVNG4tQzpWMK+lAhKQfBok0xWzhiiMD1DqxkGkpYAlfcDV0UupmgtBRgwe6MwBo7wpW/8lrBQNEdSKNIJ/7OBuoqj6oDV0SIVZ99YzYTvZrpu5rpwueQEPLWxYRbT9G2ylJTVpBIJoKCcIlS7POqE3QJvsA5F0TU/NJKMFdUvAiv7YRRRCSBQ9zcos5HRA6zJ6PSQgxLm7NNUOuB51OOEb9CWGH/uOmMuZgrWLI5cw+vk5dOdq0TTcT4GjUToSB4F6IbkPWVdzcDQqh7chWLInQRk+R686kMUDUwHQnOvDJFAyafCxDDo5WEmjC2u4fMuC6LPxD7T7EmNgFs3wu5JBbIqs7C2EH23Za5wY/x/p9UtTIrwKFUNKvL92shE=
+  app: pet-pal-app
+  on:
+    repo: davelarimore/pet-pal
