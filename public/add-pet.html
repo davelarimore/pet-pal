@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Pet Pal - Add Pet</title>
+    <meta name="description" content="Pet Pal allows pet care providers and their clients to share and update their information">
+    <link rel="stylesheet" href="stylesheets/style.css">
+</head>
+<body>
+    <header role="banner">
+        <div class="compactHeader">
+            <a href="index.html">
+                <img src="images/logo.svg" alt="Pet Pal">
+            </a>
+            <h1>Pet Pal</h1>
+        </div>
+    </header>
+    <main role="main">
+        <div class="boxed">
+            <h2>Add a Pet</h2>
+            <form>
+                <fieldset name="addPet">
+                    <label for="petName" class="visuallyhidden">Name</label>
+                    <input type="text" id="petName" title="Pet Name" placeholder="Name" required></input>                  
+                    <label for="petType" class="visuallyhidden">Type</label>
+                        <select id="petType" title="Pet Type" required>
+                            <option value="" disabled selected hidden>Type</option>
+                            <option value="dog">Dog</option>
+                            <option value="cat">Cat</option>
+                            <option value="bird">Bird</option>
+                            <option value="fish">Fish</option>
+                            <option value="reptile">Reptile</option>
+                            <option value="amphibian">Amphibian</option>
+                            <option value="rodent">Rodent</option>
+                            <option value="other">Other</option>
+                        </select> 
+                    <label for="petBreed" class="visuallyhidden">Breed</label>
+                    <input type="text" id="petBreed" title="Breed" placeholder="Breed"></input>
+                    <label for="petColor" class="visuallyhidden">Color</label>
+                    <input type="text" id="petColor" title="Color" placeholder="Color"></input>
+                    <label for="petFood" class="visuallyhidden">Food</label>
+                    <input type="text" id="petFood" title="Food" placeholder="Food"></input>
+                    <input type="submit" value="Submit" class="button" placeholder="">
+                </fieldset>
+            </form>
+            <a class="cancel" href="#" onclick=" window.history.back();">Cancel</a>
+        </div>
+    </main>
+</body>
+</html>

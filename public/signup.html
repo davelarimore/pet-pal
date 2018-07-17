@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Pet Pal - Sign Up</title>
+    <meta name="description" content="Pet Pal allows pet care providers and their clients to share and update their information">
+    <link rel="stylesheet" href="stylesheets/style.css">
+</head>
+<body>
+    <header role="banner">
+        <div class="fullHeader">
+            <a href="index.html">
+                <img src="images/logo.svg" alt="Pet Pal">
+            </a>
+            <h1>Pet Pal</h1>
+        </div>
+    </header>
+    <main role="main">
+        <p>Please select your pet care provider to continue</p>
+        <form>
+            <fieldset name="chooseProvider">
+                <label for="provider" class="visuallyhidden">Pet Care Provider</label>
+                <select type="select" id="provider" title="Pet Care Provider" required>
+                    <option value="" disabled selected hidden>Pet care provider</option>
+                    <option value="jane">Jane's Pet Care</option>
+                    <option value="dog-walkers">Dog Walkers Inc.</option>
+                </select>
+                <input type="submit" value="Continue" class="button">
+            </fieldset>
+        </form>
+        <a href="signup-provider.html">Pet Care Provider Sign Up</a>
+    </main>
+</body>
+</html>
