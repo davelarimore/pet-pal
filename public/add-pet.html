@@ -20,7 +20,7 @@
     <main role="main">
         <div class="boxed">
             <h2>Add a Pet</h2>
-            <form>
+            <form id="js-add-pet">
                 <fieldset name="addPet">
                     <label for="petName" class="visuallyhidden">Name</label>
                     <input type="text" id="petName" title="Pet Name" placeholder="Name" required></input>                  
@@ -45,8 +45,9 @@
                     <input type="submit" value="Submit" class="button" placeholder="">
                 </fieldset>
             </form>
-            <a class="cancel" href="#" onclick=" window.history.back();">Cancel</a>
         </div>
     </main>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <script src="javascripts/add-pet.js"></script>
 </body>
 </html>

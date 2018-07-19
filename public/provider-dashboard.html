@@ -20,29 +20,15 @@
     <main role="main">
         <div class="boxed">
             <h2>Visits</h2>
-            <div class="listItem">
-                <a href="#"><img src="images/delete.svg" title="Delete Visit" alt="Delete Visit" /></a>
-                <h3>June 29, 9 AM</h3>
-                <p>John Doe</p>
-            </div>
-            <div class="listItem">
-                <a href="#"><img src="images/delete.svg" title="Delete Visit" alt="Delete Visit" /></a>
-                <h3>June 30, 9 AM</h3>
-                <p>John Doe</p>
-            </div>
-            <div class="listItem">
-                <a href="#"><img src="images/delete.svg" title="Delete Visit" alt="Delete Visit" /></a>
-                <h3>June 31, 9 AM</h3>
-                <p>John Doe</p>
-            </div>
+            <div id="js-recent-visits-list"></div>
             <a class="buttonSmall" href="visits.html">View All</a>
-            <a class="buttonSmall" href="add-visit.html">Add</a>
+            <a class="buttonSmall" id="js-add-visit" href="add-visit.html">Add</a>
         </div>
         <div class="boxed">
             <h2>Clients</h2>
             <a class="buttonSmall" href="clients.html">View All</a>
             <a class="buttonSmall" href="add-client.html">Add</a>
-            <form>
+            <form id="js-search-client">
                 <fieldset name="clientSearch">
                     <label for="lastName" class="visuallyhidden">Search by last name</label>
                     <input type="text" id="lastName" title="Client Last Name" placeholder="Client Last Name" required></input>
@@ -51,5 +37,7 @@
             </form>
         </div>
     </main>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <script src="javascripts/provider-dashboard.js"></script>
 </body>
 </html>

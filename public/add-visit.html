@@ -20,7 +20,7 @@
     <main role="main">
         <div class="boxed">
             <h2>Add a Visit</h2>
-            <form>
+            <form id="js-add-visit">
                 <fieldset name="addVisit">
                     <label for="client" class="visuallyhidden">Client</label>
                         <select id="client" title="Client" required>
@@ -40,12 +40,14 @@
                             <option value="daily">Daily</option>
                             <option value="mondayFriday">Monday-Friday</option>
                             <option value="weekly">Weekly</option>
+                            <option value="none">None</option>
                         </select>
                     <input type="submit" value="Submit" class="button" placeholder="">
                 </fieldset>
             </form>
-            <a class="cancel" href="#" onclick=" window.history.back();">Cancel</a>
         </div>
     </main>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <script src="javascripts/add-visit.js"></script>
 </body>
 </html>

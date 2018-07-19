@@ -20,16 +20,28 @@
     <main role="main">
         <div class="boxed">
             <h1>Login</h1>
-            <form>
+            <form id="js-login">
                 <fieldset name="login">
                     <label for="email" class="visuallyhidden">Email</label>
                     <input type="text" id="email" title="Email address" placeholder="Email" required></input>
                     <label for="password" class="visuallyhidden">Pasword</label>
                     <input type="text" id="password" title="Password" placeholder="Password" required></input>
+                    <fieldset class="radioSets">
+                        <div class="radioSet">
+                            <input type="radio" id="provider" name="role" value="provider">
+                            <label for="provider">Provider</label>
+                        </div>
+                        <div class="radioSet">
+                            <input type="radio" id="client" name="role" value="client">
+                            <label for="client">Client</label>
+                        </div>
+                    </div>
                     <input type="submit" value="Submit" class="button">
                 </fieldset>
             </form>
         </div>
     </main>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <script src="javascripts/login.js"></script>
 </body>
 </html>

@@ -19,18 +19,18 @@
     </header>
     <main role="main">
         <p>Please select your pet care provider to continue</p>
-        <form>
+        <form id="js-signup">
             <fieldset name="chooseProvider">
                 <label for="provider" class="visuallyhidden">Pet Care Provider</label>
-                <select type="select" id="provider" title="Pet Care Provider" required>
+                <select id="js-provider-list" type="select" id="provider" title="Pet Care Provider" required>
                     <option value="" disabled selected hidden>Pet care provider</option>
-                    <option value="jane">Jane's Pet Care</option>
-                    <option value="dog-walkers">Dog Walkers Inc.</option>
                 </select>
                 <input type="submit" value="Continue" class="button">
             </fieldset>
         </form>
         <a href="signup-provider.html">Pet Care Provider Sign Up</a>
     </main>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <script src="javascripts/signup.js"></script>
 </body>
 </html>

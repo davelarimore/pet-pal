@@ -61,7 +61,7 @@ h1, h2, p {
   background-color: #EEE;
   margin-bottom: 40px;
 }
-input, select {
+input, select, .radioSets {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;  
   display: block;
   border: 1px solid black;
@@ -80,10 +80,24 @@ input, select {
   -webkit-box-sizing:content-box; 
   box-sizing:content-box;
 }
+input[type='radio'] {
+  display: block;
+  width: 36px;
+  float: left;
+}
+.radioSet{
+  float: left;
+  margin-top: 10px;
+  width: 50%;
+}
+.radioSet > label {
+  margin-top: 2px;
+}
 select:invalid {
   color: gray;
 }
 label {
+  text-align: left;
   display: block;
 }
 fieldset {
@@ -96,12 +110,14 @@ fieldset {
   padding-bottom: 20px;
   margin: 30px 0;
 }
-.listItem a {
-  float: right;
-}
 .listItem img {
   width: 36px;
   height: 36px;
+  float: right;
+}
+.listItemLink {
+  color: black;
+  text-decoration: none;
 }
 .clientHeader {
   text-align: left;

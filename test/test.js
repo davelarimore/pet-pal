@@ -11,19 +11,12 @@ const expect = chai.expect;
 chai.use(chaiHttp);
 
 describe('Users', function() {
-  // Before our tests run, we activate the server. Our `runServer`
-  // function returns a promise, and we return the promise by
-  // doing `return runServer`. If we didn't return a promise here,
-  // there's a possibility of a race condition where our tests start
-  // running before our server has started.
+  // Before our tests run, we activate the server.
   before(function() {
     return runServer();
   });
 
   // Close server after these tests run in case
-  // we have other test modules that need to 
-  // call `runServer`. If server is already running,
-  // `runServer` will error out.
   after(function() {
     return closeServer();
   });

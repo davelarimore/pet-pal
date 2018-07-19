@@ -1,5 +1,21 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" version="1.1" style="shape-rendering:geometricPrecision;text-rendering:geometricPrecision;image-rendering:optimizeQuality;" viewBox="0 0 333 416.25" x="0px" y="0px" fill-rule="evenodd" clip-rule="evenodd"><defs><style type="text/css">
-   
-    .fil0 {fill:black;fill-rule:nonzero}
-   
-  </style></defs><g><g><path class="fil0" d="M119 155c-12,-21 -7,-21 11,-41l-11 41zm6 -16c-2,3 40,52 61,64 15,9 4,6 27,-10 0,0 8,-5 16,0l53 36c0,0 14,8 1,22l-42 35c0,0 -14,7 -42,-3 -49,-18 -131,-99 -149,-148 -14,-41 0,-47 26,-78 7,-8 19,-20 29,-5 41,61 50,58 20,87zm42 -20c-7,0 -7,-10 0,-10 32,0 57,26 57,58 0,6 -10,6 -10,0 0,-27 -21,-48 -47,-48zm-10 -29c-7,0 -7,-10 0,-10 52,0 97,43 97,97 0,6 -10,6 -10,0 0,-49 -40,-87 -87,-87zm-27 22l-36 -53c-35,40 -43,38 -31,71 16,45 95,124 140,141 34,12 32,3 71,-32 -65,-44 -47,-41 -71,-21 -18,16 -76,-51 -84,-63l11 -43z"/></g></g><text x="0" y="348" fill="#000000" font-size="5px" font-weight="bold" font-family="'Helvetica Neue', Helvetica, Arial-Unicode, Arial, Sans-serif">Created by Enshia</text><text x="0" y="353" fill="#000000" font-size="5px" font-weight="bold" font-family="'Helvetica Neue', Helvetica, Arial-Unicode, Arial, Sans-serif">from the Noun Project</text></svg>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 16.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="328.347px" height="327.644px" viewBox="315.825 60.329 328.347 327.644"
+	 enable-background="new 315.825 60.329 328.347 327.644" xml:space="preserve">
+<g>
+	<g>
+		<path d="M416.096,208.528c-16.144-28.252-9.417-28.252,14.799-55.159L416.096,208.528z M424.168,187.003
+			c-2.69,4.036,53.814,69.958,82.066,86.102c20.18,12.108,5.381,8.073,36.324-13.453c0,0,10.763-6.727,21.525,0l71.304,48.432
+			c0,0,18.835,10.763,1.345,29.598l-56.504,47.087c0,0-18.835,9.418-56.505-4.036c-65.922-24.216-176.24-133.189-200.457-199.111
+			c-18.834-55.159,0-63.231,34.979-104.937c9.417-10.763,25.562-26.907,39.016-6.727
+			C452.42,152.024,464.528,147.988,424.168,187.003z M480.673,160.096c-9.418,0-9.418-13.454,0-13.454
+			c43.051,0,76.685,34.979,76.685,78.03c0,8.072-13.453,8.072-13.453,0C543.904,188.348,515.651,160.096,480.673,160.096z
+			 M467.219,121.081c-9.417,0-9.417-13.454,0-13.454c69.958,0,130.499,57.85,130.499,130.499c0,8.072-13.453,8.072-13.453,0
+			C584.265,172.204,530.45,121.081,467.219,121.081z M430.895,150.679l-48.432-71.303c-47.087,53.814-57.85,51.123-41.706,95.52
+			c21.525,60.541,127.808,166.823,188.349,189.694c45.741,16.144,43.051,4.036,95.52-43.052
+			c-87.448-59.195-63.231-55.159-95.52-28.252c-24.217,21.525-102.247-68.612-113.01-84.757L430.895,150.679z"/>
+	</g>
+</g>
+</svg>
