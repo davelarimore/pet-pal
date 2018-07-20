@@ -1,130 +1,53 @@
-const CLIENT_STORE = {
-    user: 001, // provider who owns it
-    client: "John Doe",
-    email: "john@test.biz",
-    phone: "555-555-5555",
-    vetInfo: "City Vet",
-    address: {
-        addressString: "123 Main",
-        latLon: "0,0",
-        entryNote: "Door code: 1234"
-    }
-};
-
-const VISITS_STORE = [{
-    user: 001, // provider who owns it
-    client: "John Doe",
-    startTime: "June 29, 10:00 AM",
-    endTime: "June 29, 10:30 AM",
-    recurrence: null,
-},
-{
-    user: 001, // provider who owns it
-    client: "John Doe",
-    startTime: "June 30, 9:00 AM",
-    endTime: "June 30, 9:00 AM",
-    recurrence: null,
-},
-{
-    user: 001, // provider who owns it
-    client: "John Doe",
-    startTime: "June 31, 9:00 AM",
-    endTime: "June 31, 9:00 AM",
-    recurrence: null,
-}];
-
-const PETS_STORE = [{
-    user: 001,
-    name: "Fluffy",
-    type: "Cat",
-    breed: "Tabby",
-    color: "Grey",
-    photo: "",
-    food: "Purina"
-},
-{
-    user: 001,
-    name: "Caramel",
-    type: "Cat",
-    breed: "Tabby",
-    color: "Tan",
-    photo: "",
-    food: "Purina"
-},
-{
-    user: 001,
-    name: "Snowball",
-    type: "Cat",
-    breed: "Tabby",
-    color: "White",
-    photo: "",
-    food: "Purina"
-}];
-
-const TASKS_STORE = [{
-    user: 001,
-    description: "Feed animals",
-    completed: false,
-},
-{
-    user: 001,
-    description: "Get mail",
-    completed: false,
-},
-{
-    user: 001,
-    description: "Walk dog",
-    completed: false,
-}];
-
 // Client Header
 function generateClientHeaderHTML(clientData, visitData) {
     return `
     <a class="buttonSmall" href="update-client.html">Edit</a>
-            <h2>${clientData.client}</h2>
+            <h2>${clientData.fullName}</h2>
             <p>Next Visit: ${visitData[0].startTime}</p>`;
 }   
 
 function renderClientHeader() {
-    const clientHeader = generateClientHeaderHTML(CLIENT_STORE, VISITS_STORE);
+    clientID = getQueryVariable("clientID");
+    console.log(`Client ID for header is: ${clientID}`);
+    const clientHeader = generateClientHeaderHTML(CLIENTS_STORE[0], VISITS_STORE);
     $('#js-client-header').html(clientHeader);
 }
 
 // Client Info
-function generateClientInfoHTML(item, itemIndex, template) {
+function generateClientInfoHTML(client) {
     return `
-    <a class="boxedInfoItem" href="tel:${item.phone}">
+    <a class="boxedInfoItem" href="tel:${client.phone}">
                 <img src="images/phone.svg" alt="Phone">
-                <p>${item.phone}</p>
+                <p>${client.phone}</p>
             </a>
-            <a class="boxedInfoItem" href="mailto:${item.email}">
+            <a class="boxedInfoItem" href="mailto:${client.email}">
                     <img src="images/email.svg" alt="Email">
-                <p>${item.email}</p>
+                <p>${client.email}</p>
             </a>
-            <a class="boxedInfoItem" href="https://www.google.com/maps/@${item.latLon}">
+            <a class="boxedInfoItem" href="https://www.google.com/maps/@${client.address.latLon}">
                 <img src="images/location.svg" alt="Address">
-                <p>${item.address.addressString}</p>
+                <p>${client.address.addressString}</p>
             </a>
             <a class="boxedInfoItem" href="#0">
                 <img src="images/vet.svg" alt="Veterinarian">
-                <p>${item.vetInfo}</p>
+                <p>${client.vetInfo}</p>
             </a>`;
 }
 
 function renderClientInfo() {
     // render the list in the DOM
-    const clientInfo = generateClientInfoHTML(CLIENT_STORE);
+    const clientInfo = generateClientInfoHTML(CLIENTS_STORE[0]);
     // insert that HTML into the DOM
     $('#js-client-info').html(clientInfo);
 }
 
   // Pets
-function generatePetHTML(item, itemIndex, template) {
+function generatePetHTML(pet) {
     return `
-    <a href="#" id="js-pet" class="petThumbnail">
+    <a href="pet.html?petID=${pet.id}" id="js-pet" class="petThumbnail">
                 <div>
-                    <img src="images/logo.svg" alt="${item.name}">
-                    <p>${item.name}</p>
+                    <img src="images/logo.svg" alt="${pet.name}">
+                    <p>${pet.name}</p>
                 </div>
             </a>`;
 }
@@ -135,18 +58,16 @@ function generatePetsHTML(petsList) {
 }
 
 function renderPets() {
-    // render the list in the DOM
     const petsList = generatePetsHTML(PETS_STORE);
-    // insert that HTML into the DOM
     $('#js-pets').html(petsList);
 }
 
   // Pets
-function generateTaskHTML(item, itemIndex, template) {
+function generateTaskHTML(task) {
     return `
     <a class="boxedInfoItem" href="#0">
                 <img src="images/checkbox.svg" alt="Task">
-                <p>${item.description}</p>
+                <p>${task.description}</p>
             </a>`;
 }
 

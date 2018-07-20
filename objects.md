@@ -17,10 +17,10 @@ const userSchema = mongoose.Schema({
     }
     provider: { type: Boolean, required: true }, // false = client
     // client: { type: Boolean, required: true }
-    clients: { type: String }, // provider has many
-    visits: { type: String }, // provider has many
-    pets: { type: String }, // client has many
-    tasks: { type: String } // client has many
+    clients: { type: Array }, // provider has many
+    visits: { type: Array }, // provider has many
+    pets: { type: Array }, // client has many
+    tasks: { type: Array } // client has many
 })
 ```
 

@@ -5,4 +5,4 @@ function handleAddVisit(){
       }); 
 }
   
-  $(handleAddVisit);
+$(handleAddVisit);

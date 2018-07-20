@@ -1,33 +1,15 @@
-const USERS_STORE = [{
-    user: 001, // provider who owns it
-    companyName: "Jane's Pet Care",
-    provider: true
-},
-{
-    user: 002, // provider who owns it
-    companyName: "Dog Walkers Inc.",
-    provider: true
-},
-{
-    user: 002, // provider who owns it
-    companyName: "",
-    provider: false
-}];
-
-
 function handleSignupSubmit(){
     $('#js-signup').on("submit", event => {
         event.preventDefault();
         console.log('`handleSubmit` ran');
-        window.location.href = "client-dashboard.html"
+        window.location.href = "signup-client.html"
     }); 
 }
 
-
-function generateProviderHTML(item, itemIndex, template) {
+function generateProviderHTML(provider) {
     if (item.provider === true) {
         return `
-        <option value="${item.companyName}">${item.companyName}</option>`
+        <option value="${provider.companyName}">${provider.companyName}</option>`
     }
 }
   
@@ -37,7 +19,7 @@ function generateProviderListHTML(visitsList) {
 }
   
 function renderProviderListInput() {
-    const recentVisitsHTML = generateProviderListHTML(USERS_STORE);
+    const recentVisitsHTML = generateProviderListHTML(PROVIDERS_STORE);
     $('#js-provider-list').append(recentVisitsHTML);
 }
 
