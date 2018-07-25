@@ -1,21 +1,53 @@
 const PROVIDERS_STORE = [{
-    id: 101, // provider who owns it
+    id: 101,
     companyName: "Jane's Pet Care",
+    firstName: "Jane",
+    lastName: "Doe",
+    email: "jane@test.biz",
+    phone: "555-555-5555",
+    vetInfo: "",
+    address: {
+        addressString: "123 Main",
+        latLon: "0,0",
+        entryNote: "Door code: 1234"
+    },
     provider: true
 },
 {
-    id: 102, // provider who owns it
+    id: 102,
     companyName: "Dog Walkers Inc.",
+    firstName: "Bob",
+    lastName: "Doe",
+    email: "bob@test.biz",
+    phone: "555-555-5555",
+    vetInfo: "",
+    address: {
+        addressString: "123 Main",
+        latLon: "0,0",
+        entryNote: "Door code: 1234"
+    },
     provider: true
 },
 {
-    id: 103, // provider who owns it
+    id: 103,
     companyName: "",
+    firstName: "Jane",
+    lastName: "Doe",
+    email: "john@test.biz",
+    phone: "555-555-5555",
+    vetInfo: "City Vet",
+    address: {
+        addressString: "123 Main",
+        latLon: "0,0",
+        entryNote: "Door code: 1234"
+    },
     provider: false
 }];
 
 const CLIENTS_STORE = [{
     id: 201,
+    firstName: "John",
+    lastName: "Doe",
     fullName: "John Doe", 
     companyName: "",
     email: "john@test.biz",
@@ -34,6 +66,8 @@ const CLIENTS_STORE = [{
 },
 {
     id: 202,
+    firstName: "Jane",
+    lastName: "Doe",
     fullName: "Jane Doe", 
     companyName: "",
     email: "jane@test.biz",
@@ -52,6 +86,8 @@ const CLIENTS_STORE = [{
 },
 {
     id: 203,
+    firstName: "Sally",
+    lastName: "Doe",
     fullName: "Sally Doe", 
     companyName: "",
     email: "sally@test.biz",
@@ -88,6 +124,20 @@ const VISITS_STORE = [{
     client: "John Doe",
     startTime: "June 31, 9:00 AM",
     endTime: "June 31, 9:00 AM",
+    recurrence: null,
+},
+{
+    id: 304, // provider who owns it
+    client: "John Doe",
+    startTime: "July 1, 9:00 AM",
+    endTime: "July 1, 9:00 AM",
+    recurrence: null,
+},
+{
+    id: 305, // provider who owns it
+    client: "John Doe",
+    startTime: "July 2, 9:00 AM",
+    endTime: "July 2, 9:00 AM",
     recurrence: null,
 }];
 

@@ -9,16 +9,22 @@
     <link rel="stylesheet" href="stylesheets/style.css">
 </head>
 <body>
-    <header role="banner">
+    <header role="banner" id="js-header">
         <div class="fullHeader">
-            <img src="images/logo.svg" alt="Pet Pal">
+            <a href="index.html">
+                <img src="images/logo.svg" alt="Pet Pal">
+            </a>
             <h1>Pet Pal</h1>
             <p>Pet Pal allows pet care providers and their clients to share and update their information</p>
         </div>
     </header>
-    <main role="main">
-        <a class="button" href="login.html">Login</a>
-        <a class="button" href="signup.html">Sign Up</a>
+    <main role="main" id="js-main">
+        <a class="button" id="js-login-button" href="#">Login</a>
+        <a class="button" id="js-signup-button" href="#">Sign Up</a>
     </main>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <script src="javascripts/mock-data.js"></script>
+    <script src="javascripts/templates.js"></script>
+    <script src="javascripts/common.js"></script>
 </body>
 </html>

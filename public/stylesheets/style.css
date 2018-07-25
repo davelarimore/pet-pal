@@ -20,6 +20,9 @@ a {
 .compactHeader h1 {
   padding-top: 10px;
 }
+.dashBoardLink {
+  float: right;
+}
 .fullHeader {
   text-align: center;
 }
@@ -69,17 +72,17 @@ input, select, .radioSets {
   border-radius: 0;
   background-color: white;
   width: 100%;
-  max-width: 278px;
+  /*max-width: 278px;*/
   padding: 10px;
   margin-top: 5px;
   margin-bottom: 15px;
   margin-left: auto;
   margin-right: auto;
-  /* make inputs and selects same width */
+  /* make inputs and selects same width
   -ms-box-sizing:content-box;
   -moz-box-sizing:content-box;
   -webkit-box-sizing:content-box; 
-  box-sizing:content-box;
+  box-sizing:content-box;*/
 }
 input[type='radio'] {
   display: block;
@@ -170,12 +173,12 @@ fieldset {
   height: 50px;
 }
 .visuallyhidden {
-  border: 0;
+  /*border: 0;
   clip: rect(0 0 0 0);
   height: 1px;
   margin: -1px;
   overflow: hidden;
   padding: 0;
   position: absolute;
-  width: 1px;
+  width: 1px;*/
 }
