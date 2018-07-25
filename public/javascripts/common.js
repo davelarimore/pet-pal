@@ -11,8 +11,6 @@ function updatePet(pet) {
       data: JSON.stringify(pet),
       success: function(data) {
         displayPetDetail(data);
-        handleUpdatePet();
-        handleDeletePet();
       },
       dataType: "json",
       contentType: "application/json"
@@ -28,19 +26,17 @@ function addTask(task) {
       data: JSON.stringify(task),
       success: function() {
         displayCompactSiteHeader();
-        handleDashboardButton();
         displayClientDashboard();
-        handlePetClick();
-        handleAddPetClick();
-        handleAddTaskClick();
       },
       dataType: "json",
       contentType: "application/json"
     });
 }
+//Get Tasks by user
+//Delete task by ID
 
-//Get Client by ID
-function getClient(id) {
+//Get Client by Name
+function getClientByName(id) {
     console.log("Adding task: " + id);
     $.ajax({
       method: "GET",
@@ -48,17 +44,31 @@ function getClient(id) {
       data: JSON.stringify(id),
       success: function() {
         displayCompactSiteHeader();
-        handleDashboardButton();
         displayClientDashboard();
-        handlePetClick();
-        handleAddPetClick();
-        handleAddTaskClick();
       },
       dataType: "json",
       contentType: "application/json"
     });
  
 }
+
+//Add User
+//Update User
+//Get Client by ID
+//Get Client Users for provider
+//Delete Client User
+//Add Pet
+//Get Pet
+//Get Pets
+//Delete Pet
+//Add Visit
+//Get Visits
+
+//Auth login
+//Auth signup
+//Auth refresh
+
+
 ///////////////////////////////////////////
 //Update Provider Info Screen
 ///////////////////////////////////////////
@@ -79,7 +89,7 @@ function displayProviderProfileUpdateForm(provider) {
     $('#js-main').html(element);
 }
 function handleProviderProfileUpdateSubmit() {
-    $('#js-provider-update-form').on("submit", event => {
+    $('#js-main').on("submit", '#js-provider-update-form', event => {
         event.preventDefault();
         const userData = {
             companyName: $(event.currentTarget).find("#companyName").val(),
@@ -93,6 +103,7 @@ function handleProviderProfileUpdateSubmit() {
         updateUser(userData);
     }); 
 }
+$(handleClientProfileUpdateSubmit);
 ///////////////////////////////////////////
 //Add Visit Screen
 ///////////////////////////////////////////
@@ -118,7 +129,7 @@ function generateClientListHTML(clientsList) {
 
 //Listener
 function handleAddVisitSubmit() {
-    $('#js-add-visit-form').on("submit", event => {
+    $('#js-main').on("submit", '#js-add-visit-form', event => {
         event.preventDefault();
         const visitData = {
             client: $(event.currentTarget).find("#client").val(),
@@ -133,6 +144,7 @@ function handleAddVisitSubmit() {
         addVisit(visitData);
     }); 
 }
+$(handleAddVisitSubmit);
 ///////////////////////////////////////////
 //All Visits Screen
 ///////////////////////////////////////////
@@ -163,6 +175,17 @@ function displayAllVisits() {
 ///////////////////////////////////////////
 //All Clients Screen
 ///////////////////////////////////////////
+
+function getAndDisplayAllClients() {
+    getClients(displayAllClients);
+}
+
+function getClients(callbackFn) {
+    //connect to real API later
+    setTimeout(function(){ callbackFn(CLIENTS_STORE)}, 100);
+}
+
+
 function generateClientItemHTML(client) {
     return `
     <a href="#" class="listItemLink js-client-link"><div class="listItem">
@@ -171,12 +194,13 @@ function generateClientItemHTML(client) {
                 <p>${client.address.addressString}</p>
             </div></a>`;
   }
-function generateAllClientsHTML(visitsList) {
-    const items = visitsList.map((item, index) => generateClientItemHTML(item, index));  
+function generateAllClientsHTML(clientsList) {
+    const items = clientsList.map((item, index) => generateClientItemHTML(item, index));  
     return items.join("");
 }
-function displayAllClients() {
-    const clientsListHTML = generateAllClientsHTML(CLIENTS_STORE);
+
+function displayAllClients(data) {
+    const clientsListHTML = generateAllClientsHTML(data);
     $('#js-main').html(`
     <div class="boxed">
         <h2>Clients</h2>
@@ -187,16 +211,12 @@ function displayAllClients() {
     </div>`);
 }
 function handleClientListClick() {
-    $('.js-client-link').on("click", event => {
+    $('.js-main').on("click", '.js-client-link', event => {
         displayCompactSiteHeader();
-        handleDashboardButton();
         displayClientDashboard();
-        handleUpdateClientProfileClick();
-        handlePetClick();
-        handleAddPetClick();
-        handleAddTaskClick();
         }); 
 }
+$(handleClientListClick);
 ///////////////////////////////////////////
 //Add Client Screen
 ///////////////////////////////////////////
@@ -206,8 +226,17 @@ function handleClientListClick() {
 ///////////////////////////////////////////
 //Provider Dashboard
 ///////////////////////////////////////////
-function displayProviderDashboard() {
-    const recentVisitsHTML = generateUpcomingVisitsHTML(VISITS_STORE);
+function getVisitsAndDisplayProviderDashboard() {
+    getUpcomingVisits(displayProviderDashboard);
+}
+
+function getUpcomingVisits(callbackFn) {
+    //connect to real API later
+    setTimeout(function(){ callbackFn(VISITS_STORE)}, 100);
+}
+
+function displayProviderDashboard(data) {
+    const recentVisitsHTML = generateUpcomingVisitsHTML(data);
     const element = $(providerDashboardTemplate);
     element.find("#js-visits-list").html(recentVisitsHTML);
     $('#js-main').html(element);
@@ -230,66 +259,57 @@ function generateUpcomingVisitsHTML(visitsList) {
 
 //Visit Action Listeners
 function handleDeleteVisitButton(){
-    $('#js-visits-list').on("click", ".js-delete-visit", event => {
+    $('#js-main').on("click", ".js-delete-visit", event => {
         //modal yes/no confirm
         //deleteVisit(visit);
         console.log("Handling delete visit button");
         displayCompactSiteHeader();
-        handleDashboardButton();
-        displayProviderDashboard();
-        handleViewAllVisitsButton();
-        handleAddVisitButton();
-        handleDeleteVisitButton();
-        handleViewAllClientsButton();
-        handleAddClientButton();
-        handleSearchForClientSubmit();
-        handleProviderProfileUpdateButton();
+        getVisitsAndDisplayProviderDashboard();
       }); 
 }
+$(handleDeleteVisitButton);
 function handleViewAllVisitsButton() {
-    $('#js-view-all-visits-button').on("click", event => {
+    $('#js-main').on("click", '#js-view-all-visits-button', event => {
         displayAllVisits();
-        handleDeleteVisitButton();
-        handleAddVisitButton();
         }); 
 }
+$(handleViewAllVisitsButton);
 function handleAddVisitButton() {
-    $('#js-add-visit-button').on("click", event => {
+    $('#js-main').on("click", '#js-add-visit-button', event => {
         displayAddVisitForm();
-        handleAddVisitSubmit();
         }); 
 }
+$(handleAddVisitButton);
 
 //Client Action Listeners
 function handleViewAllClientsButton() {
-    $('#js-view-all-clients-button').on("click", event => {
-        displayAllClients();
-        handleClientListClick();
-        handleAddClientButton();
+    $('#js-main').on("click", '#js-view-all-clients-button', event => {
+        console.log("Handling all clients button");
+        getAndDisplayAllClients();
         }); 
 }
+$(handleViewAllClientsButton);
 function handleAddClientButton() {
-    $('#js-add-client-button').on("click", event => {
+    $('#js-main').on("click", '#js-add-client-button', event => {
         displayClientSignupForm();
-        handleClientSignupSubmit();
         }); 
 }
+$(handleAddClientButton);
 function handleSearchForClientSubmit() {
-    $('#js-search-client').on("submit", event => {
+    $('#js-main').on("submit", '#js-search-client', event => {
         event.preventDefault();
         let query = $(event.currentTarget).find("#lastName").val();
-        getClient(query);
+        getClientByName(query);
     }); 
 }
-
+$(handleSearchForClientSubmit);
 //Provider Action Listener
 function handleProviderProfileUpdateButton() {
-    $('#js-update-provider-info-button').on("click", event => {
+    $('#js-main').on("click", '#js-update-provider-info-button', event => {
         displayProviderProfileUpdateForm(PROVIDERS_STORE[0]);
-        handleProviderProfileUpdateSubmit();
         }); 
 }
-
+$(handleProviderProfileUpdateButton);
 ///////////////////////////////////////////
 //Update Pet Screen
 ///////////////////////////////////////////
@@ -306,7 +326,7 @@ function displayUpdatePetForm(pet) {
     $('#js-main').html(element);
 }
 function handleUpdatePetFormSubmit() {
-    $("#js-update-pet-form").on("submit", event => {
+    $("#js-main").on("submit", "#js-update-pet-form", event => {
         event.preventDefault();
         const petData = {
             name: $(event.currentTarget).find("#petName").val(),
@@ -317,12 +337,10 @@ function handleUpdatePetFormSubmit() {
         };
         updatePet(petData);
         displayCompactSiteHeader();
-        handleDashboardButton();
         displayPetDetail();
-        handleUpdatePet();
-        handleDeletePet();
     });
 }
+$(handleUpdatePetFormSubmit);
 ///////////////////////////////////////////
 //Add Task Screen
 ///////////////////////////////////////////
@@ -330,20 +348,17 @@ function displayAddTaskForm() {
     $('#js-main').html(addTaskFormTemplate);
 }
 function handleAddTaskSubmit() {
-    $("#js-add-task-form").on("submit", event => {
+    $("#js-main").on("submit", "#js-add-task-form", event => {
         event.preventDefault();
         const taskData = {
             description: $(event.currentTarget).find("#taskDescription").val(),
         };
         addTask(taskData);
         displayCompactSiteHeader();
-        handleDashboardButton();
         displayClientDashboard();
-        handlePetClick();
-        handleAddPetClick();
-        handleAddTaskClick();
     });
 }
+$(handleAddTaskSubmit);
 ///////////////////////////////////////////
 //Add Pet Screen
 ///////////////////////////////////////////
@@ -351,14 +366,14 @@ function displayAddPetForm() {
     $('#js-main').html(addPetFormTemplate);
 }
 function handleAddPetSubmit() {
-    $("#js-add-pet-form").on("submit", event => {
+    $("#js-main").on("submit", "#js-add-pet-form", event => {
         event.preventDefault();
         //addPet();
         displayCompactSiteHeader();
-        handleDashboardButton();
         displayPetDetail();
     }); 
 };
+$(handleAddPetSubmit);
 ///////////////////////////////////////////
 //Pet Detail Screen
 ///////////////////////////////////////////
@@ -401,24 +416,20 @@ function displayPetDetail() {
     );
 }
 function handleUpdatePet() {
-    $('#js-update-pet-button').on("click", event => {
+    $('#js-main').on("click", '#js-update-pet-button', event => {
         displayCompactSiteHeader();
-        handleDashboardButton();
         displayUpdatePetForm(PETS_STORE[0]);
-        handleUpdatePetFormSubmit();
       }); 
 }
+$(handleUpdatePet);
 function handleDeletePet() {
-    $('.js-delete-pet-button').on("click", event => {
+    $('.js-main').on("click", '.js-delete-pet-button', event => {
         //deletePet();
         displayCompactSiteHeader();
-        handleDashboardButton();
         displayClientDashboard();
-        handlePetClick();
-        handleAddPetClick();
-        handleAddTaskClick();
       }); 
 }
+$(handleDeletePet);
 ///////////////////////////////////////////
 //Update Client Profile Screen
 ///////////////////////////////////////////
@@ -439,7 +450,7 @@ function displayClientProfileUpdateForm(client) {
     $('#js-main').html(element);
 }
 function handleClientProfileUpdateSubmit() {
-    $('#js-client-update-form').on("submit", event => {
+    $('#js-main').on("submit", '#js-client-update-form', event => {
         event.preventDefault();
         const userData = {
             firstName: $(event.currentTarget).find("#firstName").val(),
@@ -453,14 +464,10 @@ function handleClientProfileUpdateSubmit() {
         };
         updateUser(userData);
         displayCompactSiteHeader();
-        handleDashboardButton();
         displayClientDashboard();
-        handleUpdateClientProfileClick();
-        handlePetClick();
-        handleAddPetClick();
-        handleAddTaskClick();
     }); 
 }
+$(handleClientProfileUpdateSubmit);
 ///////////////////////////////////////////
 //Client Dashboard / Provider Client Detail
 ///////////////////////////////////////////
@@ -528,38 +535,32 @@ function displayClientDashboard() {
     `);
 }
 function handlePetClick() {
-    $('.js-pet').on("click", event => {
+    $('.js-main').on("click", '.js-pet', event => {
         displayCompactSiteHeader();
-        handleDashboardButton();
         displayPetDetail();
-        handleUpdatePet();
-        handleDeletePet();
       }); 
 }
+$(handlePetClick);
 function handleAddPetClick() {
-    $('#js-add-pet-button').on("click", event => {
+    $('#js-main').on("click", '#js-add-pet-button', event => {
         displayCompactSiteHeader();
-        handleDashboardButton();
         displayAddPetForm();
-        handleAddPetSubmit();
       }); 
 }
+$(handleAddPetClick);
 function handleAddTaskClick() {
-    $('#js-add-task-button').on("click", event => {
+    $('#js-main').on("click", '#js-add-task-button', event => {
         displayCompactSiteHeader();
-        handleDashboardButton();
         displayAddTaskForm();
-        handleAddTaskSubmit();
       }); 
 }
-
+$(handleAddTaskClick);
 function handleUpdateClientProfileClick() {
-    $('#js-update-client-profile').on("click", event => {
+    $('#js-main').on("click", '#js-update-client-profile', event => {
         displayClientProfileUpdateForm(CLIENTS_STORE[0]);
-        handleClientProfileUpdateSubmit();
       }); 
 }
-
+$(handleUpdateClientProfileClick);
 ///////////////////////////////////////////
 // Client Header (Multiple Screens)
 ///////////////////////////////////////////
@@ -572,17 +573,13 @@ function generateClientHeaderHTML(clientData, visitData) {
 }
 
 function handleDashboardButton() {
-    //conditional logic for provider
-    $('#js-dashboard-button').on("click", event => {
+    //conditional logic for provider/client
+    $('#js-header').on("click", '#js-dashboard-button', event => {
         displayCompactSiteHeader();
-        handleDashboardButton();
         displayClientDashboard();
-        handleUpdateClientProfileClick();
-        handlePetClick();
-        handleAddPetClick();
-        handleAddTaskClick();
       }); 
 }
+$(handleDashboardButton);
 ///////////////////////////////////////////
 // Compact Site Header
 ///////////////////////////////////////////
@@ -596,11 +593,12 @@ function displayProviderSignupForm() {
     $('#js-main').html(providerSignupFormTemplate);
 }
 function handleProviderSignupSubmit() {
-    $('#js-provider-signup-form').on("submit", event => {
+    $('#js-main').on("submit", '#js-provider-signup-form', event => {
         event.preventDefault();
-        displayProviderDashBoard();
+        getVisitsAndDisplayProviderDashboard();
     }); 
 }
+$(handleProviderSignupSubmit);
 ///////////////////////////////////////////
 //Client Signup Screen
 ///////////////////////////////////////////
@@ -609,18 +607,14 @@ function displayClientSignupForm() {
 };
 
 function handleClientSignupSubmit(){
-    $('#js-client-signup-form').on("submit", event => {
+    $('#js-main').on("submit", '#js-client-signup-form', event => {
         event.preventDefault();
         addUser(); //pass provider
         displayCompactSiteHeader();
-        handleDashboardButton();
         displayClientDashboard();
-        handleUpdateClientProfileClick();
-        handlePetClick();
-        handleAddPetClick();
-        handleAddTaskClick();
     }); 
 }
+$(handleClientSignupSubmit);
 ///////////////////////////////////////////
 //Signup Type Screen
 ///////////////////////////////////////////
@@ -641,19 +635,19 @@ function generateProviderListHTML(providersList) {
     return items.join("");
 }
 function handleSignupTypeSubmit(){
-    $('#js-signup-type-form').on("submit", event => {
+    $('#js-main').on("submit", '#js-signup-type-form', event => {
         event.preventDefault();
         displayClientSignupForm();
-        handleClientSignupSubmit();
     }); 
 }
+$(handleSignupTypeSubmit);
 function handleProviderSignupClick(){
-    $('#js-provider-signup').on("click", event => {
+    $('#js-main').on("click", '#js-provider-signup', event => {
         console.log("Provider signup link clicked");
         displayProviderSignupForm();
-        handleProviderSignupSubmit();
     }); 
 }
+$(handleProviderSignupClick);
 ///////////////////////////////////////////
 //Login screen
 ///////////////////////////////////////////
@@ -661,47 +655,33 @@ function displayLoginForm() {
     $('#js-main').html(loginFormTemplate);
 }
 function handleLoginSubmit() {
-    $('#js-login-form').on("submit", event => {
+    $('#js-main').on("submit", '#js-login-form', event => {
         const role = $('input[name="role"]:checked').val();
         event.preventDefault();
         console.log('`handleLogin` ran');
         if (role === "provider") {
             displayCompactSiteHeader();
-            handleDashboardButton();
-            displayProviderDashboard();
-            handleViewAllVisitsButton();
-            handleAddVisitButton();
-            handleDeleteVisitButton();
-            handleViewAllClientsButton();
-            handleAddClientButton();
-            handleSearchForClientSubmit();
-            handleProviderProfileUpdateButton();
+            getVisitsAndDisplayProviderDashboard();
         }
         else {
             displayCompactSiteHeader();
-            handleDashboardButton();
             displayClientDashboard();
-            handleUpdateClientProfileClick();
-            handlePetClick();
-            handleAddPetClick();
-            handleAddTaskClick();
         }
     }); 
 }
+$(handleLoginSubmit);
 ///////////////////////////////////////////
 //Home Screen
 ///////////////////////////////////////////
 function handleLoginClick() {
-    $('#js-login-button').on("click", event => {
+    $('#js-main').on("click", '#js-login-button', event => {
     displayLoginForm();
     handleLoginSubmit();
     }); 
 }
 function handleSignupClick() {
-    $('#js-signup-button').on("click", event => {
+    $('#js-main').on("click", '#js-signup-button', event => {
     displaySignupTypeForm();
-    handleSignupTypeSubmit();
-    handleProviderSignupClick();
     }); 
 }
 // when the page loads
