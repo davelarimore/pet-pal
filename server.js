@@ -1,13 +1,18 @@
 const express = require('express');
 const app = express();
 app.use(express.static('public'));
-//app.listen(process.env.PORT || 8080);
 
+const authRouter = require('./routes/authRouter');
+const usersRouter = require('./routes/usersRouter');
+const petsRouter = require('./routes/petsRouter');
+const visitsRouter = require('./routes/visitsRouterr');
+const tasksRouter = require('./routes/tasksRouter');
 
-
-
-
-
+app.use('/auth', authRouter);
+app.use('/users', usersRouter);
+app.use('/pets', petsRouter);
+app.use('/vists', visitsRouterr);
+app.use('/tasks', tasksRouter);
 
 // this function starts our server and returns a Promise.
 // In our test code, we need a way of asynchronously starting
