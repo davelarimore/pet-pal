@@ -73,11 +73,11 @@ const loginFormTemplate = `<div class="boxed">
             <input type="text" id="password" title="Password" placeholder="Password" required></input>
             <fieldset class="radioSets">
                 <div class="radioSet">
-                    <input type="radio" id="provider" name="role" value="provider">
+                    <input type="radio" id="provider" name="role" value="provider" required>
                     <label for="provider">Provider</label>
                 </div>
                 <div class="radioSet">
-                    <input type="radio" id="client" name="role" value="client">
+                    <input type="radio" id="client" name="role" value="client" required>
                     <label for="client">Client</label>
                 </div>
             </fieldset>

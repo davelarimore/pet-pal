@@ -13,9 +13,9 @@ router.put("/users/:id", (req, res) => {
   console.log(res);
 });
 // delete user
-router.delete("/users/:id", (req, res) => {
-  console.log(res);
-});
+// router.delete("/users/:id", (req, res) => {
+//   console.log(res);
+// });
   ```
 
 ##Pets
@@ -53,13 +53,13 @@ router.get("/users/:id/visits", (req, res) => {
   console.log(res);
 });
 // get one of a provider's visits
-router.get("/users/:id/visits/:id", (req, res) => {
-  console.log(res);
-});
+// router.get("/users/:id/visits/:id", (req, res) => {
+//   console.log(res);
+// });
 // delete one of a provider's visits
-router.delete("/users/:id/visits/:id", (req, res) => {
-  console.log(res);
-});
+// router.delete("/users/:id/visits/:id", (req, res) => {
+//   console.log(res);
+// });
 ```
 
 ##Tasks
