@@ -9,7 +9,7 @@ const signupTypeFormTemplate = `
                 <input type="submit" value="Continue" class="button">
             </fieldset>
         </form>
-    <a href="#" id="js-provider-signup">Pet Care Provider Sign Up</a>`;
+    <a href="#provider-signup">Pet Care Provider Sign Up</a>`;
 
 const clientSignupFormTemplate = `
     <div class="boxed">
@@ -88,12 +88,11 @@ const loginFormTemplate = `<div class="boxed">
 
 const compactHeaderTemplate = `
     <div class="compactHeader">
-    <a href="#" id="js-dashboard-button" class="dashBoardLink">Dashboard</a>
+    <a href="#client-dashboard" class="dashBoardLink">Dashboard</a>
     <a href="index.html">
             <img src="images/logo.svg" alt="Pet Pal">
         </a>
         <h1>Pet Pal</h1>
-        <a href="#" id
     </div>`;
 
 const addPetFormTemplate = `
@@ -142,13 +141,13 @@ const providerDashboardTemplate = `
     <div class="boxed">
     <h2>Visits</h2>
     <div id="js-visits-list"></div>
-    <a class="buttonSmall" id="js-view-all-visits-button" href="#">View All</a>
-    <a class="buttonSmall" id="js-add-visit-button" href="#">Add</a>
+    <a class="buttonSmall" href="#all-visits">View All</a>
+    <a class="buttonSmall" href="#add-visit">Add</a>
     </div>
     <div class="boxed">
     <h2>Clients</h2>
-    <a class="buttonSmall" id="js-view-all-clients-button" href="#">View All</a>
-    <a class="buttonSmall" id="js-add-client-button" href="#">Add</a>
+    <a class="buttonSmall" href="#all-clients">View All</a>
+    <a class="buttonSmall" href="#add-client">Add</a>
     <form id="js-search-client">
         <fieldset name="clientSearch">
             <label for="lastName" class="visuallyhidden">Search by last name</label>
@@ -157,7 +156,7 @@ const providerDashboardTemplate = `
         </fieldset>
     </form>
     </div>
-    <a class="button" id="js-update-provider-info-button" href="#">Update My Info</a>`;
+    <a class="button" href="#update-provider">Update My Info</a>`;
 
 const addVisitFormTemplate = `
     <div class="boxed">

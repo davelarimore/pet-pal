@@ -19,8 +19,8 @@ const userSchema = mongoose.Schema({
         entryNote: { type: String }
     },
     role: { type: String, required: true, default:"client"}, 
-    clients: [{ type: Mongoose.Schema.Types.ObjectId, ref: "User" }], // provider has many
-    provider: { type: Mongoose.Schema.Types.ObjectId, ref: "User" }, // client has one
+    // clients: [{ type: Mongoose.Schema.Types.ObjectId, ref: "User" }], // provider has many
+    // provider: { type: Mongoose.Schema.Types.ObjectId, ref: "User" }, // client has one
     visits: { type: Array }, // provider has many, referenced
     pets: { type: Array }, // client has many, referenced
     tasks: { type: Array }, // client has many, referenced

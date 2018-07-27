@@ -1,7 +1,92 @@
 ///////////////////////////////////////////
+//Routes
+///////////////////////////////////////////
+const router = new Navigo(null, true, '#!');
+
+router
+    .on({
+        'login': () => {
+            displayLoginForm();
+            handleLoginSubmit();
+        },
+        'signup': () => {
+            displaySignupTypeForm();
+            handleSignupTypeSubmit();
+        },
+        'provider-signup': () => {
+            displayProviderSignupForm();
+            handleProviderSignupSubmit();
+        },
+        'client-dashboard': () => {
+            displayCompactSiteHeader();
+            displayClientDashboard();
+        },
+        'provider-dashboard': () => {
+            displayCompactSiteHeader();
+            getVisitsAndDisplayProviderDashboard();
+        },
+        'pet-detail': () => {
+            displayCompactSiteHeader();
+            getPetAndDisplayPetDetail();
+        },
+        'add-pet': () => {
+            displayCompactSiteHeader();
+            displayAddPetForm();
+        },
+        'add-task': () => {
+            displayCompactSiteHeader();
+            displayAddTaskForm();
+        },
+        'add-task': () => {
+            displayCompactSiteHeader();
+            displayAddTaskForm();
+        },
+        'update-client': () => {
+            displayCompactSiteHeader();
+            getClientUserAndDisplayClientUpdateForm();
+        },
+        'update-provider': () => {
+            displayCompactSiteHeader();
+            getProviderUserAndDisplayUpdateForm();
+        },
+        'update-pet': () => {
+            displayCompactSiteHeader();
+            getPetAndDisplayUpdateForm();
+        },
+        'delete-pet': () => {
+            deletePetAndDisplayAlertDialog();
+            displayCompactSiteHeader();
+            displayClientDashboard();
+        },
+        'delete-visit': () => {
+            deleteVisitAndDisplayAlertDialog();
+            displayCompactSiteHeader();
+            getVisitsAndDisplayProviderDashboard();
+        },
+        'all-visits': () => {
+            getAndDisplayAllVisits();
+        },
+        'add-visit': () => {
+            getClientsAndDisplayAddVisitForm();
+        },
+        'all-clients': () => {
+            getAndDisplayAllClients();
+        },
+        //click from client list
+        'client-detail': () => {
+            displayCompactSiteHeader();
+            displayClientDashboard();
+        },
+        'add-client': () => {
+            displayClientSignupForm();
+        },
+    })
+    .resolve();
+
+///////////////////////////////////////////
 //Update Provider Info Screen
 ///////////////////////////////////////////
-function getUserAndDisplayUpdateForm() {
+function getProviderUserAndDisplayUpdateForm() {
     getUser(displayProviderProfileUpdateForm);
 }
 function getUser(callbackFn) {
@@ -112,7 +197,7 @@ function getVisits(callbackFn) {
 function generateVisitItemHTML(visit) {
     return `
     <div class="listItem">
-                <a href="#" id="js-delete-visit"><img src="images/delete.svg" title="Delete Visit" alt="Delete Visit" /></a>
+                <a href="#delete-visit"><img src="images/delete.svg" title="Delete Visit" alt="Delete Visit" /></a>
                 <h3>${visit.startTime}</h3>
                 <p>${visit.client}</p>
             </div>`;
@@ -129,7 +214,7 @@ function displayAllVisits(data) {
         <div id="js-visits-list">
             ${visitsListHTML}
         </div>
-        <a class="button" id="js-add-visit-button" href="#">Add Visit</a>
+        <a class="button" href="#add-visit">Add Visit</a>
     </div>`);
 }
 ///////////////////////////////////////////
@@ -144,7 +229,7 @@ function getClients(callbackFn) {
 }
 function generateClientItemHTML(client) {
     return `
-    <a href="#" class="listItemLink js-client-link"><div class="listItem">
+    <a href="#client-detail" class="listItemLink"><div class="listItem">
                 <img src="images/arrow.svg" title="View Client" alt="View Client" />
                 <h3>${client.fullName}</h3>
                 <p>${client.address.addressString}</p>
@@ -162,16 +247,9 @@ function displayAllClients(data) {
         <div id="js-clients-list">
             ${clientsListHTML}
         </div>
-        <a class="button" id="js-add-client-button" href="#">Add Client</a>
+        <a class="button" href="#add-client">Add Client</a>
     </div>`);
 }
-function handleClientListClick() {
-    $('#js-main').on("click", '.js-client-link', event => {
-        displayCompactSiteHeader();
-        displayClientDashboard();
-        }); 
-}
-$(handleClientListClick);
 ///////////////////////////////////////////
 //Add Client Screen
 ///////////////////////////////////////////
@@ -197,7 +275,7 @@ function displayProviderDashboard(data) {
 function generateVisitItemHTML(visit) {
     return `
     <div class="listItem">
-        <a href="#" class="js-delete-visit"><img src="images/delete.svg" title="Delete Visit" alt="Delete Visit" /></a>
+        <a href="#delete-visit"><img src="images/delete.svg" title="Delete Visit" alt="Delete Visit" /></a>
         <h3>${visit.startTime}</h3>
         <p>${visit.client}</p>
     </div>`;
@@ -208,17 +286,7 @@ function generateUpcomingVisitsHTML(visitsList) {
     return items.join("");
 }
 
-//Visit Action Listeners
-function handleDeleteVisitButton(){
-    $('#js-main').on("click", ".js-delete-visit", event => {
-        //modal yes/no confirm
-        console.log("Handling delete visit button");
-        deleteVisitAndDisplayAlertDialog();
-        displayCompactSiteHeader();
-        getVisitsAndDisplayProviderDashboard();
-      }); 
-}
-$(handleDeleteVisitButton);
+//Visit Actions
 function deleteVisitAndDisplayAlertDialog(data) {
     if (confirm("Delete visit?")) {
         deleteVisit(data, displayAlertDialog);;
@@ -230,33 +298,8 @@ function deleteVisit(data, callbackFn) {
     //connect to real API later
     setTimeout(function(){ callbackFn("Visit Deleted")}, 100);
 }
-function handleViewAllVisitsButton() {
-    $('#js-main').on("click", '#js-view-all-visits-button', event => {
-        getAndDisplayAllVisits();
-        }); 
-}
-$(handleViewAllVisitsButton);
-function handleAddVisitButton() {
-    $('#js-main').on("click", '#js-add-visit-button', event => {
-        getClientsAndDisplayAddVisitForm();
-        }); 
-}
-$(handleAddVisitButton);
 
-//Client Action Listeners
-function handleViewAllClientsButton() {
-    $('#js-main').on("click", '#js-view-all-clients-button', event => {
-        console.log("Handling all clients button");
-        getAndDisplayAllClients();
-        }); 
-}
-$(handleViewAllClientsButton);
-function handleAddClientButton() {
-    $('#js-main').on("click", '#js-add-client-button', event => {
-        displayClientSignupForm();
-        }); 
-}
-$(handleAddClientButton);
+//Client Actions
 function handleSearchForClientSubmit() {
     $('#js-main').on("submit", '#js-search-client', event => {
         event.preventDefault();
@@ -273,13 +316,6 @@ function getClientByName(data, callbackFn) {
     setTimeout(function(){ callbackFn(CLIENTS_STORE[0])}, 100);
 }
 
-//Provider Action Listener
-function handleProviderProfileUpdateButton() {
-    $('#js-main').on("click", '#js-update-provider-info-button', event => {
-        getUserAndDisplayUpdateForm();
-        }); 
-}
-$(handleProviderProfileUpdateButton);
 ///////////////////////////////////////////
 //Update Pet Screen
 ///////////////////////////////////////////
@@ -389,7 +425,7 @@ function getPetAndDisplayPetDetail() {
 function generatePetInfoHTML(pet) {
     return `
     <div class="petsList">
-            <a href="#" class="petThumbnail">
+            <a href="#pet-detail" class="petThumbnail">
                 <div>
                     <img src="images/logo.svg" alt="Fluffy">
                     <p>${pet.name}</p>
@@ -410,25 +446,10 @@ function displayPetDetail(petData) {
     $('#js-main').html(`
         ${clientHeader}
         ${petDetail}
-        <a class="button" id="js-update-pet-button" href="#">Update Pet</a>
-        <a class="button" id="js-delete-pet-button" href="#">Delete Pet</a>`
+        <a class="button" href="#update-pet">Update Pet</a>
+        <a class="button" href="#delete-pet">Delete Pet</a>`
     );
 }
-function handleUpdatePet() {
-    $('#js-main').on("click", '#js-update-pet-button', event => {
-        displayCompactSiteHeader();
-        getPetAndDisplayUpdateForm();
-      }); 
-}
-$(handleUpdatePet);
-function handleDeletePet() {
-    $('.js-main').on("click", '.js-delete-pet-button', event => {
-        deletePetAndDisplayAlertDialog();
-        displayCompactSiteHeader();
-        displayClientDashboard();
-      }); 
-}
-$(handleDeletePet);
 function deletePetAndDisplayAlertDialog(data) {
     if (confirm("Delete pet?")) {
         deletePet(data, displayAlertDialog);;
@@ -495,7 +516,7 @@ function generateClientInfoHTML(client, user) {
     // show additional field if current user is provider
     // if (user.provider === true) {
     //     entryNoteHTML = `
-    //     <a class="boxedInfoItem" href="#">
+    //     <a class="boxedInfoItem" href="#0">
     //     <img src="images/house.svg" alt="Entry Note">
     //     <p>${client.address.entryNote}</p>
     // </a>`;
@@ -522,7 +543,7 @@ function generateClientInfoHTML(client, user) {
 // Pets
 function generatePetHTML(pet) {
     return `
-    <a href="#" class="petThumbnail js-pet">
+    <a href="#pet-detail" class="petThumbnail">
     <div><img src="images/logo.svg" alt="${pet.name}"><p>${pet.name}</p></div></a>`;
 }
 function generatePetsHTML(petsData) {
@@ -547,56 +568,23 @@ function displayClientDashboard() {
     $('#js-main').html(`
     ${clientHeader}${clientInfo}
     <div class="petsList">${petsList}</div>
-    <a class="button" id="js-add-pet-button" href="#">Add Pet</a>
+    <a class="button" href="#add-pet">Add Pet</a>
     <div id="js-tasks">${tasksList}</div>
-    <a class="button" id="js-add-task-button" href="#">Add Task</a>
+    <a class="button" href="#add-task">Add Task</a>
     `);
 }
-function handlePetClick() {
-    $('#js-main').on("click", '.js-pet', event => {
-        displayCompactSiteHeader();
-        getPetAndDisplayPetDetail();
-      }); 
-}
-$(handlePetClick);
-function handleAddPetClick() {
-    $('#js-main').on("click", '#js-add-pet-button', event => {
-        displayCompactSiteHeader();
-        displayAddPetForm();
-      }); 
-}
-$(handleAddPetClick);
-function handleAddTaskClick() {
-    $('#js-main').on("click", '#js-add-task-button', event => {
-        displayCompactSiteHeader();
-        displayAddTaskForm();
-      }); 
-}
-$(handleAddTaskClick);
-function handleUpdateClientProfileClick() {
-    $('#js-main').on("click", '#js-update-client-profile', event => {
-        getClientUserAndDisplayClientUpdateForm();
-      }); 
-}
-$(handleUpdateClientProfileClick);
+
 ///////////////////////////////////////////
 // Client Header (Multiple Screens)
 ///////////////////////////////////////////
 function generateClientHeaderHTML(clientData, visitData) {
     return `
     <div class="clientHeader">
-    <a class="buttonSmall" id="js-update-client-profile" href="#">Edit</a>
+    <a class="buttonSmall" href="#update-client">Edit</a>
             <h2>${clientData.fullName}</h2>
             <p>Next Visit: ${visitData[0].startTime}</p></div>`;
 }
-function handleDashboardButton() {
-    //conditional logic for provider/client
-    $('#js-header').on("click", '#js-dashboard-button', event => {
-        displayCompactSiteHeader();
-        displayClientDashboard();
-      }); 
-}
-$(handleDashboardButton);
+
 ///////////////////////////////////////////
 // Compact Site Header
 ///////////////////////////////////////////
@@ -666,13 +654,7 @@ function handleSignupTypeSubmit(){
     }); 
 }
 $(handleSignupTypeSubmit);
-function handleProviderSignupClick(){
-    $('#js-main').on("click", '#js-provider-signup', event => {
-        console.log("Provider signup link clicked");
-        displayProviderSignupForm();
-    }); 
-}
-$(handleProviderSignupClick);
+
 ///////////////////////////////////////////
 //Login screen
 ///////////////////////////////////////////
@@ -695,19 +677,3 @@ function handleLoginSubmit() {
     }); 
 }
 $(handleLoginSubmit);
-///////////////////////////////////////////
-//Home Screen
-///////////////////////////////////////////
-function handleLoginClick() {
-    $('#js-main').on("click", '#js-login-button', event => {
-    displayLoginForm();
-    handleLoginSubmit();
-    }); 
-}
-$(handleLoginClick);
-function handleSignupClick() {
-    $('#js-main').on("click", '#js-signup-button', event => {
-    displaySignupTypeForm();
-    }); 
-}
-$(handleSignupClick);
