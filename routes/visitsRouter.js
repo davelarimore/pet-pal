@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-const { Visit } = require("models");
+const { Visit } = require("../models");
 
 //GET
 router.get("/", (req, res) => {

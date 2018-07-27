@@ -1,10 +1,10 @@
 var express = require('express');
 var router = express.Router();
 
-const { User } = require("models");
+const { User } = require("../models");
 
-// GET
-router.get("/", (req, res) => {
+// GET all my clients, authenticated providers only
+router.get("/clients", (req, res) => {
   User
   .find()
   .then(User => res.json(
@@ -16,7 +16,7 @@ router.get("/", (req, res) => {
   });
 });
 
-// GET by ID
+// GET my client by ID, accessible by provider only
 router.get("/:id", (req, res) => {
   User
   .findById(req.params.id)
@@ -26,6 +26,8 @@ router.get("/:id", (req, res) => {
       res.status(500).json({message: "Internal server error"});
   })
 })
+
+// GET users/me
 
 //POST
 router.post("/", (req, res) => {
@@ -89,11 +91,6 @@ router.put("/:id", (req, res) => {
   res.status(200).json(updatedItem);
 });
 
-//DELETE
-// router.delete("/:id", (req, res) => {
-//   User.delete(req.params.id);
-//   console.log(`Deleted shopping list item \`${req.params.ID}\``);
-//   res.status(204).end();
-// });
+//DELETE N/A
 
 module.exports = router;

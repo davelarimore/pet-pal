@@ -1,17 +1,29 @@
 const express = require('express');
+const mongoose = require("mongoose");
 const app = express();
+
 app.use(express.static('public'));
+app.use(express.json());
+
+// Mongoose internally uses a promise-like object,
+// but its better to make Mongoose use built in es6 promises
+mongoose.Promise = global.Promise;
+
+// config.js is where we control constants for entire
+// app like PORT and DATABASE_URL
+const { DATABASE_URL } = require("./config");
+mongoose.connect(DATABASE_URL);
 
 const authRouter = require('./routes/authRouter');
 const usersRouter = require('./routes/usersRouter');
 const petsRouter = require('./routes/petsRouter');
-const visitsRouter = require('./routes/visitsRouterr');
+const visitsRouter = require('./routes/visitsRouter');
 const tasksRouter = require('./routes/tasksRouter');
 
 app.use('/auth', authRouter);
 app.use('/users', usersRouter);
 app.use('/pets', petsRouter);
-app.use('/vists', visitsRouterr);
+app.use('/vists', visitsRouter);
 app.use('/tasks', tasksRouter);
 
 // this function starts our server and returns a Promise.

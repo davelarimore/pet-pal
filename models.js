@@ -18,11 +18,12 @@ const userSchema = mongoose.Schema({
         latLon: { type: String },
         entryNote: { type: String }
     },
-    provider: { type: Boolean, required: true }, // false = client
-    clients: { type: Array }, // provider has many
-    visits: { type: Array }, // provider has many
-    pets: { type: Array }, // client has many
-    tasks: { type: Array }, // client has many
+    role: { type: String, required: true, default:"client"}, 
+    clients: [{ type: Mongoose.Schema.Types.ObjectId, ref: "User" }], // provider has many
+    provider: { type: Mongoose.Schema.Types.ObjectId, ref: "User" }, // client has one
+    visits: { type: Array }, // provider has many, referenced
+    pets: { type: Array }, // client has many, referenced
+    tasks: { type: Array }, // client has many, referenced
     password: { type: String, required: true }
 })
 
@@ -54,16 +55,14 @@ userSchema.methods.serialize = function() {
   };
 };
 
-const User = mongoose.model("user", blogSchema);
-
-module.exports = { User };
+const User = mongoose.model("User", userSchema);
 
 ///////////////////////////
 //Pet
 ///////////////////////////
 
 const petSchema = mongoose.Schema({
-    user: { type: String, required: true },  // user who owns it
+    user: { type: String, required: true },  // user who owns it, referenced
     name: { type: String, required: true },
     type: { type: String, required: true },
     breed: { type: String },
@@ -71,36 +70,32 @@ const petSchema = mongoose.Schema({
     food: { type: String }
 })
 
-const Pet = mongoose.model("pet", blogSchema);
-
-module.exports = { Pet };
+const Pet = mongoose.model("Pet", petSchema);
 
 ///////////////////////////
 //Visit
 ///////////////////////////
 
 const visitSchema = mongoose.Schema({
-    user: { type: String, required: true }, // user who owns it
+    user: { type: String, required: true }, // user who owns it, referenced
     client: { type: String, required: true },
     startTime: { type: Date, required: true },
     endTime: { type: Date, required: true },
     recurrence: { type: String, required: true }
 })
 
-const Visit = mongoose.model("visit", blogSchema);
-
-module.exports = { Visit };
+const Visit = mongoose.model("Visit", visitSchema);
 
 ///////////////////////////
 //Task
 ///////////////////////////
 
 const taskSchema = mongoose.Schema({
-    user: { type: String, required: true },  // user who owns it
+    user: { type: String, required: true },  // user who owns it, referenced
     description: { type: String, required: true },
     completed: { type: Boolean },
 })
 
-const Task = mongoose.model("task", blogSchema);
+const Task = mongoose.model("Task", taskSchema);
 
-module.exports = { Task };
+module.exports = { User, Pet, Visit, Task };

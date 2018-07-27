@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-const { Task } = require("models");
+const { Task } = require("../models");
 
 //GET
 router.get("/", (req, res) => {

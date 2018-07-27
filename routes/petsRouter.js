@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-const { Pet } = require("models");
+const { Pet } = require("../models");
 
 //GET
 router.get("/", (req, res) => {
@@ -14,7 +14,7 @@ router.get("/", (req, res) => {
   });
 
 // GET by ID
-app.get("/:id", (req, res) => {
+router.get("/:id", (req, res) => {
     Pet
     .findById(req.params.id)
     .then(post => res.json(post))
