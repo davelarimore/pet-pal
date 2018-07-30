@@ -3,7 +3,7 @@ var router = express.Router();
 
 const { Pet } = require("../models");
 
-//GET
+//GET: get all "my" pets for authenticated client, or all of an authenticated provider's client's pets
 router.get("/", (req, res) => {
     Pet
     .find()
@@ -13,7 +13,7 @@ router.get("/", (req, res) => {
     });
   });
 
-// GET by ID
+// GET by ID: get one pet belonging to the authenticated client, or belonging to the client of an authenticated provider
 router.get("/:id", (req, res) => {
     Pet
     .findById(req.params.id)
@@ -24,7 +24,7 @@ router.get("/:id", (req, res) => {
     })
 })
 
-//POST
+//POST: add a pet to the authenticated client, or to the client of an authenticated provider
 router.post("/", (req, res) => {
   const requiredFields = ["user", "name", "type"];
   for (let i = 0; i < requiredFields.length; i++) {
@@ -46,7 +46,7 @@ router.post("/", (req, res) => {
     res.status(201).json(item);
 });
 
-//PUT
+//PUT: update pet belonging to the authenticated client, or belonging to the client of an authenticated provider
 router.put("/:id", (req, res) => {
   const requiredFields = ["name", "type"];
   for (let i = 0; i < requiredFields.length; i++) {
@@ -75,7 +75,7 @@ router.put("/:id", (req, res) => {
   res.status(200).json(updatedItem);
 });
 
-// DELETE
+// DELETE: delete pet belonging to the authenticated client, or belonging to the client of an authenticated provider
 router.delete("/:id", (req, res) => {
   Pet.delete(req.params.id);
   console.log(`Deleted pet \`${req.params.ID}\``);

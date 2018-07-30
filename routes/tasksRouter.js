@@ -3,7 +3,7 @@ var router = express.Router();
 
 const { Task } = require("../models");
 
-//GET
+//GET: get all tasks belonging to the authenticated client, or belonging to the client of an authenticated provider
 router.get("/", (req, res) => {
     Task
     .find()
@@ -15,7 +15,7 @@ router.get("/", (req, res) => {
 
 // GET by ID N/A
 
-//POST
+//POST: add task to the authenticated client, or to the client of an authenticated provider
 router.post("/", (req, res) => {
   const requiredFields = ["user", "description"];
   for (let i = 0; i < requiredFields.length; i++) {
@@ -36,7 +36,7 @@ router.post("/", (req, res) => {
 
 //PUT N/A
 
-// DELETE
+// DELETE: delete task belonging to the authenticated client, or belonging to the client of an authenticated provider
 router.delete("/:id", (req, res) => {
   Task.delete(req.params.id);
   console.log(`Deleted task \`${req.params.ID}\``);

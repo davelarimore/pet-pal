@@ -141,13 +141,13 @@ const providerDashboardTemplate = `
     <div class="boxed">
     <h2>Visits</h2>
     <div id="js-visits-list"></div>
-    <a class="buttonSmall" href="#all-visits">View All</a>
-    <a class="buttonSmall" href="#add-visit">Add</a>
+    <a class="buttonSmall" id="js-all-visits-button" href="#">View All</a>
+    <a class="buttonSmall" id="js-add-visit-button" href="#">Add</a>
     </div>
     <div class="boxed">
     <h2>Clients</h2>
-    <a class="buttonSmall" href="#all-clients">View All</a>
-    <a class="buttonSmall" href="#add-client">Add</a>
+    <a class="buttonSmall" id="js-all-clients-button" href="#">View All</a>
+    <a class="buttonSmall" id="js-add-client-button" href="#">Add</a>
     <form id="js-search-client">
         <fieldset name="clientSearch">
             <label for="lastName" class="visuallyhidden">Search by last name</label>
@@ -156,7 +156,7 @@ const providerDashboardTemplate = `
         </fieldset>
     </form>
     </div>
-    <a class="button" href="#update-provider">Update My Info</a>`;
+    <a class="button" id="js-update-profile-button" href="#">Update My Info</a>`;
 
 const addVisitFormTemplate = `
     <div class="boxed">

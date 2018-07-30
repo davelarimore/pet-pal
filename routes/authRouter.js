@@ -3,17 +3,17 @@ var router = express.Router();
 
 const { Auth } = require("../models");
 
-// login
+// login: authenticate a user
 router.post("/auth/login", (req, res) => {
     console.log(res);
 });
 
-// signup
+// signup: add a new user
 router.post("/auth/signup", (req, res) => {
     console.log(res);
 });
 
-// refresh token
+// refresh token: refresh the token of an authenticated user
 router.post("/auth/refresh", (req, res) => {
     console.log(res);
 });

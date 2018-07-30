@@ -3,7 +3,7 @@ var router = express.Router();
 
 const { Visit } = require("../models");
 
-//GET
+//GET: get all visits belonging to an authenticated provider
 router.get("/", (req, res) => {
     Visit
     .find()
@@ -13,7 +13,11 @@ router.get("/", (req, res) => {
     });
   });
 
-//POST
+
+  //GET upcoming: get the (one) upcoming visit for an authenticated client,
+  // or for the client of an authenticated provider
+
+//POST: add a visit for the client of an authenticated provider (client's can't add visits)
 router.post("/", (req, res) => {
   const requiredFields = ["user", "client", "startTime", "endTime", "recurrence"];
   for (let i = 0; i < requiredFields.length; i++) {
@@ -36,7 +40,7 @@ router.post("/", (req, res) => {
 
 //PUT N/A
 
-// DELETE
+// DELETE: delete a visit for the client of an authenticated provider (client's can't delete visits)
 router.delete("/:id", (req, res) => {
   Visit.delete(req.params.id);
   console.log(`Deleted visit \`${req.params.ID}\``);

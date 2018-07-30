@@ -3,7 +3,7 @@ var router = express.Router();
 
 const { User } = require("../models");
 
-// GET all my clients, authenticated providers only
+// GET: all my clients, authenticated providers only
 router.get("/clients", (req, res) => {
   User
   .find()
@@ -16,7 +16,7 @@ router.get("/clients", (req, res) => {
   });
 });
 
-// GET my client by ID, accessible by provider only
+// GET one of my clients by ID, accessible by authenticated provider only
 router.get("/:id", (req, res) => {
   User
   .findById(req.params.id)
@@ -27,9 +27,9 @@ router.get("/:id", (req, res) => {
   })
 })
 
-// GET users/me
+// GET users/me: - get my client object only, accessible by any authenticated user
 
-//POST
+//POST: create a user via the signup forms, or by an authenticated provider via "add client"
 router.post("/", (req, res) => {
   const requiredFields = ["firstName", "lastName", "email", "phone", "address", "provider", "password"];
   for (let i = 0; i < requiredFields.length; i++) {
@@ -43,7 +43,7 @@ router.post("/", (req, res) => {
   const item = User.create({
     firstName: req.body.firstName,
     lastName: req.body.lastName,
-    companyName: req.body.companyName,
+    companyName: req.body.companyName, //required for provider?
     email: req.body.email,
     phone: req.body.lastName,
     vetInfo: req.body.vetInfo,
@@ -57,7 +57,7 @@ router.post("/", (req, res) => {
   res.status(201).json(item);
 });
 
-//PUT
+//PUT: update authenticated user (update me), or update client of an authenticated provider 
 router.put("/:id", (req, res) => {
   const requiredFields = ["firstName", "lastName", "email", "phone", "address", "provider"];
   for (let i = 0; i < requiredFields.length; i++) {
