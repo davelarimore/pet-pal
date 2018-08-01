@@ -1,8 +1,7 @@
 {
-    "id": 201,
+    "_id": 201,
     "firstName": "John",
     "lastName": "Doe",
-    "fullName": "John Doe", 
     "companyName": "",
     "email": "john@test.biz",
     "phone": "555-555-5555",
@@ -12,17 +11,13 @@
         "latLon": "0,0",
         "entryNote": "Door code: 1234"
     },
-    "provider": "",
-    "clients": "",
-    "visits": "",
-    "pets": "",
-    "tasks": ""
+    "role": "client",
+    "password": ""
 }
 {
-    "id": 202,
+    "_id": 202,
     "firstName": "Jane",
     "lastName": "Doe",
-    "fullName": "John Doe", 
     "companyName": "",
     "email": "jane@test.biz",
     "phone": "555-555-5555",
@@ -32,19 +27,15 @@
         "latLon": "0,0",
         "entryNote": "Door code: 1234"
     },
-    "provider": "",
-    "clients": "",
-    "visits": "",
-    "pets": "",
-    "tasks": ""
+    "role": "client",
+    "password": ""
 }
 {
-    "id": 203,
+    "_id": 203,
     "firstName": "Sally",
     "lastName": "Doe",
-    "fullName": "John Doe", 
     "companyName": "",
-    "email": "john@test.biz",
+    "email": "sally@test.biz",
     "phone": "555-555-5555",
     "vetInfo": "City Vet",
     "address": {
@@ -52,9 +43,6 @@
         "latLon": "0,0",
         "entryNote": "Door code: 1234"
     },
-    "provider": "",
-    "clients": "",
-    "visits": "",
-    "pets": "",
-    "tasks": ""
+    "role": "client",
+    "password": ""
 }

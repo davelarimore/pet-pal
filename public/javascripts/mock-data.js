@@ -106,35 +106,40 @@ const CLIENTS_STORE = [{
 }];
 
 const VISITS_STORE = [{
-    id: 301, // provider who owns it
+    id: 301,
+    providerID: 101,
     client: "John Doe",
     startTime: "June 29, 10:00 AM",
     endTime: "June 29, 10:30 AM",
     recurrence: null,
 },
 {
-    id: 302, // provider who owns it
+    id: 302,
+    providerID: 101,
     client: "John Doe",
     startTime: "June 30, 9:00 AM",
     endTime: "June 30, 9:00 AM",
     recurrence: null,
 },
 {
-    id: 303, // provider who owns it
+    id: 303,
+    providerID: 101,
     client: "John Doe",
     startTime: "June 31, 9:00 AM",
     endTime: "June 31, 9:00 AM",
     recurrence: null,
 },
 {
-    id: 304, // provider who owns it
+    id: 304,
+    providerID: 101,
     client: "John Doe",
     startTime: "July 1, 9:00 AM",
     endTime: "July 1, 9:00 AM",
     recurrence: null,
 },
 {
-    id: 305, // provider who owns it
+    id: 305,
+    providerID: 101,
     client: "John Doe",
     startTime: "July 2, 9:00 AM",
     endTime: "July 2, 9:00 AM",

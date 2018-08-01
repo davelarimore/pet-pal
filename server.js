@@ -1,5 +1,5 @@
 const express = require('express');
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 //const Navigo = require('navigo');
 const app = express();
 
@@ -12,26 +12,14 @@ mongoose.Promise = global.Promise;
 
 // config.js is where we control constants for entire
 // app like PORT and DATABASE_URL
-const { DATABASE_URL } = require("./config");
+const { DATABASE_URL } = require('./config');
 mongoose.connect(DATABASE_URL);
 
-// const authRouter = require('./routes/authRouter');
-// const usersRouter = require('./routes/usersRouter');
-// const petsRouter = require('./routes/petsRouter');
-// const visitsRouter = require('./routes/visitsRouter');
-// const tasksRouter = require('./routes/tasksRouter');
+//const isAuthenticated = require('./middleware/auth_middleware')
 
-// app.use('/auth', authRouter);
-// app.use('api/users', usersRouter);
-// app.use('api/pets', petsRouter);
-// app.use('api/vists', visitsRouter);
-// app.use('api/tasks', tasksRouter);
-
-const isAuthenticated = require("./middleware/auth_middleware")
-
-app.use("/api", [
-  isAuthenticated,
-  require("./routes/authRouter"),
+app.use('/api', [
+  //isAuthenticated,
+  require('./routes/authRouter'),
   require('./routes/usersRouter'),
   require('./routes/petsRouter'),
   require('./routes/visitsRouter'),
@@ -49,7 +37,7 @@ function runServer() {
           console.log(`Your app is listening on port ${port}`);
           resolve(server);
         })
-        .on("error", err => {
+        .on('error', err => {
           reject(err);
         });
     });
@@ -60,7 +48,7 @@ function runServer() {
   // create one.
   function closeServer() {
     return new Promise((resolve, reject) => {
-      console.log("Closing server");
+      console.log('Closing server');
       server.close(err => {
         if (err) {
           reject(err);

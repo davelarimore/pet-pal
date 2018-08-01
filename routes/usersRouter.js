@@ -1,109 +1,42 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
+const bodyParser = require('body-parser');
+const jsonParser = bodyParser.json();
 
-const { User } = require("../models");
+const users_controller = require('../controllers/usersController');
+
+////////////////////////////////
+//AUTHENTICATED PROVIDERS ONLY
+////////////////////////////////
 
 // GET: all my clients, authenticated providers only
-router.get("/clients", (req, res) => {
-  User
-  .find()
-  .then(User => res.json(
-      User.map(post => post.serialize())
-  ))
-  .catch(err => {
-    console.error(err);
-    res.status(500).json({message: "Inernal server error"})
-  });
-});
+router.get('/users/my_clients', users_controller.users_get_client_list);
 
 // GET one of my clients by ID, accessible by authenticated provider only
-router.get("/:id", (req, res) => {
-  User
-  .findById(req.params.id)
-  .then(post => res.json(post.serialize()))
-  .catch(err => {
-      console.error(err);
-      res.status(500).json({message: "Internal server error"});
-  })
-})
+router.get('/users/my_clients/:id', users_controller.users_get_client);
+
+// POST new client accessible by authenticated provider only
+router.post('/users/my_clients', users_controller.users_post_client);
+
+//PUT MY CLIENT: update client of an authenticated provider 
+router.put('/users/my_clients/:id', users_controller.users_put_client);
+
+////////////////////////////////
+// ALL AUTHENTICATED USERS
+////////////////////////////////
 
 // GET users/me: - get my client object only, accessible by any authenticated user
+router.get('/users/me', users_controller.users_get_me);
 
-//POST: create a user via the signup forms, or by an authenticated provider via "add client"
-router.post("/", (req, res) => {
-  const requiredFields = ["firstName", "lastName", "email", "phone", "address", "provider", "password"];
-  for (let i = 0; i < requiredFields.length; i++) {
-    const field = requiredFields[i];
-    if (!(field in req.body)) {
-      const message = `Missing \`${field}\` in request body`;
-      console.error(message);
-      return res.status(400).send(message);
-    }
-  }
-  const item = User.create({
-    firstName: req.body.firstName,
-    lastName: req.body.lastName,
-    companyName: req.body.companyName, //required for provider?
-    email: req.body.email,
-    phone: req.body.lastName,
-    vetInfo: req.body.vetInfo,
-    address: {
-      addressString: req.body.phone,
-      entryNote: req.body.entryNote,
-    },
-    provider: req.body.provider,
-    password: req.body.password
-  });
-  res.status(201).json(item);
-});
+//POST: create a user via the signup forms
+router.post('/users', jsonParser, users_controller.users_post);
 
+//PUT ME: update authenticated user (update me)
+router.put('/users/me', users_controller.users_put_me);
 
-function createUser(user) {
-  const newUser = new User();
-  ['address', 'firstname', 'content', 'see'].map(prop => {
-    if (user.hasOwnProperty(prop)) {
-      newUser[prop] = user[prop];
-    }
-  });
-  return newUser.save();
-}
-
-
-//PUT: update authenticated user (update me), SEPARATE ROUTE: or update client of an authenticated provider 
-router.put("/:id", (req, res) => {
-  //replace with middleware for required fields validation
-  const requiredFields = ["firstName", "lastName", "email", "phone", "address", "provider"];
-  for (let i = 0; i < requiredFields.length; i++) {
-    const field = requiredFields[i];
-    if (!(field in req.body)) {
-      const message = `Missing \`${field}\` in request body`;
-      console.error(message);
-      return res.status(400).send(message);
-    }
-  }
-  if (req.params.id !== req.body.id) {
-    const message = `Request path id (${
-      req.params.id
-    }) and request body id ``(${req.body.id}) must match`;
-    console.error(message);
-    return res.status(400).send(message);
-  }
-  console.log(`Updating user \`${req.params.id}\``);
-  const updatedItem = User.update({
-    firstName: req.body.firstName,
-    lastName: req.body.lastName,
-    companyName: req.body.companyName,
-    email: req.body.email,
-    phone: req.body.lastName,
-    vetInfo: req.body.vetInfo,
-    address: {
-      addressString: req.body.phone,
-      entryNote: req.body.entryNote,
-    },
-  });
-  res.status(200).json(updatedItem);
-});
-
-//DELETE N/A
+////////////////////////////////
+// DEV TESTING ONLY
+////////////////////////////////
+router.get('/users', users_controller.users_get_all);
 
 module.exports = router;

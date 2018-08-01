@@ -1,46 +1,32 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 
-const { Task } = require("../models");
+const tasks_controller = require('../controllers/tasksController');
 
-//GET: get all tasks belonging to the authenticated client, or belonging to the client of an authenticated provider
-router.get("/", (req, res) => {
-    Task
-    .find()
-    .catch(err => {
-      console.error(err);
-      res.status(500).json({message: "Inernal server error"})
-    });
-  });
+////////////////////////////////
+//AUTHENTICATED PROVIDERS ONLY
+////////////////////////////////
 
-// GET by ID N/A
+//GET: get all tasks belonging to the client of an authenticated provider
+router.get('/tasks/my_client', tasks_controller.tasks_client_get_list);
 
-//POST: add task to the authenticated client, or to the client of an authenticated provider
-router.post("/", (req, res) => {
-  const requiredFields = ["user", "description"];
-  for (let i = 0; i < requiredFields.length; i++) {
-    const field = requiredFields[i];
-    if (!(field in req.body)) {
-        const message = `Missing \`${field}\` in request body`;
-        console.error(message);
-        return res.status(400).send(message);
-    }
-  }
-  const item = Task.create({
-    user: req.body.user,
-    description: req.body.description,
-    completed: false
-  });
-    res.status(201).json(item);
-});
+//POST: add task to the client of an authenticated provider
+router.post('/tasks/my_client', tasks_controller.tasks_client_post);
 
-//PUT N/A
+// DELETE: delete task belonging to the client of an authenticated provider
+router.delete('/tasks/my_client/:id', tasks_controller.tasks_client_delete);
 
-// DELETE: delete task belonging to the authenticated client, or belonging to the client of an authenticated provider
-router.delete("/:id", (req, res) => {
-  Task.delete(req.params.id);
-  console.log(`Deleted task \`${req.params.ID}\``);
-  res.status(204).end();
-});
+////////////////////////////////
+//AUTHENTICATED CLIENTS ONLY
+////////////////////////////////
+
+//GET: get all tasks belonging to the authenticated client
+router.get('/tasks', tasks_controller.tasks_get);
+
+//POST: add task to the authenticated client
+router.post('/tasks', tasks_controller.tasks_post);
+
+// DELETE: delete task belonging to the authenticated client
+router.delete('/tasks/:id', tasks_controller.tasks_delete);
 
 module.exports = router;
