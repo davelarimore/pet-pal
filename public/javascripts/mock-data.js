@@ -143,7 +143,7 @@ const VISITS_STORE = [{
 
 const PETS_STORE = [{
     id: 401,
-    client: "John Doe",
+    client: 201,
     name: "Fluffy",
     type: "Cat",
     breed: "Tabby",
@@ -153,7 +153,7 @@ const PETS_STORE = [{
 },
 {
     id: 402,
-    client: "John Doe",
+    client: 201,
     name: "Caramel",
     type: "Cat",
     breed: "Tabby",
@@ -163,7 +163,7 @@ const PETS_STORE = [{
 },
 {
     id: 403,
-    client: "John Doe",
+    client: 201,
     name: "Snowball",
     type: "Cat",
     breed: "Tabby",

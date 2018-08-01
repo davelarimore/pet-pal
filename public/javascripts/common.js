@@ -1,5 +1,5 @@
 ///////////////////////////////////////////
-//Routes
+//Client Routes
 ///////////////////////////////////////////
 const router = new Navigo("localhost:8080", true, "#!");
 
@@ -14,6 +14,7 @@ router
             handleSignupTypeSubmit();
         },
         "provider-signup": () => {
+            console.log("Handling provider signup button");
             displayProviderSignupForm();
             handleProviderSignupSubmit();
         },
@@ -46,7 +47,7 @@ router
                 displayAndHandleAddPetForm(params.userID);
             }
             else if (params.action === "delete") {
-                deletePetAndDisplayAlertDialog(params.petID);
+                displayDeletePetConfirmation(params.petID);
             }
             else if (params.action === "update") {
                 getPetAndDisplayUpdateForm(params.petID);
@@ -61,7 +62,7 @@ router
                 displayAddTaskForm(params.userID);
             }
             else if (params.action === "delete") {
-                deleteTaskAndDisplayAlertDialog(params.taskID);
+                displayDeleteTaskConfirmation(params.taskID);
             }
         },
         "user/:userID/visit/:visitID/:action": (params) => {
@@ -70,7 +71,7 @@ router
                 getClientsAndDisplayAddVisitForm(params.userID);
             }
             else if (params.action === "delete") {
-                deleteVisitAndDisplayAlertDialog(params.visitID);
+                displayDeleteVisitConfirmation(params.visitID);
             }
         },
         "user/:userID/visits": (params) => {
@@ -111,7 +112,7 @@ function displayProviderProfileUpdateForm(providerData) {
     element.find("#email").val(providerData.email);
     element.find("#phone").val(providerData.phone);
     element.find("#streetAddress").val(providerData.address.addressString);
-    //remove password fields
+    //remove password fields from template
     element.find("label[for=password], input#password").remove();
     element.find("label[for=confirmPassword], input#confirmPassword").remove();
     $("#js-main").html(element);
@@ -196,34 +197,16 @@ function addVisit(data, callbackFn) {
 //All Visits Screen
 ///////////////////////////////////////////
 function getAndDisplayAllVisits(userID) {
-    getVisits(userID, displayAllVisits);
+    getVisits(userID)
+        .then(displayAllVisits); 
 }
 
-// function getVisits(userID, callbackFn) {
-//     console.log("Retrieving recipes");
-//     $.getJSON("api/visits", userID, (response) => {
-//         callbackFn(response);
-//     });
-// }
-
-// function getAndDisplayAllVisits(userID) {
-//     console.log("Getting visits for" + userID);
-//     $.ajax({
-//         method: "GET",
-//         url: "api/visits",
-//         data: JSON.stringify(userID),
-//         dataType: "json",
-//         contentType: "application/json"
-//     })
-//     .done((visitsData) => {
-//         displayAllVisits(visitsData);
-//     })
-// }
-
-function getVisits(userID, callbackFn) {
-    //connect to real API later using userID>visits
-    visitsData = VISITS_STORE;
-    setTimeout(function(){ callbackFn(visitsData)}, 100);
+function getVisits(userID) {
+    return new Promise((resolve, reject) => {
+        //connect to real API later using userID>visits
+        visitsData = VISITS_STORE;
+        setTimeout(function () { resolve(visitsData) }, 100);
+    })
 }
 function generateVisitItemHTML(visit) {
     return `
@@ -304,8 +287,9 @@ function getUpcomingVisits(userID, callbackFn) {
 function displayProviderDashboard(userData, visitsData) {
     const recentVisitsHTML = generateUpcomingVisitsHTML(visitsData);
     const element = $(providerDashboardTemplate);
-    //element.find("#js-update-profile-button").attr("href", "`#update-client/${userData.id}`");
     element.find("#js-visits-list").html(recentVisitsHTML);
+    //For some reason this doesn't work, used vanilla JS below instead
+    //element.find("#js-update-profile-button").attr("href", `#update-client/${userData.id}`);
     $("#js-main").html(element);
     document.querySelector("#js-all-visits-button").setAttribute("href", `#user/${userData.id}/visits`);
     document.querySelector("#js-add-visit-button").setAttribute("href", `#user/${userData.id}/visit/add`);
@@ -328,7 +312,8 @@ function generateUpcomingVisitsHTML(visitsData) {
 }
 
 //Visit Actions
-function deleteVisitAndDisplayAlertDialog(visitID) {
+//rewrite
+function displayDeleteVisitConfirmation(visitID) {
     if (confirm("Delete visit?")) {
         deleteVisit(visitID, displayAlertDialog);;
      } else {
@@ -508,7 +493,8 @@ function displayPetDetail(petData, userData, visitsData) {
         <a class="button" href="#user/${userData.id}/pet/${petData.id}/delete">Delete Pet</a>`
     );
 }
-function deletePetAndDisplayAlertDialog(petID) {
+//rewrite delete pet
+function displayDeletePetConfirmation(petID) {
     if (confirm("Delete pet?")) {
         deletePet(petID, displayAlertDialog);;
      } else {
@@ -642,7 +628,8 @@ function generateTasksHTML(tasksList) {
     const items = tasksList.map((item, index) => generateTaskHTML(item, index));  
     return items.join("");
 }
-function deleteTaskAndDisplayAlertDialog(taskID) {
+//rewrite delete task
+function displayDeleteTaskConfirmation(taskID) {
     if (confirm("Delete task?")) {
         deleteTask(taskID, displayAlertDialog);;
     } else {

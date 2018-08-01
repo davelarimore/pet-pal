@@ -57,8 +57,21 @@ router.post("/", (req, res) => {
   res.status(201).json(item);
 });
 
-//PUT: update authenticated user (update me), or update client of an authenticated provider 
+
+function createUser(user) {
+  const newUser = new User();
+  ['address', 'firstname', 'content', 'see'].map(prop => {
+    if (user.hasOwnProperty(prop)) {
+      newUser[prop] = user[prop];
+    }
+  });
+  return newUser.save();
+}
+
+
+//PUT: update authenticated user (update me), SEPARATE ROUTE: or update client of an authenticated provider 
 router.put("/:id", (req, res) => {
+  //replace with middleware for required fields validation
   const requiredFields = ["firstName", "lastName", "email", "phone", "address", "provider"];
   for (let i = 0; i < requiredFields.length; i++) {
     const field = requiredFields[i];

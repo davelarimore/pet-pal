@@ -15,17 +15,28 @@ mongoose.Promise = global.Promise;
 const { DATABASE_URL } = require("./config");
 mongoose.connect(DATABASE_URL);
 
-const authRouter = require('./routes/authRouter');
-const usersRouter = require('./routes/usersRouter');
-const petsRouter = require('./routes/petsRouter');
-const visitsRouter = require('./routes/visitsRouter');
-const tasksRouter = require('./routes/tasksRouter');
+// const authRouter = require('./routes/authRouter');
+// const usersRouter = require('./routes/usersRouter');
+// const petsRouter = require('./routes/petsRouter');
+// const visitsRouter = require('./routes/visitsRouter');
+// const tasksRouter = require('./routes/tasksRouter');
 
-app.use('/auth', authRouter);
-app.use('api/users', usersRouter);
-app.use('api/pets', petsRouter);
-app.use('api/vists', visitsRouter);
-app.use('api/tasks', tasksRouter);
+// app.use('/auth', authRouter);
+// app.use('api/users', usersRouter);
+// app.use('api/pets', petsRouter);
+// app.use('api/vists', visitsRouter);
+// app.use('api/tasks', tasksRouter);
+
+const isAuthenticated = require("./middleware/auth_middleware")
+
+app.use("/api", [
+  isAuthenticated,
+  require("./routes/authRouter"),
+  require('./routes/usersRouter'),
+  require('./routes/petsRouter'),
+  require('./routes/visitsRouter'),
+  require('./routes/tasksRouter'),
+]);
 
 // this function starts our server and returns a Promise.
 // In our test code, we need a way of asynchronously starting

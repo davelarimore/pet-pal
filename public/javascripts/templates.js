@@ -9,7 +9,7 @@ const signupTypeFormTemplate = `
                 <input type="submit" value="Continue" class="button">
             </fieldset>
         </form>
-    <a href="#provider-signup">Pet Care Provider Sign Up</a>`;
+    <a href="./#provider-signup">Pet Care Provider Sign Up</a>`;
 
 const clientSignupFormTemplate = `
     <div class="boxed">
