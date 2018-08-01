@@ -94,13 +94,26 @@ router
 //Update Provider Info Screen
 ///////////////////////////////////////////
 function getProviderUserAndDisplayUpdateForm(userID) {
-    getUser(userID, displayProviderProfileUpdateForm);
+    getUser(userID)
+    .then(displayProviderProfileUpdateForm)
+    .catch (() => console.log('not found'));
 }
-function getUser(userID, callbackFn) {
-    //connect to real API later using userID
-    providerData = PROVIDERS_STORE[0];
-    setTimeout(function () { callbackFn(providerData)}, 100);
+function getUser(userID) {
+    return new Promise((resolve, reject) => {
+        userData = $.getJSON(`api/users/me`);
+        resolve(userData);
+    })
 }
+
+function getVisits(providerID) {
+    return new Promise((resolve, reject) => {
+        visitsData = $.getJSON(`api/visits/${providerID}`);
+        //connect to real API later using userID>visits
+        //visitsData = VISITS_STORE;
+        resolve(visitsData);
+    })
+}
+
 function displayProviderProfileUpdateForm(providerData) {
     //pre-fill form
     const element = $(providerSignupFormTemplate);
@@ -133,24 +146,36 @@ function handleProviderProfileUpdateSubmit() {
     }); 
 }
 $(handleClientProfileUpdateSubmit);
-function updateUserAndDisplayAlertDialog(data) {
-    updateUser(data, displayAlertDialog);
+function updateUserAndDisplayAlertDialog(userData) {
+    updateUser(userData)
+    .then(displayAlertDialog("Profile updated"))
+    .catch(() => console.log('error'));
 }
-function updateUser(data, callbackFn) {
-    //connect to real API later
-    setTimeout(function(){ callbackFn('User Updated')}, 100);
+function updateUser(userData) {
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            method: 'POST',
+            url: 'api/users/me',
+            data: userData,
+        });
+        resolve(userData);
+    })
 }
 ///////////////////////////////////////////
 //Add Visit Screen
 ///////////////////////////////////////////
 function getClientsAndDisplayAddVisitForm(providerID) {
-    getClients(providerID, displayAddVisitForm);
+    getClients(providerID)
+    .then(displayAddVisitForm)
+    .catch(() => console.log('not found'));
 }
-function getClients(providerID, callbackFn) {
-    //connect to real API later using providerID>clients
-    clientsData = CLIENTS_STORE;
-    setTimeout(function(){ callbackFn(clientsData)}, 100);
+function getClients(providerID) {
+    return new Promise((resolve, reject) => {
+        clientsData = $.getJSON(`api/users/my_clients`);
+        resolve(clientsData);
+    })
 }
+
 function displayAddVisitForm(clientsData) {
     const clientListHTML = generateClientListHTML(clientsData);
     const element = $(addVisitFormTemplate);
@@ -204,8 +229,6 @@ function getAndDisplayAllVisits(providerID) {
 function getVisits(providerID) {
     return new Promise((resolve, reject) => {
         visitsData = $.getJSON(`api/visits/${providerID}`);
-        //connect to real API later using userID>visits
-        //visitsData = VISITS_STORE;
         resolve(visitsData);
     })
 }
@@ -235,13 +258,10 @@ function displayAllVisits(visitsData) {
 ///////////////////////////////////////////
 //All Clients Screen
 ///////////////////////////////////////////
-function getAndDisplayAllClients(userID) {
-    getClients(userID, displayAllClients);
-}
-function getClients(userID, callbackFn) {
-    //connect to real API later using userID>clients
-    clientsData = CLIENTS_STORE;
-    setTimeout(function () { callbackFn(clientsData)}, 100);
+function getAndDisplayAllClients(providerID) {
+    getClients(providerID)
+    .then(displayAllClients)
+    .catch(() => console.log('not found'));
 }
 function generateClientItemHTML(client) {
     return `
@@ -276,14 +296,24 @@ function displayAllClients(clientsData) {
 //Provider Dashboard
 ///////////////////////////////////////////
 
-function getVisitsAndDisplayProviderDashboard(userID) {
-    getUpcomingVisits(userID, displayProviderDashboard);
+function getVisitsAndDisplayProviderDashboard(providerID) {
+    const STORE = { visitsData: [], userData: [] };
+    return getUpcomingVisits(providerID)
+    .then(visitsData => {
+        STORE.visitsData = visitsData;
+        return getUser(providerID);
+    })
+    .then(userData => {
+        STORE.userData = userData;
+    })
+    .then(displayProviderDashboard(STORE.userData, STORE.visitsData))
+    .catch(() => console.log('not found'));
 }
-function getUpcomingVisits(userID, callbackFn) {
-    //connect to real API later
-    userData = PROVIDERS_STORE[0];
-    visitsData = VISITS_STORE;
-    setTimeout(function(){ callbackFn(userData, visitsData)}, 100);
+function getUpcomingVisits(providerID) {
+    return new Promise((resolve, reject) => {
+        visitsData = $.getJSON(`api/visits/${providerID}`);
+        resolve(visitsData);
+    })
 }
 function displayProviderDashboard(userData, visitsData) {
     const recentVisitsHTML = generateUpcomingVisitsHTML(visitsData);
@@ -292,11 +322,11 @@ function displayProviderDashboard(userData, visitsData) {
     //For some reason this doesn't work, used vanilla JS below instead
     //element.find('#js-update-profile-button').attr('href', `#update-client/${userData.id}`);
     $('#js-main').html(element);
-    document.querySelector('#js-all-visits-button').setAttribute('href', `#user/${userData.id}/visits`);
-    document.querySelector('#js-add-visit-button').setAttribute('href', `#user/${userData.id}/visit/add`);
-    document.querySelector('#js-all-clients-button').setAttribute('href', `#user/${userData.id}/clients`);
-    document.querySelector('#js-add-client-button').setAttribute('href', `#user/${userData.id}`);
-    document.querySelector('#js-update-profile-button').setAttribute('href', `#update-client/${userData.id}`);
+    document.querySelector('#js-all-visits-button').setAttribute('href', `#user/${userData._id}/visits`);
+    document.querySelector('#js-add-visit-button').setAttribute('href', `#user/${userData._id}/visit/add`);
+    document.querySelector('#js-all-clients-button').setAttribute('href', `#user/${userData._id}/clients`);
+    document.querySelector('#js-add-client-button').setAttribute('href', `#user/${userData._id}`);
+    document.querySelector('#js-update-profile-button').setAttribute('href', `#update-client/${userData._id}`);
 }
 function generateVisitItemHTML(visit) {
     return `

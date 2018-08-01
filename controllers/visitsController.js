@@ -6,11 +6,9 @@ const Visits = require('../models/visitsModel');
 
 //GET: get all visits belonging to an authenticated provider
 exports.visits_get_list = (req, res) => {
-    console.log(req.params.id);
     Visits
         .find({'provider': req.params.id })
         .then(visits => {
-            console.log(visits);
             res.json(visits)
         })
         .catch(err => {
