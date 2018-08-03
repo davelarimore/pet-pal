@@ -2,6 +2,9 @@
 
 const Users = require('../models/usersModel');
 
+const jwt = require('jsonwebtoken');
+const { JWT_SECRET } = require('../config');
+
 ////////////////////////////////
 //AUTHENTICATED PROVIDERS ONLY
 ////////////////////////////////
@@ -62,7 +65,27 @@ exports.usersPutClient = (req, res) => {
 
 // GET users/me: - get my client object only, accessible by any authenticated user
 exports.usersGetMe = (req, res) => {
-    res.send('NOT IMPLEMENTED: Get my user data');
+    if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
+        let authorization = req.headers.authorization.split(' ')[1],
+            decoded;
+        try {
+            decoded = jwt.verify(authorization, JWT_SECRET);
+        } catch (e) {
+            res.status(401).send('unauthorized');
+        }
+        console.log(decoded);
+        const userId = decoded.user.id;
+        console.log(userId);
+        // Fetch the user by id 
+        Users.findOne({ _id: userId })
+            .then(user => {
+                res.json(user.serialize());
+            })
+            .catch(err => {
+                console.error(err);
+                res.status(500).json({ message: 'Internal server error' })
+            })
+    }
 };
 
 //PUT ME: update authenticated user (update me)
@@ -206,10 +229,9 @@ exports.usersPost = (req, res) => {
         });
 };
 
-// Never expose all your users like below in a prod application
-// we're just doing this so we have a quick way to see
-// if we're creating users. keep in mind, you can also
-// verify this in the Mongo shell.
+////////////////////////////////
+// DEV ONLY
+////////////////////////////////
 exports.usersGetAll = (req, res) => {
     Users
         .find()
@@ -220,41 +242,3 @@ exports.usersGetAll = (req, res) => {
             res.status(500).json({ message: 'Inernal server error' })
         });
 };
-
-
-
-
-// //PUT: update authenticated user (update me), SEPARATE ROUTE: or update client of an authenticated provider 
-// router.put('/:id', (req, res) => {
-//     //replace with middleware for required fields validation
-//     const requiredFields = ['firstName', 'lastName', 'email', 'phone', 'address', 'provider'];
-//     for (let i = 0; i < requiredFields.length; i++) {
-//         const field = requiredFields[i];
-//         if (!(field in req.body)) {
-//             const message = `Missing \`${field}\` in request body`;
-//             console.error(message);
-//             return res.status(400).send(message);
-//         }
-//     }
-//     if (req.params.id !== req.body.id) {
-//         const message = `Request path id (${
-//             req.params.id
-//             }) and request body id ``(${req.body.id}) must match`;
-//         console.error(message);
-//         return res.status(400).send(message);
-//     }
-//     console.log(`Updating user \`${req.params.id}\``);
-//     const updatedItem = User.update({
-//         firstName: req.body.firstName,
-//         lastName: req.body.lastName,
-//         companyName: req.body.companyName,
-//         email: req.body.email,
-//         phone: req.body.lastName,
-//         vetInfo: req.body.vetInfo,
-//         address: {
-//             addressString: req.body.phone,
-//             entryNote: req.body.entryNote,
-//         },
-//     });
-//     res.status(200).json(updatedItem);
-// });

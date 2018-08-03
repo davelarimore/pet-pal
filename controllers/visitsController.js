@@ -1,5 +1,8 @@
 const Visits = require('../models/visitsModel');
 
+const jwt = require('jsonwebtoken');
+const { JWT_SECRET } = require('../config');
+
 ////////////////////////////////
 //AUTHENTICATED PROVIDERS ONLY
 ////////////////////////////////
@@ -32,65 +35,60 @@ exports.visitsGetClientUpcoming = (req, res) => {
 
 //POST: add a visit for the client of an authenticated provider (client's can't add visits)
 exports.visitsPost = (req, res) => {
-    res.send('NOT IMPLEMENTED: Add a visit to my client');
+    Visits
+        .create({
+            provider: req.body.provider,
+            client: req.body.client,
+            startTime: req.body.startTime,
+            endTime: req.body.endTime,
+            recurrence: req.body.recurrence,
+        })
+        .then(visit => res.status(201).json(visit))
+        .catch(err => {
+            console.error(err);
+            res.status(500).json({ message: "Internal server error" });
+        });
 }
 
 // DELETE: delete a visit for the client of an authenticated provider (client's can't delete visits)
 exports.visitsDelete = (req, res) => {
-    res.send('NOT IMPLEMENTED: Delete visit beloning to my client');
+    Visits
+        .findByIdAndRemove(req.params.id)
+        .then(() => {
+            res.status(204).json({ message: 'Visit deleted' });
+        })
+        .catch(err => {
+            console.error(err);
+            res.status(500).json({ error: 'Internal server error' });
+        });
 }
-
 ////////////////////////////////
 // AUTHENTICATED CLIENTS ONLY
 ////////////////////////////////
 
 //GET my upcoming visit 
 exports.visitsGetMyUpcoming = (req, res) => {
-    res.send('NOT IMPLEMENTED: get my upcoming visit');
-}
-
-// //GET: get all visits belonging to an authenticated provider
-// visitSchema.get((req, res) => {
-
-//         .find()
-//         .catch(err => {
-//             console.error(err);
-//             res.status(500).json({ message: 'Inernal server error' })
-//         });
-// });
-
-
-// //GET upcoming: get the (one) upcoming visit for an authenticated client,
-// // or for the client of an authenticated provider
-
-// //POST: add a visit for the client of an authenticated provider (client's can't add visits)
-// router.post('/', (req, res) => {
-//     const requiredFields = ['user', 'client', 'startTime', 'endTime', 'recurrence'];
-//     for (let i = 0; i < requiredFields.length; i++) {
-//         const field = requiredFields[i];
-//         if (!(field in req.body)) {
-//             const message = `Missing \`${field}\` in request body`;
-//             console.error(message);
-//             return res.status(400).send(message);
-//         }
-//     }
-//     const item = Visit.create({
-//         user: req.body.user,
-//         client: req.body.client,
-//         startTime: req.body.startTime,
-//         endTime: req.body.endTime,
-//         recurrence: req.body.recurrence
-//     });
-//     res.status(201).json(item);
-// });
-
-// //PUT N/A
-
-// // DELETE: delete a visit for the client of an authenticated provider (client's can't delete visits)
-// router.delete('/:id', (req, res) => {
-//     Visit.delete(req.params.id);
-//     console.log(`Deleted visit \`${req.params.ID}\``);
-//     res.status(204).end();
-// });
-
-// module.exports = router;
+    if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
+        let authorization = req.headers.authorization.split(' ')[1],
+            decoded;
+        try {
+            decoded = jwt.verify(authorization, JWT_SECRET);
+        } catch (e) {
+            res.status(401).send('unauthorized');
+        }
+        console.log(decoded);
+        const userId = decoded.user.id;
+        console.log(userId);
+        // Fetch the tasks by client id 
+        Visits.find({ client: userId })
+            .sort('-startTime')
+            .limit(1)
+            .then(visit => {
+                res.json(visit);
+            })
+            .catch(err => {
+                console.error(err);
+                res.status(500).json({ message: 'Internal server error' })
+            })
+    }
+};

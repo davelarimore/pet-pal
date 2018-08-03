@@ -93,6 +93,16 @@ function addUser(userData) {
 }
 
 //Pets
+function getMyPet(petID) {
+    return new Promise((resolve, reject) => {
+        petData = $.ajax({
+            method: 'GET',
+            headers: authHeaders,
+            url: `api/pets/${petID}`,
+        })
+        resolve(petData);
+    })
+}
 function getMyPets() {
     return new Promise((resolve, reject) => {
         petData = $.ajax({

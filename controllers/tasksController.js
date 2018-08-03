@@ -1,5 +1,8 @@
 const Tasks = require('../models/tasksModel');
 
+const jwt = require('jsonwebtoken');
+const { JWT_SECRET } = require('../config');
+
 ////////////////////////////////
 //AUTHENTICATED PROVIDERS ONLY
 ////////////////////////////////
@@ -25,13 +28,43 @@ exports.tasksClientDelete = (req, res) => {
 
 //GET: get all tasks belonging to the authenticated client
 exports.tasksGet = (req, res) => {
-    res.send('NOT IMPLEMENTED: Get my tasks');
+    if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
+        let authorization = req.headers.authorization.split(' ')[1],
+            decoded;
+        try {
+            decoded = jwt.verify(authorization, JWT_SECRET);
+        } catch (e) {
+            res.status(401).send('unauthorized');
+        }
+        console.log(decoded);
+        const userId = decoded.user.id;
+        console.log(userId);
+        // Fetch the tasks by client id 
+        Tasks.find({ client: userId })
+            .then(tasks => {
+                res.json(tasks);
+            })
+            .catch(err => {
+                console.error(err);
+                res.status(500).json({ message: 'Internal server error' })
+            })
+    }
 };
 
 //POST: add task to the authenticated client
 exports.tasksPost = (req, res) => {
-    res.send('NOT IMPLEMENTED: Add task');
-};
+    Tasks
+        .create({
+            client: req.body.client,
+            description: req.body.description,
+            completed: req.body.completed
+        })
+        .then(task => res.status(201).json(task))
+        .catch(err => {
+            console.error(err);
+            res.status(500).json({ message: "Internal server error" });
+        });
+}
 
 // DELETE: delete task belonging to the authenticated client
 exports.tasksDelete = (req, res) => {

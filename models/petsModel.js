@@ -5,10 +5,11 @@ const mongoose = require('mongoose');
 ///////////////////////////
 
 const petSchema = mongoose.Schema({
-    client: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'users'
-    },
+    client: { type: String, required: true },
+    // client: {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: 'users'
+    // },
     name: { type: String, required: true },
     type: { type: String, required: true },
     breed: { type: String },

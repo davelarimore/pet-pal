@@ -9,13 +9,13 @@ const mongoose = require('mongoose');
 const userSchema = mongoose.Schema({
     firstName: { type: String, required: true, default: '' },
     lastName: { type: String, required: true, default: '' },
-    companyName: { type: String }, // provider only
+    companyName: { type: String, default: '' }, // provider only
     email: { type: String, required: true, unique: true },
-    phone: { type: String },
-    vetInfo: { type: String }, // client only
-    addressString: { type: String },
-    latLon: { type: String },
-    entryNote: { type: String },
+    phone: { type: String, default: '' },
+    vetInfo: { type: String, default: '' }, // client only
+    addressString: { type: String, default: '' },
+    latLon: { type: String, default: '' },
+    entryNote: { type: String, default: '' },
     role: { type: String, required: true, default: "client" },
     password: { type: String, required: true }
 })
@@ -29,6 +29,7 @@ userSchema.methods.serialize = function () {
     return {
         id: this._id,
         firstName: this.firstName,
+        lastName: this.lastName,
         companyName: this.companyName,
         email: this.email,
         phone: this.phone,
@@ -36,10 +37,7 @@ userSchema.methods.serialize = function () {
         addressString: this.addressString,
         latLon: this.latLon,
         entryNote: this.entryNote,
-        provider: this.provider,
-        clients: this.clients,
-        visits: this.visits,
-        tasks: this.tasks,
+        role: this.role
     };
 };
 

@@ -1,3 +1,16 @@
+//Date Formatter
+
+function formatDate(rawDate) {
+    const date = new Date(rawDate);
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ];
+    return (monthNames[date.getMonth() + 1]) +
+        ' ' + date.getDate() +
+        ' at ' + date.toTimeString().substr(0, 5);
+}
+
+
 ///////////////////////////////////////////
 //Update Provider Info Screen
 ///////////////////////////////////////////
@@ -344,7 +357,9 @@ function getClientsPetDetail(petID) {
         .then(visitData => {
             STORE.visitData = visitData;
         })
-        .then(displayPetDetail(STORE.petData, STORE.userData, STORE.visitData))
+        .then(() => {
+            return STORE;
+        })
         .catch(() => console.log('error'));
 }
 function generatePetInfoHTML(pet) {
@@ -365,14 +380,14 @@ function generatePetInfoHTML(pet) {
             <div class='boxedInfoItem'><p>Food: ${pet.food}</p></div>
         </div>`;
 }
-function displayPetDetail(petData, userData, visitsData) {
-    const clientHeader = generateClientHeaderHTML(userData, visitsData);
-    const petDetail = generatePetInfoHTML(petData);
+function displayPetDetail(STORE) {
+    const clientHeader = generateClientHeaderHTML(STORE.userData, STORE.visitData);
+    const petDetail = generatePetInfoHTML(STORE.petData);
     $('#js-main').html(`
         ${clientHeader}
         ${petDetail}
-        <a class='button' href='#user/${userData.id}/pet/${petData.id}/update'>Update Pet</a>
-        <a class='button' href='#user/${userData.id}/pet/${petData.id}/delete'>Delete Pet</a>`
+        <a class='button' href='#user/${STORE.userData.id}/pet/${STORE.petData.id}/update'>Update Pet</a>
+        <a class='button' href='#user/${STORE.userData.id}/pet/${STORE.petData.id}/delete'>Delete Pet</a>`
     );
 }
 //rewrite delete pet
@@ -383,6 +398,55 @@ function displayDeleteClientPetConfirmation(petID) {
      } else {
         alert('Action Cancelled');
      } 
+}
+///////////////////////////////////////////
+//Pet Detail Screen - Client
+///////////////////////////////////////////
+function getMyPetAndDisplayPetDetail(petID) {
+    getMyPetDetail(petID)
+        .then(displayMyPetDetail);
+}
+function getMyPetDetail(petID) {
+    console.log("Getting my pet detail");
+    const STORE = { petData: [], userData: [], visitData: [] };
+    return getMyPet(petID)
+        .then(petData => {
+            console.log(petData);
+            STORE.petData = petData;
+            return getMe(petData.client);
+        })
+        .then(userData => {
+            STORE.userData = userData;
+            return getMyUpcomingVisit(petData.client);
+        })
+        .then(visitData => {
+            STORE.visitData = visitData;
+        })
+        .then(() => {
+            return STORE;
+        })
+        .catch(() => console.log('error'));
+}
+function displayMyPetDetail(STORE) {
+    console.log(STORE);
+    const clientHeader = generateClientHeaderHTML(STORE.userData, STORE.visitData);
+    const petDetail = generatePetInfoHTML(STORE.petData);
+    $('#js-main').html(`
+        ${clientHeader}
+        ${petDetail}
+        <a class='button' href='#pet/${STORE.petData._id}/update'>Update Pet</a>
+        <a class='button' href='#pet/${STORE.petData._id}/delete'>Delete Pet</a>`
+    );
+}
+
+//rewrite delete pet
+function displayDeleteMyPetConfirmation(petID) {
+    if (confirm('Delete pet?')) {
+        deleteMyPet(petID)
+            .then(displayAlertDialog('Pet Deleted'));;
+    } else {
+        alert('Action Cancelled');
+    }
 }
 ///////////////////////////////////////////
 //Update Client Profile Screen
@@ -427,7 +491,7 @@ function handleClientProfileUpdateSubmit() {
 }
 $(handleClientProfileUpdateSubmit);
 ///////////////////////////////////////////
-//Client Dashboard / Provider Client Detail
+//Client Dashboard - NOT Provider Client Detail
 ///////////////////////////////////////////
 function getClientUserAndDisplayClientDashboard() {
     getClientDashboardData()
@@ -451,20 +515,22 @@ function getClientDashboardData() {
         .then(tasksData => {
             STORE.tasksData = tasksData;
         })
-        .then(displayClientDashboard(STORE.userData, STORE.visitData, STORE.petsData, STORE.tasksData))
+        .then(() => {
+            return STORE;
+        })
         .catch(() => console.log('error'));
 }
-function displayClientDashboard(userData, visitsData, petsData, tasksData) {
-    const clientHeader = generateClientHeaderHTML(userData, visitsData);
-    const clientInfo = generateClientInfoHTML(userData);
-    const petsList = generatePetsHTML(petsData);
-    const tasksList = generateTasksHTML(tasksData);
+function displayClientDashboard(STORE) {
+    const clientHeader = generateClientHeaderHTML(STORE.userData, STORE.visitData);
+    const clientInfo = generateClientInfoHTML(STORE.userData);
+    const petsList = generatePetsHTML(STORE.petsData);
+    const tasksList = generateTasksHTML(STORE.tasksData);
     $('#js-main').html(`
     ${clientHeader}${clientInfo}
     <div class='petsList'>${petsList}</div>
-    <a class='button' href='#user/${userData.id}/pet/add'>Add Pet</a>
+    <a class='button' href='#user/${STORE.userData.id}/pet/add'>Add Pet</a>
     <div id='js-tasks'>${tasksList}</div>
-    <a class='button' href='#user/${userData.id}/task/add'>Add Task</a>
+    <a class='button' href='#user/${STORE.userData.id}/task/add'>Add Task</a>
     `);
 }
 // Client Info
@@ -500,7 +566,7 @@ function generateClientInfoHTML(client, user) {
 // Pets
 function generatePetHTML(pet) {
     return `
-    <a href='#user/${pet.client}/pet/${pet.id}' class='petThumbnail'>
+    <a href='#pet/${pet._id}' class='petThumbnail'>
     <div><img src='images/logo.svg' alt='${pet.name}'><p>${pet.name}</p></div></a>`;
 }
 function generatePetsHTML(petsData) {
@@ -530,12 +596,12 @@ function displayDeleteMyTaskConfirmation(taskID) {
 // Client Header (Multiple Screens)
 ///////////////////////////////////////////
 function generateClientHeaderHTML(clientData, visitData) {
-    console.log(clientData);
+    const formattedDate = formatDate(visitData[0].startTime)
     return `
     <div class='clientHeader'>
-    <a class='buttonSmall' href='#updateClient/${clientData.id}'>Edit</a>
+    <a class='buttonSmall' href='#updateClient/${clientData._id}'>Edit</a>
             <h2>${clientData.firstName} ${clientData.lastName}</h2>
-            <p>Next Visit: ${visitData.startTime}</p></div>`;
+            <p>Next Visit: ${formattedDate}</p></div>`;
 }
 
 ///////////////////////////////////////////
@@ -651,7 +717,8 @@ function handleLoginSubmit() {
         .done(response => {
             console.log(response.authToken);
             window.localStorage.setItem('AUTH_TOKEN', response.authToken);
-            getClientUserAndDisplayClientDashboard();
+            window.location.href = `./#clientDashboard`;
+            // getClientUserAndDisplayClientDashboard();
         });
     })
 }

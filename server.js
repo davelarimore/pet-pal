@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const passport = require('passport');
 const morgan = require('morgan');
+const getRole = require('./middleware/getRole');
 //const Navigo = require('navigo');
 const app = express();
 
@@ -27,6 +28,7 @@ app.use('/auth', require('./routes/authRouter'))
 
 app.use('/api', [
   jwtAuth,
+  //getRole,
   require('./routes/usersRouter'),
   require('./routes/petsRouter'),
   require('./routes/visitsRouter'),

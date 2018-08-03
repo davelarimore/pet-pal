@@ -39,7 +39,22 @@ router
         },
         'pet/:petID': (params) => {
             displayCompactSiteHeader();
-            getClientsPetAndDisplayPetDetail(params.petID);
+            getMyPetAndDisplayPetDetail(params.petID);
+        },
+        'pet/:petID/:action': (params) => {
+            displayCompactSiteHeader();
+            if (params.action === 'add') {
+                displayAndHandleAddMyPetForm(params.userID);
+            }
+            else if (params.action === 'delete') {
+                displayDeleteMyPetConfirmation(params.petID);
+            }
+            else if (params.action === 'update') {
+                getMyPetAndDisplayUpdateForm(params.petID);
+            }
+            // else {
+            //     getMyPetAndDisplayPetDetail(params.petID);
+            // }
         },
         'user/:userID/pet/:petID/:action': (params) => {
             displayCompactSiteHeader();
