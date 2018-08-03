@@ -1,119 +1,11 @@
 ///////////////////////////////////////////
-//Client Routes
-///////////////////////////////////////////
-const router = new Navigo('localhost:8080', true, '#!');
-
-router
-    .on({
-        'login': () => {
-            displayLoginForm();
-            handleLoginSubmit();
-        },
-        'signup': () => {
-            displaySignupTypeForm();
-            handleSignupTypeSubmit();
-        },
-        'provider-signup': () => {
-            console.log('Handling provider signup button');
-            displayProviderSignupForm();
-            handleProviderSignupSubmit();
-        },
-        'client-dashboard': () => {
-            displayCompactSiteHeader();
-            getClientUserAndDisplayClientDashboard();
-        },
-        'provider-dashboard': () => {
-            displayCompactSiteHeader();
-            getVisitsAndDisplayProviderDashboard();
-        },
-        'add-client': () => {
-            displayClientSignupForm();
-        },
-        'update-client/:userID': (params) => {
-            displayCompactSiteHeader();
-            getClientUserAndDisplayClientUpdateForm(params.userID);
-        },
-        'update-provider/:userID': (params) => {
-            displayCompactSiteHeader();
-            getProviderUserAndDisplayUpdateForm(params.userID);
-        },
-        'pet/:petID': (params) => {
-            displayCompactSiteHeader();
-            getPetAndDisplayPetDetail(params.petID);
-        },
-        'user/:userID/pet/:petID/:action': (params) => {
-            displayCompactSiteHeader();
-            if (params.action === 'add') {
-                displayAndHandleAddPetForm(params.userID);
-            }
-            else if (params.action === 'delete') {
-                displayDeletePetConfirmation(params.petID);
-            }
-            else if (params.action === 'update') {
-                getPetAndDisplayUpdateForm(params.petID);
-            }
-            else {
-                getPetAndDisplayPetDetail(params.petID);
-            }
-        },
-        'user/:userID/task/:taskID/:action': (params) => {
-            displayCompactSiteHeader();
-            if (params.action === 'add') {
-                displayAddTaskForm(params.userID);
-            }
-            else if (params.action === 'delete') {
-                displayDeleteTaskConfirmation(params.taskID);
-            }
-        },
-        'user/:userID/visit/:visitID/:action': (params) => {
-            displayCompactSiteHeader();
-            if (params.action === 'add') {
-                getClientsAndDisplayAddVisitForm(params.userID);
-            }
-            else if (params.action === 'delete') {
-                displayDeleteVisitConfirmation(params.visitID);
-            }
-        },
-        'user/:userID/visits': (params) => {
-            displayCompactSiteHeader();
-            getAndDisplayAllVisits(params.userID);
-        },
-        'user/:userID/clients': (params) => {
-            displayCompactSiteHeader();
-            getAndDisplayAllClients(params.userID);
-        },
-        //click from client list
-        'user/:userID/client-detail': (params) => {
-            displayCompactSiteHeader();
-            getClientUserAndDisplayClientDashboard(params.userID);
-        },
-    })
-    .resolve();
-
-///////////////////////////////////////////
 //Update Provider Info Screen
 ///////////////////////////////////////////
-function getProviderUserAndDisplayUpdateForm(userID) {
-    getUser(userID)
+function getProviderUserAndDisplayUpdateForm() {
+    getMe()
     .then(displayProviderProfileUpdateForm)
     .catch (() => console.log('not found'));
 }
-function getUser(userID) {
-    return new Promise((resolve, reject) => {
-        userData = $.getJSON(`api/users/me`);
-        resolve(userData);
-    })
-}
-
-function getVisits(providerID) {
-    return new Promise((resolve, reject) => {
-        visitsData = $.getJSON(`api/visits/${providerID}`);
-        //connect to real API later using userID>visits
-        //visitsData = VISITS_STORE;
-        resolve(visitsData);
-    })
-}
-
 function displayProviderProfileUpdateForm(providerData) {
     //pre-fill form
     const element = $(providerSignupFormTemplate);
@@ -142,40 +34,23 @@ function handleProviderProfileUpdateSubmit() {
                 addressString: $(event.currentTarget).find('#streetAddress').val(),
             }
         };
-        updateUserAndDisplayAlertDialog(userData);
+        updateMeAndDisplayAlertDialog(userData);
     }); 
 }
 $(handleClientProfileUpdateSubmit);
-function updateUserAndDisplayAlertDialog(userData) {
-    updateUser(userData)
+function updateMeAndDisplayAlertDialog(userData) {
+    updateMe(userData)
     .then(displayAlertDialog("Profile updated"))
     .catch(() => console.log('error'));
-}
-function updateUser(userData) {
-    return new Promise((resolve, reject) => {
-        $.ajax({
-            method: 'POST',
-            url: 'api/users/me',
-            data: userData,
-        });
-        resolve(userData);
-    })
 }
 ///////////////////////////////////////////
 //Add Visit Screen
 ///////////////////////////////////////////
-function getClientsAndDisplayAddVisitForm(providerID) {
-    getClients(providerID)
+function getMyClientsAndDisplayAddVisitForm(providerID) {
+    getMyClients()
     .then(displayAddVisitForm)
     .catch(() => console.log('not found'));
 }
-function getClients(providerID) {
-    return new Promise((resolve, reject) => {
-        clientsData = $.getJSON(`api/users/my_clients`);
-        resolve(clientsData);
-    })
-}
-
 function displayAddVisitForm(clientsData) {
     const clientListHTML = generateClientListHTML(clientsData);
     const element = $(addVisitFormTemplate);
@@ -212,25 +87,16 @@ function handleAddVisitSubmit() {
 }
 $(handleAddVisitSubmit);
 function addVisitAndDisplayAlertDialog(data) {
-    addVisit(data, displayAlertDialog);
-}
-function addVisit(data, callbackFn) {
-    //connect to real API later
-    setTimeout(function(){ callbackFn('Visit Added')}, 100);
+    addVisit(data)
+    .then(displayAlertDialog('Visit Added'));
 }
 ///////////////////////////////////////////
 //All Visits Screen
 ///////////////////////////////////////////
 function getAndDisplayAllVisits(providerID) {
-    getVisits(providerID)
+    getProviderUpcomingVisits(providerID)
         .then(displayAllVisits)
         .catch(() => console.log('not found'));
-}
-function getVisits(providerID) {
-    return new Promise((resolve, reject) => {
-        visitsData = $.getJSON(`api/visits/${providerID}`);
-        resolve(visitsData);
-    })
 }
 function generateVisitItemHTML(visit) {
     return `
@@ -259,7 +125,7 @@ function displayAllVisits(visitsData) {
 //All Clients Screen
 ///////////////////////////////////////////
 function getAndDisplayAllClients(providerID) {
-    getClients(providerID)
+    getMyClients(providerID)
     .then(displayAllClients)
     .catch(() => console.log('not found'));
 }
@@ -283,7 +149,7 @@ function displayAllClients(clientsData) {
         <div id='js-clients-list'>
             ${clientsListHTML}
         </div>
-        <a class='button' href='#add-client'>Add Client</a>
+        <a class='button' href='#addClient'>Add Client</a>
     </div>`);
 }
 ///////////////////////////////////////////
@@ -295,13 +161,12 @@ function displayAllClients(clientsData) {
 ///////////////////////////////////////////
 //Provider Dashboard
 ///////////////////////////////////////////
-
-function getVisitsAndDisplayProviderDashboard(providerID) {
+function getVisitsAndDisplayProviderDashboard() {
     const STORE = { visitsData: [], userData: [] };
-    return getUpcomingVisits(providerID)
+    return getProviderUpcomingVisits()
     .then(visitsData => {
         STORE.visitsData = visitsData;
-        return getUser(providerID);
+        return getMe();
     })
     .then(userData => {
         STORE.userData = userData;
@@ -309,24 +174,18 @@ function getVisitsAndDisplayProviderDashboard(providerID) {
     .then(displayProviderDashboard(STORE.userData, STORE.visitsData))
     .catch(() => console.log('not found'));
 }
-function getUpcomingVisits(providerID) {
-    return new Promise((resolve, reject) => {
-        visitsData = $.getJSON(`api/visits/${providerID}`);
-        resolve(visitsData);
-    })
-}
 function displayProviderDashboard(userData, visitsData) {
     const recentVisitsHTML = generateUpcomingVisitsHTML(visitsData);
     const element = $(providerDashboardTemplate);
     element.find('#js-visits-list').html(recentVisitsHTML);
     //For some reason this doesn't work, used vanilla JS below instead
-    //element.find('#js-update-profile-button').attr('href', `#update-client/${userData.id}`);
+    //element.find('#js-update-profile-button').attr('href', `#updateClient/${userData.id}`);
     $('#js-main').html(element);
     document.querySelector('#js-all-visits-button').setAttribute('href', `#user/${userData._id}/visits`);
     document.querySelector('#js-add-visit-button').setAttribute('href', `#user/${userData._id}/visit/add`);
     document.querySelector('#js-all-clients-button').setAttribute('href', `#user/${userData._id}/clients`);
     document.querySelector('#js-add-client-button').setAttribute('href', `#user/${userData._id}`);
-    document.querySelector('#js-update-profile-button').setAttribute('href', `#update-client/${userData._id}`);
+    document.querySelector('#js-update-profile-button').setAttribute('href', `#updateClient/${userData._id}`);
 }
 function generateVisitItemHTML(visit) {
     return `
@@ -346,16 +205,12 @@ function generateUpcomingVisitsHTML(visitsData) {
 //rewrite
 function displayDeleteVisitConfirmation(visitID) {
     if (confirm('Delete visit?')) {
-        deleteVisit(visitID, displayAlertDialog);;
+        deleteVisit(visitID)
+        .then(displayAlertDialog('Visit Deleted'));;
      } else {
         alert('Action Cancelled');
      } 
 }
-function deleteVisit(visitID, callbackFn) {
-    //connect to real API later using visitID
-    setTimeout(function(){ callbackFn('Visit Deleted')}, 100);
-}
-
 //Client Actions
 function handleSearchForClientSubmit() {
     $('#js-main').on('submit', '#js-search-client', event => {
@@ -366,33 +221,26 @@ function handleSearchForClientSubmit() {
 }
 $(handleSearchForClientSubmit);
 function getClientByNameAndDisplayClient(lastName) {
-    getCLientByName(lastName, redirectToClientDetail);
-}
-function getClientByName(lastName, callbackFn) {
-    //connect to real API later using lastName
-    userID = CLIENTS_STORE[0];
-    setTimeout(function(){ callbackFn(userID)}, 100);
+    getClientByName(lastName)
+    .then(redirectToClientDetail);
 }
 function redirectToClientDetail(userID) {
-        window.location.href = `./#user/${userID}/client-detail`;
+        window.location.href = `./#user/${userID}/clientDetail`;
 }
 
 ///////////////////////////////////////////
-//Update Pet Screen
+//Update Pet Screen - Provider View
 ///////////////////////////////////////////
-function getPetAndDisplayUpdateForm(petID) {
-    getPet(petID, displayUpdatePetForm);
+function getClientsPetAndDisplayUpdateForm(petID) {
+    getClientsPet(petID)
+    .then(displayUpdateClientsPetForm);
 }
-function getPet(petID, callbackFn) {
-    //connect to real API later using petID
-    petData = PETS_STORE[0];
-    setTimeout(function(){ callbackFn(petData)}, 100);
-}
-function displayUpdatePetForm(petData) {
+function displayUpdateClientsPetForm(petData) {
     const element = $(addPetFormTemplate);
     element.find('#js-add-pet-form').attr('id', '#js-update-pet-form');
     element.find('h2').text('Update Pet');
     //pre-fill template
+    element.find('#_id').val(petData._id);
     element.find('#petName').val(petData.name);
     element.find('#petType').val(petData.type).change();
     element.find('#petBreed').val(petData.breed);
@@ -400,65 +248,61 @@ function displayUpdatePetForm(petData) {
     element.find('#petFood').val(petData.food);
     $('#js-main').html(element);
 }
-function handleUpdatePetFormSubmit() {
+function handleUpdateClientsPetFormSubmit() {
     $('#js-main').on('submit', '#js-update-pet-form', event => {
         event.preventDefault();
+        const petID = $(event.currentTarget).find('#_id').val();
         const petData = {
+            _id: petID,
             name: $(event.currentTarget).find('#petName').val(),
             type: $(event.currentTarget).find('#petType').val(),
             breed: $(event.currentTarget).find('#petType').val(),
             color: $(event.currentTarget).find('#petColor').val(),
             food: $(event.currentTarget).find('#petFood').val(),
         };
-        updatePetAndDisplayAlertDialog(petData);
+        updateClientsPetAndDisplayAlertDialog(petID, petData);
         window.location.href = `./#pet/:petID`;
         //displayCompactSiteHeader();
-        //getPetAndDisplayPetDetail();
+        //getClientsPetAndDisplayPetDetail();
     });
 }
-$(handleUpdatePetFormSubmit);
-function updatePetAndDisplayAlertDialog(petData) {
-    updatePet(petData, displayAlertDialog);
-}
-function updatePet(petData, callbackFn) {
-    //connect to real API later
-    setTimeout(function(){ callbackFn('Pet Updated')}, 100);
+$(handleUpdateClientsPetFormSubmit);
+function updateClientsPetAndDisplayAlertDialog(petID, petData) {
+    updateClientsPet(petID, petData)
+    .then(displayAlertDialog('Pet Updated'));
 }
 ///////////////////////////////////////////
-//Add Task Screen
+//Add Task Screen - Provider
 ///////////////////////////////////////////
-function displayAndHandleAddTaskForm(userID) {
+function displayAndHandleAddClientTaskForm(userID) {
     $('#js-main').html(addTaskFormTemplate);
-    $(handleAddTaskSubmit(userID));
+    $(handleAddClientTaskSubmit(userID));
 }
-function handleAddTaskSubmit(userID) {
+function handleAddClientTaskSubmit(userID) {
     $('#js-main').on('submit', '#js-add-task-form', event => {
         event.preventDefault();
         const taskData = {
             user: userID,
             description: $(event.currentTarget).find('#taskDescription').val(),
         };
-        addTaskAndDisplayAlertDialog(taskData);
+        addClientTaskAndDisplayAlertDialog(taskData);
         displayCompactSiteHeader();
         getClientUserAndDisplayClientDashboard(userID);
     });
 }
 
-function addTaskAndDisplayAlertDialog(data) {
-    addTask(data, displayAlertDialog);
-}
-function addTask(data, callbackFn) {
-    //connect to real API later
-    setTimeout(function(){ callbackFn('Task Added')}, 100);
+function addClientTaskAndDisplayAlertDialog(taskData) {
+    addClientTask(taskData)
+    .then(displayAlertDialog('Task Added'));
 }
 ///////////////////////////////////////////
-//Add Pet Screen
+//Add Pet Screen - Provider
 ///////////////////////////////////////////
-function displayAndHandleAddPetForm(userID) {
+function displayAndHandleAddClientPetForm(userID) {
     $('#js-main').html(addPetFormTemplate);
-    $(handleAddPetSubmit(userID));
+    $(handleAddClientPetSubmit(userID));
 }
-function handleAddPetSubmit(userID) {
+function handleAddClientPetSubmit(userID) {
     $('#js-main').on('submit', '#js-add-pet-form', event => {
         event.preventDefault();
         const petData = {
@@ -469,34 +313,40 @@ function handleAddPetSubmit(userID) {
             color: $(event.currentTarget).find('#petColor').val(),
             food: $(event.currentTarget).find('#petFood').val(),
         };
-        addPetAndDisplayAlertDialog(petData);
+        addClientPetAndDisplayAlertDialog(petData);
         displayCompactSiteHeader();
         //show detail for added pet
-        //getPetAndDisplayPetDetail();
+        //getClientsPetAndDisplayPetDetail();
     }); 
 }
-function addPetAndDisplayAlertDialog(petData) {
-    addPet(petData, displayAlertDialog);
-}
-function addPet(petData, callbackFn) {
-    //connect to real API later usng petData
-    setTimeout(function(){ callbackFn('Pet Added')}, 100);
+function addClientPetAndDisplayAlertDialog(petData) {
+    addClientPet(petData)
+    .then(displayAlertDialog('Pet Added'));
 }
 ///////////////////////////////////////////
-//Pet Detail Screen
+//Pet Detail Screen - Provider View
 ///////////////////////////////////////////
-
-function getPetAndDisplayPetDetail(petID) {
-    getPetDetail(petID, displayPetDetail);
+function getClientsPetAndDisplayPetDetail(petID) {
+    getClientsPetDetail(petID)
+    .then(displayPetDetail);
 }
-function getPetDetail(petID, callbackFn) {
-    //connect to real API later using petID
-    petData = PETS_STORE[0];
-    userData = CLIENTS_STORE[0];
-    visitsData = VISITS_STORE[0];
-    setTimeout(function () { callbackFn(petData, userData, visitsData) }, 100);
+function getClientsPetDetail(petID) {
+    const STORE = { petData: [], userData: [], visitData: [] };
+    return getClientsPet(petID)
+        .then(petData => {
+            STORE.petData = petData;
+            return getMyClient(petData.client);
+        })
+        .then(userData => {
+            STORE.userData = userData;
+            return getClientsUpcomingVisit(petData.client);
+        })
+        .then(visitData => {
+            STORE.visitData = visitData;
+        })
+        .then(displayPetDetail(STORE.petData, STORE.userData, STORE.visitData))
+        .catch(() => console.log('error'));
 }
-
 function generatePetInfoHTML(pet) {
     return `
     <div class='petsList'>
@@ -516,36 +366,30 @@ function generatePetInfoHTML(pet) {
         </div>`;
 }
 function displayPetDetail(petData, userData, visitsData) {
-    //const clientHeader = generateClientHeaderHTML(userData, visitsData);
+    const clientHeader = generateClientHeaderHTML(userData, visitsData);
     const petDetail = generatePetInfoHTML(petData);
     $('#js-main').html(`
+        ${clientHeader}
         ${petDetail}
         <a class='button' href='#user/${userData.id}/pet/${petData.id}/update'>Update Pet</a>
         <a class='button' href='#user/${userData.id}/pet/${petData.id}/delete'>Delete Pet</a>`
     );
 }
 //rewrite delete pet
-function displayDeletePetConfirmation(petID) {
+function displayDeleteClientPetConfirmation(petID) {
     if (confirm('Delete pet?')) {
-        deletePet(petID, displayAlertDialog);;
+        deleteClientPet(petID)
+        .then(displayAlertDialog('Pet Deleted'));;
      } else {
         alert('Action Cancelled');
      } 
 }
-function deletePet(petID, callbackFn) {
-    //connect to real API later
-    setTimeout(function(){callbackFn('Pet Deleted')}, 100);
-}
 ///////////////////////////////////////////
 //Update Client Profile Screen
 ///////////////////////////////////////////
-function getClientUserAndDisplayClientUpdateForm(userID) {
-    getClientUser(userID, displayClientProfileUpdateForm);
-}
-function getClientUser(userID, callbackFn) {
-    //connect to real API later using userID
-    userData = CLIENTS_STORE[0];
-    setTimeout(function(){ callbackFn(userData)}, 100);
+function getClientUserAndDisplayClientUpdateForm() {
+    getMe()
+    .then(displayClientProfileUpdateForm);
 }
 function displayClientProfileUpdateForm(clientData) {
     const element = $(clientSignupFormTemplate);
@@ -576,7 +420,7 @@ function handleClientProfileUpdateSubmit() {
             },
             vetInfo: $(event.currentTarget).find('#vetInfo').val(),
         };
-        updateUserAndDisplayAlertDialog(userData);
+        updateMeAndDisplayAlertDialog(userData);
         displayCompactSiteHeader();
         getClientUserAndDisplayClientDashboard();
     }); 
@@ -585,16 +429,30 @@ $(handleClientProfileUpdateSubmit);
 ///////////////////////////////////////////
 //Client Dashboard / Provider Client Detail
 ///////////////////////////////////////////
-function getClientUserAndDisplayClientDashboard(userID) {
-    getClientDashboardData(userID, displayClientDashboard);
+function getClientUserAndDisplayClientDashboard() {
+    getClientDashboardData()
+        .then(displayClientDashboard);
 }
-function getClientDashboardData(userID, callbackFn) {
-    //connect to real API later using userID
-    userData = CLIENTS_STORE[0];
-    visitsData = VISITS_STORE[0];
-    petsData = PETS_STORE;
-    tasksData = TASKS_STORE;
-    setTimeout(function () { callbackFn(userData, visitsData, petsData, tasksData) }, 100);
+function getClientDashboardData() {
+    const STORE = { userData: [], visitData: [], petsData: [], tasksData: [] };
+    return getMe()
+        .then(userData => {
+            STORE.userData = userData;
+            return getMyUpcomingVisit();
+        })
+        .then(visitData => {
+            STORE.visitData = visitData;
+            return getMyPets();
+        })
+        .then(petsData => {
+            STORE.petsData = petsData;
+            return getMyTasks()
+        })
+        .then(tasksData => {
+            STORE.tasksData = tasksData;
+        })
+        .then(displayClientDashboard(STORE.userData, STORE.visitData, STORE.petsData, STORE.tasksData))
+        .catch(() => console.log('error'));
 }
 function displayClientDashboard(userData, visitsData, petsData, tasksData) {
     const clientHeader = generateClientHeaderHTML(userData, visitsData);
@@ -617,7 +475,7 @@ function generateClientInfoHTML(client, user) {
     //     entryNoteHTML = `
     //     <a class='boxedInfoItem' href='#0'>
     //     <img src='images/house.svg' alt='Entry Note'>
-    //     <p>${client.address.entryNote}</p>
+    //     <p>${client.entryNote}</p>
     // </a>`;
     // }
     return `
@@ -629,9 +487,9 @@ function generateClientInfoHTML(client, user) {
                     <img src='images/email.svg' alt='Email'>
                 <p>${client.email}</p>
             </a>
-            <a class='boxedInfoItem' href='https://www.google.com/maps/@${client.address.latLon}'>
+            <a class='boxedInfoItem' href='https://www.google.com/maps/@${client.latLon}'>
                 <img src='images/location.svg' alt='Address'>
-                <p>${client.address.addressString}</p>
+                <p>${client.addressString}</p>
             </a>
             ${entryNoteHTML}
             <a class='boxedInfoItem' href='#0'>
@@ -660,27 +518,23 @@ function generateTasksHTML(tasksList) {
     return items.join('');
 }
 //rewrite delete task
-function displayDeleteTaskConfirmation(taskID) {
+function displayDeleteMyTaskConfirmation(taskID) {
     if (confirm('Delete task?')) {
-        deleteTask(taskID, displayAlertDialog);;
+        deleteMyTask(taskID)
+            .then(displayAlertDialog('Task Deleted'));;
     } else {
         alert('Action Cancelled');
     }
 }
-function deleteTask(taskID, callbackFn) {
-    //connect to real API later using taskID
-    setTimeout(function () { callbackFn('Task Deleted') }, 100);
-}
-
 ///////////////////////////////////////////
 // Client Header (Multiple Screens)
 ///////////////////////////////////////////
-
 function generateClientHeaderHTML(clientData, visitData) {
+    console.log(clientData);
     return `
     <div class='clientHeader'>
-    <a class='buttonSmall' href='#update-client/${clientData.id}'>Edit</a>
-            <h2>${clientData.fullName}</h2>
+    <a class='buttonSmall' href='#updateClient/${clientData.id}'>Edit</a>
+            <h2>${clientData.firstName} ${clientData.lastName}</h2>
             <p>Next Visit: ${visitData.startTime}</p></div>`;
 }
 
@@ -718,10 +572,10 @@ $(handleProviderSignupSubmit);
 function displayClientSignupForm() {
     $('#js-main').html(clientSignupFormTemplate);
 };
-function handleClientSignupSubmit(){
+function handleClientSignupSubmit() {
     $('#js-main').on('submit', '#js-client-signup-form', event => {
         const userData = {
-            providerID: 101,
+            provider: $(event.currentTarget).find(`select[name='provider']: selected`).data('id'),
             firstName: $(event.currentTarget).find('#firstName').val(),
             lastName: $(event.currentTarget).find('#lastName').val(),
             email: $(event.currentTarget).find('#email').val(),
@@ -741,17 +595,6 @@ function handleClientSignupSubmit(){
     }); 
 }
 $(handleClientSignupSubmit);
-
-function addUser(userData) {
-    return new Promise((resolve, reject) => {
-        $.ajax({
-            method: 'POST',
-            url: 'api/users',
-            data: userData,
-        });
-        resolve(userData);
-    })
-}
 ///////////////////////////////////////////
 //Signup Type Screen
 ///////////////////////////////////////////
@@ -760,18 +603,25 @@ function displaySignupTypeForm() {
     const element = $(signupTypeFormTemplate);
     element.find('#js-provider-list').append(providerListHTML);
     $('#js-main').html(element);
+    // getProviders()
+    // .then(providers => {
+    //     const providerListHTML = generateProviderListHTML(providers);
+    //     const element = $(signupTypeFormTemplate);
+    //     element.find('#js-provider-list').append(providerListHTML);
+    //     $('#js-main').html(element);
+    // })
 }
 function generateProviderHTML(provider) {
     if (provider.provider === true) {
         return `
-        <option value='${provider.companyName}'>${provider.companyName}</option>`
+        <option value='${provider.companyName}' data-id='${provider._id}'>${provider.companyName}</option>`
     }
 }
 function generateProviderListHTML(providersList) {
     const items = providersList.map((item, index) => generateProviderHTML(item, index));  
     return items.join('');
 }
-function handleSignupTypeSubmit(){
+function handleSignupTypeSubmit() {
     $('#js-main').on('submit', '#js-signup-type-form', event => {
         event.preventDefault();
         displayClientSignupForm();
@@ -787,15 +637,22 @@ function displayLoginForm() {
 }
 function handleLoginSubmit() {
     $('#js-main').on('submit', '#js-login-form', event => {
-        const role = $(`input[name='role']:checked`).val();
         event.preventDefault();
-        console.log('`handleLogin` ran');
-        if (role === 'provider') {
-            window.location.href = './#provider-dashboard';
-        }
-        else {
-            window.location.href = './#client-dashboard';
-        }
-    }); 
+        const email = $(event.currentTarget).find('#email').val();
+        const password = $(event.currentTarget).find('#password').val();
+        $.ajax({
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            url: `auth/login`,
+            data: JSON.stringify({ email: email, password: password }),
+        })
+        .done(response => {
+            console.log(response.authToken);
+            window.localStorage.setItem('AUTH_TOKEN', response.authToken);
+            getClientUserAndDisplayClientDashboard();
+        });
+    })
 }
 $(handleLoginSubmit);

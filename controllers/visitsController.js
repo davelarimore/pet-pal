@@ -5,7 +5,7 @@ const Visits = require('../models/visitsModel');
 ////////////////////////////////
 
 //GET: get all visits belonging to an authenticated provider
-exports.visits_get_list = (req, res) => {
+exports.visitsGetList = (req, res) => {
     Visits
         .find({'provider': req.params.id })
         .then(visits => {
@@ -18,7 +18,7 @@ exports.visits_get_list = (req, res) => {
 }
 
 //GET upcoming visit for my client
-exports.visits_get_client_upcoming = (req, res) => {
+exports.visitsGetClientUpcoming = (req, res) => {
     Visits
         .find({'client': req.params.id })
         .sort('-startTime')
@@ -31,12 +31,12 @@ exports.visits_get_client_upcoming = (req, res) => {
 }
 
 //POST: add a visit for the client of an authenticated provider (client's can't add visits)
-exports.visits_post = (req, res) => {
+exports.visitsPost = (req, res) => {
     res.send('NOT IMPLEMENTED: Add a visit to my client');
 }
 
 // DELETE: delete a visit for the client of an authenticated provider (client's can't delete visits)
-exports.visits_delete = (req, res) => {
+exports.visitsDelete = (req, res) => {
     res.send('NOT IMPLEMENTED: Delete visit beloning to my client');
 }
 
@@ -45,7 +45,7 @@ exports.visits_delete = (req, res) => {
 ////////////////////////////////
 
 //GET my upcoming visit 
-exports.visits_get_my_upcoming = (req, res) => {
+exports.visitsGetMyUpcoming = (req, res) => {
     res.send('NOT IMPLEMENTED: get my upcoming visit');
 }
 

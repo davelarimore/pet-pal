@@ -1,16 +1,19 @@
 const express = require('express');
+const passport = require('passport');
 const router = express.Router();
 
-const auth_controller = require('../controllers/authController');
+const authController = require('../controllers/authController');
+
+const localAuth = passport.authenticate('local', { session: false });
 
 // login: authenticate a user
-router.get('/auth/login', auth_controller.authenticate);
+router.post('/login', localAuth, authController.authenticate);
 
 // signup: add a new user
-router.post('/auth/signup', auth_controller.signup);
+router.post('/signup', authController.signup);
 
 // refresh token: refresh the token of an authenticated user
-router.get('/auth/refresh', auth_controller.refresh);
+router.get('/refresh', authController.refresh);
 
 module.exports = router;
 

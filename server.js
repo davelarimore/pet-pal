@@ -1,8 +1,11 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const passport = require('passport');
+const morgan = require('morgan');
 //const Navigo = require('navigo');
 const app = express();
 
+app.use(morgan('common'));
 app.use(express.static('public'));
 app.use(express.json());
 
@@ -10,16 +13,20 @@ app.use(express.json());
 // but its better to make Mongoose use built in es6 promises
 mongoose.Promise = global.Promise;
 
-// config.js is where we control constants for entire
-// app like PORT and DATABASE_URL
+const { localStrategy, jwtStrategy } = require('./lib/authStrategy');
+
+passport.use(localStrategy);
+passport.use(jwtStrategy);
+
+const jwtAuth = passport.authenticate('jwt', { session: false });
+
 const { DATABASE_URL } = require('./config');
 mongoose.connect(DATABASE_URL);
 
-//const isAuthenticated = require('./middleware/auth_middleware')
+app.use('/auth', require('./routes/authRouter'))
 
 app.use('/api', [
-  //isAuthenticated,
-  require('./routes/authRouter'),
+  jwtAuth,
   require('./routes/usersRouter'),
   require('./routes/petsRouter'),
   require('./routes/visitsRouter'),

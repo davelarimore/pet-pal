@@ -1,21 +1,21 @@
-const { Tasks } = require('../models/tasksModel');
+const Tasks = require('../models/tasksModel');
 
 ////////////////////////////////
 //AUTHENTICATED PROVIDERS ONLY
 ////////////////////////////////
 
 //GET: get all tasks belonging to the client of an authenticated provider
-exports.tasks_client_get_list = (req, res) => {
+exports.tasksClientGetList = (req, res) => {
     res.send('NOT IMPLEMENTED: Get all tasks belonging to my client');
 };
 
 //POST: add task to the client of an authenticated provider
-exports.tasks_client_post = (req, res) => {
+exports.tasksClientPost = (req, res) => {
     res.send('NOT IMPLEMENTED: Add task to my client');
 };
 
 // DELETE: delete task belonging to the client of an authenticated provider
-exports.tasks_client_delete = (req, res) => {
+exports.tasksClientDelete = (req, res) => {
     res.send('NOT IMPLEMENTED: Delete task belonging to my client');
 };
 
@@ -24,17 +24,17 @@ exports.tasks_client_delete = (req, res) => {
 ////////////////////////////////
 
 //GET: get all tasks belonging to the authenticated client
-exports.tasks_get = (req, res) => {
+exports.tasksGet = (req, res) => {
     res.send('NOT IMPLEMENTED: Get my tasks');
 };
 
 //POST: add task to the authenticated client
-exports.tasks_post = (req, res) => {
+exports.tasksPost = (req, res) => {
     res.send('NOT IMPLEMENTED: Add task');
 };
 
 // DELETE: delete task belonging to the authenticated client
-exports.tasks_delete = (req, res) => {
+exports.tasksDelete = (req, res) => {
     res.send('NOT IMPLEMENTED: Delete my task');
 };
 

@@ -3,19 +3,20 @@ const signupTypeFormTemplate = `
         <form id="js-signup-type-form">
             <fieldset name="chooseProvider">
                 <label for="provider" class="visuallyhidden">Pet Care Provider</label>
-                <select id="js-provider-list" type="select" id="provider" title="Pet Care Provider" required>
+                <select id="js-provider-list" name="provider" type="select" id="provider" title="Pet Care Provider" required>
                     <option value="" disabled selected hidden>Pet care provider</option>
                 </select>
                 <input type="submit" value="Continue" class="button">
             </fieldset>
         </form>
-    <a href="./#provider-signup">Pet Care Provider Sign Up</a>`;
+    <a href="./#providerSignup">Pet Care Provider Sign Up</a>`;
 
 const clientSignupFormTemplate = `
     <div class="boxed">
     <h2>Create an account</h2>
     <form id="js-client-signup-form">
         <fieldset name="clientSignup">
+            <input type="hidden" id="_id" title="User ID"></input> 
             <label for="firstName" class="visuallyhidden">First Name</label>
             <input type="text" id="firstName" title="First Name" placeholder="First Name" required></input>
             <label for="lastName" class="visuallyhidden">Last Name</label>
@@ -71,16 +72,6 @@ const loginFormTemplate = `<div class="boxed">
             <input type="text" id="email" title="Email address" placeholder="Email" required></input>
             <label for="password" class="visuallyhidden">Pasword</label>
             <input type="text" id="password" title="Password" placeholder="Password" required></input>
-            <fieldset class="radioSets">
-                <div class="radioSet">
-                    <input type="radio" id="provider" name="role" value="provider" required>
-                    <label for="provider">Provider</label>
-                </div>
-                <div class="radioSet">
-                    <input type="radio" id="client" name="role" value="client" required>
-                    <label for="client">Client</label>
-                </div>
-            </fieldset>
             <input type="submit" value="Submit" class="button">
         </fieldset>
     </form>
@@ -88,7 +79,7 @@ const loginFormTemplate = `<div class="boxed">
 
 const compactHeaderTemplate = `
     <div class="compactHeader">
-    <a href="#client-dashboard" class="dashBoardLink">Dashboard</a>
+    <a href="#clientDashboard" class="dashBoardLink">Dashboard</a>
     <a href="index.html">
             <img src="images/logo.svg" alt="Pet Pal">
         </a>
@@ -100,6 +91,7 @@ const addPetFormTemplate = `
         <h2>Add a Pet</h2>
         <form id="js-add-pet-form">
             <fieldset name="addPet">
+                <input type="hidden" id="_id" title="Pet ID"></input> 
                 <label for="petName" class="visuallyhidden">Name</label>
                 <input type="text" id="petName" title="Pet Name" placeholder="Name" required></input>                  
                 <label for="petType" class="visuallyhidden">Type</label>

@@ -1,27 +1,27 @@
-const { Pets } = require('../models/petsModel');
+const Pets = require('../models/petsModel');
 
 //GET: get all of an authenticated provider's client's pets
-exports.pets_client_get_all = (req, res) => {
+exports.petsClientGetAll = (req, res) => {
     res.send('NOT IMPLEMENTED: Get all pets belonging to my client');
 };
 
 // GET by ID: get one pet belonging to the client of an authenticated provider
-exports.pets_client_get_one = (req, res) => {
+exports.petsClientGetOne = (req, res) => {
     res.send('NOT IMPLEMENTED: Get one pet belonging to my client');
 };
 
 //POST: add a pet to the client of an authenticated provider
-exports.pets_client_post = (req, res) => {
+exports.petsClientPost = (req, res) => {
     res.send('NOT IMPLEMENTED: Add pet to my client');
 };
 
 //PUT: update pet belonging to the client of an authenticated provider
-exports.pets_client_update = (req, res) => {
+exports.petsClientUpdate = (req, res) => {
     res.send('NOT IMPLEMENTED: Update pet belonging to y client');
 };
 
 // DELETE: delete pet belonging to the client of an authenticated provider
-exports.pets_client_delete = (req, res) => {
+exports.petsClientDelete = (req, res) => {
     res.send('NOT IMPLEMENTED: Delete pet belonging to my client');
 };
 
@@ -30,27 +30,27 @@ exports.pets_client_delete = (req, res) => {
 ////////////////////////////////
 
 //GET: get all 'my' pets for authenticated client
-exports.pets_get_all = (req, res) => {
+exports.petsGetAll = (req, res) => {
     res.send('NOT IMPLEMENTED: Get my pets');
 };
 
 // GET by ID: get one pet belonging to the authenticated client
-exports.pets_get_one = (req, res) => {
+exports.petsGetOne = (req, res) => {
     res.send('NOT IMPLEMENTED: Get one of my pets');
 };
 
 //POST: add a pet to the authenticated client
-exports.pets_post = (req, res) => {
+exports.petsPost = (req, res) => {
     res.send('NOT IMPLEMENTED: Add pet to my pets');
 };
 
 //PUT: update pet belonging to the authenticated client
-exports.pets_update = (req, res) => {
+exports.petsUpdate = (req, res) => {
     res.send('NOT IMPLEMENTED: Update my pet');
 };
 
 // DELETE: delete pet belonging to the authenticated client
-exports.pets_delete = (req, res) => {
+exports.petsDelete = (req, res) => {
     res.send('NOT IMPLEMENTED: Delete my pet');
 };
 

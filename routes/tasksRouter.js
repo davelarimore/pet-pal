@@ -1,32 +1,32 @@
 const express = require('express');
 const router = express.Router();
 
-const tasks_controller = require('../controllers/tasksController');
+const tasksController = require('../controllers/tasksController');
 
 ////////////////////////////////
 //AUTHENTICATED PROVIDERS ONLY
 ////////////////////////////////
 
 //GET: get all tasks belonging to the client of an authenticated provider
-router.get('/tasks/my_client', tasks_controller.tasks_client_get_list);
+router.get('/my_clients/:id/tasks', tasksController.tasksClientGetList);
 
 //POST: add task to the client of an authenticated provider
-router.post('/tasks/my_client', tasks_controller.tasks_client_post);
+router.post('/my_clients/tasks', tasksController.tasksClientPost);
 
 // DELETE: delete task belonging to the client of an authenticated provider
-router.delete('/tasks/my_client/:id', tasks_controller.tasks_client_delete);
+router.delete('/my_clients/tasks/:id', tasksController.tasksClientDelete);
 
 ////////////////////////////////
 //AUTHENTICATED CLIENTS ONLY
 ////////////////////////////////
 
 //GET: get all tasks belonging to the authenticated client
-router.get('/tasks', tasks_controller.tasks_get);
+router.get('/tasks', tasksController.tasksGet);
 
 //POST: add task to the authenticated client
-router.post('/tasks', tasks_controller.tasks_post);
+router.post('/tasks', tasksController.tasksPost);
 
 // DELETE: delete task belonging to the authenticated client
-router.delete('/tasks/:id', tasks_controller.tasks_delete);
+router.delete('/tasks/:id', tasksController.tasksDelete);
 
 module.exports = router;

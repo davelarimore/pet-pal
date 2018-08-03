@@ -1,51 +1,85 @@
 'use strict';
 
-const { Users } = require('../models/usersModel');
+const Users = require('../models/usersModel');
 
 ////////////////////////////////
 //AUTHENTICATED PROVIDERS ONLY
 ////////////////////////////////
 
 // GET: all my clients, authenticated providers only
-exports.users_get_client_list = (req, res) => {
-    res.send('NOT IMPLEMENTED: Get all tasks belonging to my client');
-};
+exports.usersGetClientList = (req, res) => {
+    Users
+        .find({ 'provider': 101 })
+        .then(clients => {
+            res.json(clients)
+        })
+        .catch(err => {
+            console.error(err);
+            res.status(500).json({ message: 'Internal server error' })
+    });
+}
 
 // GET one of my clients by ID, accessible by authenticated provider only
-exports.users_get_client = (req, res) => {
-    res.send('NOT IMPLEMENTED: Get all tasks belonging to my client');
-};
+exports.usersGetClient = (req, res) => {
+    Users
+        .find({ '_id': 201 })
+        .then(client => {
+            res.json(client)
+        })
+        .catch(err => {
+            console.error(err);
+            res.status(500).json({ message: 'Internal server error' })
+    });
+}
+
+// GET one of my clients by ID, accessible by authenticated provider only
+exports.usersGetClientByName = (req, res) => {
+    Users
+        .find({ 'lastName': Doe })
+        .then(client => {
+            res.json(client)
+        })
+        .catch(err => {
+            console.error(err);
+            res.status(500).json({ message: 'Internal server error' })
+    });
+}
 
 // POST new client accessible by authenticated provider only
-exports.users_post_client = (req, res) => {
-    res.send('NOT IMPLEMENTED: Get all tasks belonging to my client');
+exports.usersPostClient = (req, res) => {
+    res.send('NOT IMPLEMENTED: Add a client');
 };
 
 //PUT MY CLIENT: update client of an authenticated provider 
-exports.users_put_client = (req, res) => {
-    res.send('NOT IMPLEMENTED: Get all tasks belonging to my client');
+exports.usersPutClient = (req, res) => {
+    res.send('NOT IMPLEMENTED: Update a client');
 };
+
 
 ////////////////////////////////
 // ALL AUTHENTICATED USERS
 ////////////////////////////////
 
 // GET users/me: - get my client object only, accessible by any authenticated user
-exports.users_get_me = (req, res) => {
-    res.send('NOT IMPLEMENTED: Get all tasks belonging to my client');
+exports.usersGetMe = (req, res) => {
+    res.send('NOT IMPLEMENTED: Get my user data');
 };
 
 //PUT ME: update authenticated user (update me)
-exports.users_put_me = (req, res) => {
-    res.send('NOT IMPLEMENTED: Get all tasks belonging to my client');
+exports.usersPutMe = (req, res) => {
+    res.send('NOT IMPLEMENTED: Update my user data');
 };
 
 ////////////////////////////////
 // PUBLIC
 ////////////////////////////////
 
+exports.usersGetProviders = (req, res) => {
+    res.send('NOT IMPLEMENTED: Get all providers');
+};
+
 //POST: create a user via the signup forms
-exports.users_post = (req, res) => {
+exports.usersPost = (req, res) => {
 
     const requiredFields = ['email', 'password'];
     const missingField = requiredFields.find(field => !(field in req.body));
@@ -162,6 +196,7 @@ exports.users_post = (req, res) => {
             return res.status(201).json(user.serialize());
         })
         .catch(err => {
+            console.log(err);
             // Forward validation errors on to the client, otherwise give a 500
             // error because something unexpected has happened
             if (err.reason === 'ValidationError') {
@@ -175,7 +210,7 @@ exports.users_post = (req, res) => {
 // we're just doing this so we have a quick way to see
 // if we're creating users. keep in mind, you can also
 // verify this in the Mongo shell.
-exports.users_get_all = (req, res) => {
+exports.usersGetAll = (req, res) => {
     Users
         .find()
         .then(user => res.json(user))
@@ -187,70 +222,6 @@ exports.users_get_all = (req, res) => {
 };
 
 
-// // GET: all my clients, authenticated providers only
-// router.get('/clients', (req, res) => {
-//     User
-//         .find()
-//         .then(User => res.json(
-//             User.map(post => post.serialize())
-//         ))
-//         .catch(err => {
-//             console.error(err);
-//             res.status(500).json({ message: 'Inernal server error' })
-//         });
-// });
-
-// // GET one of my clients by ID, accessible by authenticated provider only
-// router.get('/:id', (req, res) => {
-//     User
-//         .findById(req.params.id)
-//         .then(post => res.json(post.serialize()))
-//         .catch(err => {
-//             console.error(err);
-//             res.status(500).json({ message: 'Internal server error' });
-//         })
-// })
-
-// // GET users/me: - get my client object only, accessible by any authenticated user
-
-// //POST: create a user via the signup forms, or by an authenticated provider via 'add client'
-// router.post('/', (req, res) => {
-//     const requiredFields = ['firstName', 'lastName', 'email', 'phone', 'address', 'provider', 'password'];
-//     for (let i = 0; i < requiredFields.length; i++) {
-//         const field = requiredFields[i];
-//         if (!(field in req.body)) {
-//             const message = `Missing \`${field}\` in request body`;
-//             console.error(message);
-//             return res.status(400).send(message);
-//         }
-//     }
-//     const item = User.create({
-//         firstName: req.body.firstName,
-//         lastName: req.body.lastName,
-//         companyName: req.body.companyName, //required for provider?
-//         email: req.body.email,
-//         phone: req.body.lastName,
-//         vetInfo: req.body.vetInfo,
-//         address: {
-//             addressString: req.body.phone,
-//             entryNote: req.body.entryNote,
-//         },
-//         provider: req.body.provider,
-//         password: req.body.password
-//     });
-//     res.status(201).json(item);
-// });
-
-
-// function createUser(user) {
-//     const newUser = new User();
-//     ['address', 'firstname', 'content', 'see'].map(prop => {
-//         if (user.hasOwnProperty(prop)) {
-//             newUser[prop] = user[prop];
-//         }
-//     });
-//     return newUser.save();
-// }
 
 
 // //PUT: update authenticated user (update me), SEPARATE ROUTE: or update client of an authenticated provider 
@@ -287,7 +258,3 @@ exports.users_get_all = (req, res) => {
 //     });
 //     res.status(200).json(updatedItem);
 // });
-
-// //DELETE N/A
-
-// module.exports = router;
