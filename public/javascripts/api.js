@@ -1,314 +1,193 @@
 ///////////////////////////////////////////
 //API
 ///////////////////////////////////////////
-const AUTH_TOKEN = window.localStorage.getItem('AUTH_TOKEN');
-const authHeaders = {
-    'Authorization': 'Bearer ' + AUTH_TOKEN,
-    'Content-Type': 'application/json',
+// let AUTH_TOKEN = window.localStorage.getItem('AUTH_TOKEN');
+
+//AJAX helper
+function ajaxCall(method, url, data) {
+    return $.ajax({
+        method: method,
+        headers: {
+            'Authorization': 'Bearer ' + window.localStorage.getItem('AUTH_TOKEN') || '',
+            'Content-Type': 'application/json',
+        },
+        url: url,
+        data: JSON.stringify(data) || ""
+    })
+}
+
+//Auth
+function addUser(userData) {
+    return new Promise((resolve, reject) => {
+        resolve(ajaxCall('POST', 'auth/signup', userData))
+    })
+}
+
+// function addUser(userData) {
+//     return $.ajax({
+//         method: 'POST',
+//         headers: {
+//             'Content-Type': 'application/json',
+//         },
+//         url: 'auth/signup',
+//         data: JSON.stringify(userData) || ""
+//     })
+// }
+
+function getProviders() {
+    return new Promise((resolve, reject) => {
+        resolve(ajaxCall('GET', 'auth/providers'));
+    })
+}
+
+function loginUser(credentials) {
+    return new Promise((resolve, reject) => {
+        resolve(ajaxCall('POST', 'auth/login', credentials));
+    })
 }
 
 //Users
 function getMe() {
     return new Promise((resolve, reject) => {
-        userData = $.ajax({
-            method: 'GET',
-            headers: authHeaders,
-            url: `api/users/me`,
-        })
-        resolve(userData);
+        resolve(ajaxCall('GET', 'api/users/me'));
     })
 }
-function getMyClient(userID) {
+
+function getClient(userId) {
     return new Promise((resolve, reject) => {
-        userData = $.ajax({
-            method: 'GET',
-            headers: authHeaders,
-            url: `api/users/my_clients/${userID}`,
-        })
-        resolve(userData);
+        resolve(ajaxCall('GET', `api/users/clients/${userId}`));
     })
 }
-function getProviders() {
-    return new Promise((resolve, reject) => {
-        userData = $.ajax({
-            method: 'GET',
-            headers: authHeaders,
-            url: `api/users/providers`,
-        })
-        resolve(providersData);
-    })
-}
+
 function updateMe(userData) {
     return new Promise((resolve, reject) => {
-        $.ajax({
-            method: 'POST',
-            headers: authHeaders,
-            url: 'api/users/me',
-            data: userData,
-        });
-        resolve(userData);
+        resolve(ajaxCall('PUT', 'api/users/me', userData));
     })
 }
-function updateMyClient(userID, userData) {
+function updateMyClient(userId, userData) {
     return new Promise((resolve, reject) => {
-        $.ajax({
-            method: 'POST',
-            headers: authHeaders,
-            url: `api/users/my_clients/${userID}`,
-            data: userData,
-        });
-        resolve(userData);
+        resolve(ajaxCall('PUT', `api/users/clients/${userId}`, userData));
     })
 }
 function getMyClients() {
     return new Promise((resolve, reject) => {
-        clientsData = $.ajax({
-            method: 'GET',
-            headers: authHeaders,
-            url: `api/users/my_clients`,
-        })
-        resolve(clientsData);
+        resolve(ajaxCall('GET', 'api/users/clients'));
     })
 }
 function getClientByName(lastName) {
     return new Promise((resolve, reject) => {
-        clientData = $.ajax({
-            method: 'GET',
-            headers: authHeaders,
-            url: `api/users/my_clients/${lastName}`,
-        })
-        resolve(clientData);
-    })
-}
-function addUser(userData) {
-    return new Promise((resolve, reject) => {
-        $.ajax({
-            method: 'POST',
-            headers: authHeaders,
-            url: 'api/users',
-            data: userData,
-        });
-        resolve(userData);
+        resolve(ajaxCall('GET', `api/users/clients/${lastName}`));
     })
 }
 
 //Pets
-function getMyPet(petID) {
+function getMyPet(petId) {
     return new Promise((resolve, reject) => {
-        petData = $.ajax({
-            method: 'GET',
-            headers: authHeaders,
-            url: `api/pets/${petID}`,
-        })
-        resolve(petData);
+        resolve(ajaxCall('GET', `api/pets/${petId}`))
     })
 }
 function getMyPets() {
     return new Promise((resolve, reject) => {
-        petData = $.ajax({
-            method: 'GET',
-            headers: authHeaders,
-            url: `api/pets`,
-        })
-        resolve(petData);
+        resolve(ajaxCall('GET', 'api/pets'));
     })
 }
-function getClientsPet(petID) {
+function getClientsPet(petId) {
     return new Promise((resolve, reject) => {
-        petData = $.ajax({
-            method: 'GET',
-            headers: authHeaders,
-            url: `api/my_clients/pets/${petID}`,
-        })
-        resolve(petData);
+        resolve(ajaxCall('GET', `api/clients/pets/${petId}`))
     })
 }
-function getClientsPets(clientID) {
+function getClientsPets(clientId) {
     return new Promise((resolve, reject) => {
-        petData = $.ajax({
-            method: 'GET',
-            headers: authHeaders,
-            url: `api/my_clients/${clientID}/pets`,
-        })
-        resolve(petData);
+        resolve(ajaxCall('GET', `api/clients/${clientId}/pets`))
     })
 }
-function updateMyPet(petID, petData) {
+function updateMyPet(petId, petData) {
     return new Promise((resolve, reject) => {
-        $.ajax({
-            method: 'PUT',
-            headers: authHeaders,
-            url: `api/pets/${petID}`,
-            data: petData,
-        });
-        resolve(petData);
+        resolve(ajaxCall('PUT', `api/pets/${petId}`, petData))
     })
 }
-function updateClientsPet(petID, petData) {
+function updateClientsPet(petId, petData) {
     return new Promise((resolve, reject) => {
-        $.ajax({
-            method: 'PUT',
-            headers: authHeaders,
-            url: `api/my_clients/pets/${petID}`,
-            data: petData,
-        });
-        resolve(petData);
+        resolve(ajaxCall('PUT', `api/clients/pets/${petId}`, petData))
     })
 }
 function addMyPet(petData) {
+    console.log("Making POST to add pet");
+    console.log(petData);
     return new Promise((resolve, reject) => {
-        $.ajax({
-            method: 'POST',
-            headers: authHeaders,
-            url: 'api/pets',
-            data: petData,
-        });
-        resolve(petData);
+        resolve(ajaxCall('POST', 'api/pets', petData));
     })
 }
 function addClientPet(petData) {
     return new Promise((resolve, reject) => {
-        $.ajax({
-            method: 'POST',
-            headers: authHeaders,
-            url: 'api/my_clients/pets',
-            data: petData,
-        });
-        resolve(petData);
+        resolve(ajaxCall('POST', 'api/clients/pets', petData))
     })
 }
-function deleteMyPet(petID) {
+function deleteMyPet(petId) {
     return new Promise((resolve, reject) => {
-        $.ajax({
-            method: 'DELETE',
-            headers: authHeaders,
-            url: `api/pets/${petID}`,
-        });
-        resolve(response);
+        resolve(ajaxCall('DELETE', `api/pets/${petId}`))
     })
 }
-function deleteClientPet(petID) {
+function deleteClientPet(petId) {
     return new Promise((resolve, reject) => {
-        $.ajax({
-            method: 'DELETE',
-            headers: authHeaders,
-            url: `api/pets/my_clients/${petID}`,
-        });
-        resolve(response);
+        resolve(ajaxCall('DELETE', `api/pets/clients/${petId}`))
     })
 }
 //Visits
 function getMyUpcomingVisit() {
     return new Promise((resolve, reject) => {
-        visitData = $.ajax({
-            method: 'GET',
-            headers: authHeaders,
-            url: `api/visits/my_upcoming`,
-        })
-        resolve(visitData);
+        resolve(ajaxCall('GET', 'api/visits/upcoming'));
     })
 }
-function getClientsUpcomingVisit(clientID) {
+function getClientsUpcomingVisit(clientId) {
     return new Promise((resolve, reject) => {
-        visitData = $.ajax({
-            method: 'GET',
-            headers: authHeaders,
-            url: `api/my_clients/${clientID}/visits`,
-        })
-        resolve(visitData);
+        resolve(ajaxCall('GET', `api/clients/${clientId}/visits`))
     })
 }
 function getProviderUpcomingVisits() {
     return new Promise((resolve, reject) => {
-        $.ajax({
-            method: 'GET',
-            headers: authHeaders,
-            url: `api/visits/me`,
-        });
-        resolve(visitsData);
+        resolve(ajaxCall('GET', 'api/visits/me'))
     })
 }
 function addVisit(visitData) {
     return new Promise((resolve, reject) => {
-        $.ajax({
-            method: 'POST',
-            headers: authHeaders,
-            url: `api/my_clients/visits`,
-            data: visitData,
-        });
-        resolve(visitData);
+        resolve(ajaxCall('POST', 'api/clients/visits', visitData))
     })
 }
-function deleteVisit(visitID) {
+function deleteVisit(visitId) {
     return new Promise((resolve, reject) => {
-        $.ajax({
-            method: 'DELETE',
-            headers: authHeaders,
-            url: `api/my_clients/visits/${visitID}`,
-        });
-        resolve(response);
+        resolve(ajaxCall('DELETE', `api/clients/visits/${visitId}`))
     })
 }
 //Tasks
 function getMyTasks() {
     return new Promise((resolve, reject) => {
-        tasksData = $.ajax({
-            method: 'GET',
-            headers: authHeaders,
-            url: `api/tasks`,
-        })
-        resolve(tasksData);
+        resolve(ajaxCall('GET', 'api/tasks'));
     })
 }
 function getClientsTasks() {
     return new Promise((resolve, reject) => {
-        tasksData = $.ajax({
-            method: 'GET',
-            headers: authHeaders,
-            url: `api/my_clients/:id/tasks`,
-        })
-        resolve(tasksData);
+        resolve(ajaxCall('GET', 'api/clients/:id/tasks'))
     })
 }
 function addMyTask(taskData) {
+    console.log(taskData);
     return new Promise((resolve, reject) => {
-        $.ajax({
-            method: 'POST',
-            headers: authHeaders,
-            url: `api/tasks`,
-            data: taskData,
-        });
-        resolve(taskData);
+        resolve(ajaxCall('POST', 'api/tasks', taskData))
     })
 }
 function addClientTask(taskData) {
     return new Promise((resolve, reject) => {
-        $.ajax({
-            method: 'POST',
-            headers: authHeaders,
-            url: `api/my_clients/tasks`,
-            data: taskData,
-        });
-        resolve(taskData);
+        resolve(ajaxCall('POST', 'api/clients/tasks', taskData))
     })
 }
-function deleteMyTask(taskID) {
+function deleteMyTask(taskId) {
     return new Promise((resolve, reject) => {
-        $.ajax({
-            method: 'DELETE',
-            headers: authHeaders,
-            url: `api/tasks/${taskID}`,
-        });
-        resolve(response);
+        resolve(ajaxCall('DELETE', `api/tasks/${taskId}`))
     })
 }
-function deleteClientTask(taskID) {
+function deleteClientTask(taskId) {
     return new Promise((resolve, reject) => {
-        $.ajax({
-            method: 'DELETE',
-            headers: authHeaders,
-            url: `api/my_clients/tasks/${taskID}`,
-        });
-        resolve(response);
+        resolve(ajaxCall('DELETE', `api/clients/tasks/${taskId}`))
     })
 }

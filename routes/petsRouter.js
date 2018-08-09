@@ -8,19 +8,19 @@ const petsController = require('../controllers/petsController');
 ////////////////////////////////
 
 //GET: get all of an authenticated provider's client's pets
-router.get('/my_client/:id/pets', petsController.petsClientGetAll);
+router.get('/client/:id/pets', petsController.petsClientGetAll);
 
 // GET by ID: get one pet belonging to the client of an authenticated provider
-router.get('/my_client/pets/:id', petsController.petsClientGetOne);
+router.get('/client/pets/:id', petsController.petsClientGetOne);
 
 //POST: add a pet to the client of an authenticated provider
-router.post('/my_client/pets', petsController.petsClientPost);
+router.post('/client/pets', petsController.petsClientPost);
 
 //PUT: update pet belonging to the client of an authenticated provider
-router.put('/my_client/pets/:id', petsController.petsClientUpdate);
+router.put('/client/pets/:id', petsController.petsClientUpdate);
 
 // DELETE: delete pet belonging to the client of an authenticated provider
-router.delete('/my_client/pets/:id', petsController.petsClientDelete);
+router.delete('/client/pets/:id', petsController.petsClientDelete);
 
 ////////////////////////////////
 //AUTHENTICATED CLIENTS ONLY

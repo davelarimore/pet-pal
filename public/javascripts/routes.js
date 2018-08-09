@@ -19,8 +19,9 @@ router
             handleProviderSignupSubmit();
         },
         'clientDashboard': () => {
+            // checkForToken(); if exists and isn't expired, use navigo hooks
             displayCompactSiteHeader();
-            getClientUserAndDisplayClientDashboard();
+            getMeAndDisplayClientDashboard();
         },
         'providerDashboard': () => {
             displayCompactSiteHeader();
@@ -31,30 +32,27 @@ router
         },
         'updateClient/:userID': (params) => {
             displayCompactSiteHeader();
-            getClientUserAndDisplayClientUpdateForm();
+            getClientUserAndDisplayClientUpdateForm(params.userID);
         },
         'updateProvider/:userID': (params) => {
             displayCompactSiteHeader();
             getProviderUserAndDisplayUpdateForm(params.userID);
         },
-        'pet/:petID': (params) => {
-            displayCompactSiteHeader();
-            getMyPetAndDisplayPetDetail(params.petID);
+        'pet/add': () => {
+            console.log("Getting update my pet form");
+            displayAndHandleAddMyPetForm();
+            },
+        'pet/:id': (params) => {
+            getMyPetAndDisplayPetDetail(params.id);
         },
         'pet/:petID/:action': (params) => {
             displayCompactSiteHeader();
-            if (params.action === 'add') {
-                displayAndHandleAddMyPetForm(params.userID);
-            }
-            else if (params.action === 'delete') {
+            if (params.action === 'delete') {
                 displayDeleteMyPetConfirmation(params.petID);
             }
             else if (params.action === 'update') {
                 getMyPetAndDisplayUpdateForm(params.petID);
             }
-            // else {
-            //     getMyPetAndDisplayPetDetail(params.petID);
-            // }
         },
         'user/:userID/pet/:petID/:action': (params) => {
             displayCompactSiteHeader();
@@ -70,6 +68,9 @@ router
             else {
                 getClientsPetAndDisplayPetDetail(params.petID);
             }
+        },
+        'task/add': () => {
+            displayAndHandleAddMyTaskForm();
         },
         'user/:userID/task/:taskID/:action': (params) => {
             displayCompactSiteHeader();

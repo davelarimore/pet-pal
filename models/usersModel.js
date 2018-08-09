@@ -17,7 +17,12 @@ const userSchema = mongoose.Schema({
     latLon: { type: String, default: '' },
     entryNote: { type: String, default: '' },
     role: { type: String, required: true, default: "client" },
-    password: { type: String, required: true }
+    password: { type: String, required: true },
+    pets: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Pets'}],
+    visits: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Visits'}],
+    tasks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tasks'}],
+    providerId: { type: mongoose.Schema.Types.ObjectId, ref: 'Users'},
+    clients: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Users'}]
 })
 
 // Virtual to generate full name
@@ -37,7 +42,12 @@ userSchema.methods.serialize = function () {
         addressString: this.addressString,
         latLon: this.latLon,
         entryNote: this.entryNote,
-        role: this.role
+        role: this.role,
+        pets: this.pets,
+        visits: this.visits,
+        tasks: this.tasks,
+        providerId: this.providerId,
+        clients: this.clients
     };
 };
 

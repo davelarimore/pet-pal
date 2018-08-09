@@ -16,7 +16,7 @@ const clientSignupFormTemplate = `
     <h2>Create an account</h2>
     <form id="js-client-signup-form">
         <fieldset name="clientSignup">
-            <input type="hidden" id="_id" title="User ID"></input> 
+            <input type="hidden" id="provider" title="Provider ID"></input> 
             <label for="firstName" class="visuallyhidden">First Name</label>
             <input type="text" id="firstName" title="First Name" placeholder="First Name" required></input>
             <label for="lastName" class="visuallyhidden">Last Name</label>

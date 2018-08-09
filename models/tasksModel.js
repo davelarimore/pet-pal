@@ -5,11 +5,11 @@ const mongoose = require('mongoose');
 ///////////////////////////
 
 const taskSchema = mongoose.Schema({
-    client: { type: String, required: true },
-    // client: {
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: 'users'
-    // },
+    // client: { type: String, required: true },
+    clientId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Users'
+    },
     description: { type: String, required: true },
     completed: { type: Boolean, default: false},
 })

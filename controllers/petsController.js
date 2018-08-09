@@ -1,3 +1,4 @@
+const Users = require('../models/usersModel');
 const Pets = require('../models/petsModel');
 
 const jwt = require('jsonwebtoken');
@@ -38,17 +39,7 @@ exports.petsClientDelete = (req, res) => {
 
 //GET: get all 'my' pets for authenticated client
 exports.petsGetAll = (req, res) => {
-    if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
-        let authorization = req.headers.authorization.split(' ')[1],
-            decoded;
-        try {
-            decoded = jwt.verify(authorization, JWT_SECRET);
-        } catch (e) {
-            res.status(401).send('unauthorized');
-        }
-        const userId = decoded.user.id;
-        // Fetch the tasks by client id 
-        Pets.find({ client: userId })
+        Pets.find({ clientId: req.user.id })
             .then(pets => {
                 res.json(pets);
             })
@@ -56,43 +47,51 @@ exports.petsGetAll = (req, res) => {
                 console.error(err);
                 res.status(500).json({ message: 'Internal server error' })
             })
-    }
 };
 
 // GET by ID: get one pet belonging to the authenticated client
 exports.petsGetOne = (req, res) => {
-    if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
-        let authorization = req.headers.authorization.split(' ')[1],
-            decoded;
-        try {
-            decoded = jwt.verify(authorization, JWT_SECRET);
-        } catch (e) {
-            res.status(401).send('unauthorized');
-        }
-        // Fetch the pet by id 
-        Pets.findOne({ _id: req.params.id })
-            .then(pet => {
-                res.json(pet);
-            })
-            .catch(err => {
-                console.error(err);
-                res.status(500).json({ message: 'Internal server error' })
-            })
-    }
+    Pets.findOne({ _id: req.params.id })
+        .then(pet => {
+            res.json(pet);
+        })
+        .catch(err => {
+            console.error(err);
+            res.status(500).json({ message: 'Internal server error' })
+        })
 };
 
 //POST: add a pet to the authenticated client
 exports.petsPost = (req, res) => {
+    let createdPetId = '';
     Pets
         .create({
-            client: req.body.client,
+            clientId: req.body.clientId,
             name: req.body.name,
             type: req.body.type,
             breed: req.body.breed,
             color: req.body.color,
             food: req.body.food,
         })
-        .then(pet => res.status(201).json(pet))
+        .then(pet => {
+            createdPetId = pet.id;
+            return Users.findOne({ _id: req.body.clientId })
+        })
+        .then((user) => {
+            user.pets.push(createdPetId);
+            return user.save();
+        })
+        .then(() => {
+            return Users.findOne({ '_id': req.body.clientId })
+                .populate('pets')
+                .populate({ path: 'visits', options: { sort: { startTime: -1 } } })
+                .populate('tasks')
+                .populate('provider')
+                .populate('clients')
+        })
+        .then(user => {
+            res.status(201).json(user.serialize());
+        })
         .catch(err => {
             console.error(err);
             res.status(500).json({ message: "Internal server error" });
@@ -101,18 +100,60 @@ exports.petsPost = (req, res) => {
 
 //PUT: update pet belonging to the authenticated client
 exports.petsUpdate = (req, res) => {
-    res.send('NOT IMPLEMENTED: Update my pet');
+    //if user owns pet
+    if (req.user.pets.includes(req.body._id)) {
+        const requiredFields = ['name', 'type', 'breed', 'color', 'food'];
+        for (let i = 0; i < requiredFields.length; i++) {
+            const field = requiredFields[i];
+            if (!(field in req.body)) {
+                const message = `Missing \`${field}\` in request body`;
+                console.error(message);
+                return res.status(400).send(message);
+            }
+        }
+        Pets.update({
+            _id: req.body._id
+        },
+            {
+                name: req.body.name,
+                type: req.body.type,
+                breed: req.body.breed,
+                color: req.body.color,
+                food: req.body.food
+            })
+            .then(response => {
+                res.json(response);
+            })
+            .catch(err => {
+                console.error(err);
+                res.status(500).json({ message: 'Internal server error' })
+            })
+        }
+    else {
+        res.status(403).json({ error: 'User does not own pet', usersPets: req.user.pets, petToDelete: req.params.id })
+    }
 };
 
 // DELETE: delete pet belonging to the authenticated client
 exports.petsDelete = (req, res) => {
-    Pets
-        .findByIdAndRemove(req.params.id)
-        .then(() => {
-            res.status(204).json({ message: 'Pet deleted' });
-        })
-        .catch(err => {
-            console.error(err);
-            res.status(500).json({ error: 'Internal server error' });
-        });
+    if (req.user.pets.includes(req.params.id)) {
+        Pets
+            .findByIdAndRemove(req.params.id)
+            .then(() => {
+                return Users.findOne({ _id: req.user.id }).populate('pets')
+            })
+            .then((user) => {
+                user.pets.pull(req.params.id);
+                return user.save();
+            })
+            .then(() => {
+                res.status(204).json({ message: 'Pet deleted' });
+            })
+            .catch(err => {
+                console.error(err);
+                res.status(500).json({ error: 'Internal server error' });
+            });
+    } else {
+        res.status(403).json({ error: 'User does not own pet', usersPets: req.user.pets, petToDelete: req.params.id })
+    }
 }

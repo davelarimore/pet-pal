@@ -11,19 +11,19 @@ const visitsController = require('../controllers/visitsController');
 router.get('/visits/me', visitsController.visitsGetList);
 
 //GET upcoming visit (one) for my client
-router.get('/my_clients/:id/visits', visitsController.visitsGetClientUpcoming);
+router.get('/clients/:id/visits', visitsController.visitsGetClientUpcoming);
 
 //POST: add a visit for the client of an authenticated provider (client's can't add visits)
-router.post('/my_clients/visits', visitsController.visitsPost);
+router.post('/clients/visits', visitsController.visitsPost);
 
 // DELETE: delete a visit for the client of an authenticated provider (client's can't delete visits)
-router.delete('/my_clients/visits/:id', visitsController.visitsDelete);
+router.delete('/clients/visits/:id', visitsController.visitsDelete);
 
 ////////////////////////////////
 // AUTHENTICATED CLIENTS ONLY
 ////////////////////////////////
 
 //GET my upcoming visit 
-router.get('/visits/my_upcoming', visitsController.visitsGetMyUpcoming);
+router.get('/visits/upcoming', visitsController.visitsGetMyUpcoming);
 
 module.exports = router;

@@ -10,14 +10,19 @@ const createAuthToken = function (user) {
     });
 };
 
+require('../models/petsModel');
+require('../models/visitsModel');
+require('../models/petsModel');
 const Users = require('../models/usersModel');
 
 const localAuth = passport.authenticate('local', { session: false });
 
 // Authenticate
 exports.authenticate = (req, res) => {
+    console.log("HANDLING AUTH");
     const authToken = createAuthToken(req.user.serialize());
-    res.json({ authToken });
+    const role = req.user.role;
+    res.status(200).json({ authToken, role });
 };
 
 // Signup
@@ -105,7 +110,7 @@ exports.signup = (req, res) => {
         });
     }
 
-    let { email, password, firstName = '', lastName = '' } = req.body;
+    let { email, password, firstName = '', lastName = '', role, companyName, phone, addressString, vetInfo, entryNote} = req.body;
     // Username and password come in pre-trimmed, otherwise we throw an error
     // before this
     firstName = firstName.trim();
@@ -131,7 +136,13 @@ exports.signup = (req, res) => {
                 email,
                 password: hash,
                 firstName,
-                lastName
+                lastName,
+                companyName,
+                role,
+                phone,
+                addressString,
+                vetInfo,
+                entryNote
             });
         })
         .then(user => {
@@ -150,5 +161,21 @@ exports.signup = (req, res) => {
 
 // Refresh Token
 exports.refresh = (req, res) => {
-    res.send('NOT IMPLEMENTED: Token refresh');
+    res.send('NOT IMPLEMENTED: Refresh token');
+//     const authToken = createAuthToken(req.user);
+//     res.json({ authToken });
 };
+
+
+// GET providers for signup screen
+exports.authGetProviders = (req, res) => {
+    Users
+        .find({ 'role': 'provider' })
+        .then(users => {
+            res.status(201).json(users);
+        })
+        .catch(err => {
+            console.error(err);
+            res.status(500).json({ message: 'Internal server error' })
+        });
+}

@@ -1,3 +1,4 @@
+const Users = require('../models/usersModel');
 const Visits = require('../models/visitsModel');
 
 const jwt = require('jsonwebtoken');
@@ -76,11 +77,9 @@ exports.visitsGetMyUpcoming = (req, res) => {
         } catch (e) {
             res.status(401).send('unauthorized');
         }
-        console.log(decoded);
         const userId = decoded.user.id;
-        console.log(userId);
         // Fetch the tasks by client id 
-        Visits.find({ client: userId })
+        Visits.find({ client: req.user.id })
             .sort('-startTime')
             .limit(1)
             .then(visit => {
