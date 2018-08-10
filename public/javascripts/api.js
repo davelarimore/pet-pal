@@ -69,11 +69,11 @@ function updateMyClient(userId, userData) {
         resolve(ajaxCall('PUT', `api/users/clients/${userId}`, userData));
     })
 }
-function getMyClients() {
-    return new Promise((resolve, reject) => {
-        resolve(ajaxCall('GET', 'api/users/clients'));
-    })
-}
+// function getMyClients() {
+//     return new Promise((resolve, reject) => {
+//         resolve(ajaxCall('GET', 'api/users/clients'));
+//     })
+// }
 function getClientByName(lastName) {
     return new Promise((resolve, reject) => {
         resolve(ajaxCall('GET', `api/users/clients/${lastName}`));

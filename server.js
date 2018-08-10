@@ -19,6 +19,11 @@ const jwtAuth = passport.authenticate('jwt', { session: false });
 mongoose.Promise = global.Promise;
 const { DATABASE_URL } = require('./config');
 
+// app.get("/", (req, res) => {
+//   res.sendFile(__dirname + "/views/index.html");
+// });
+
+
 //App
 app.use('/auth', require('./routes/authRouter'))
 

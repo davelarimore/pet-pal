@@ -110,11 +110,25 @@ exports.signup = (req, res) => {
         });
     }
 
-    let { email, password, firstName = '', lastName = '', role, companyName, phone, addressString, vetInfo, entryNote} = req.body;
+    let {
+        email,
+        password,
+        firstName = '',
+        lastName = '',
+        role,
+        companyName,
+        phone,
+        addressString,
+        vetInfo,
+        entryNote,
+        providerId
+    } = req.body;
     // Username and password come in pre-trimmed, otherwise we throw an error
     // before this
     firstName = firstName.trim();
     lastName = lastName.trim();
+    let createdUserId = '';
+    let createdUserData = '';
 
     return Users.find({ email })
         .count()
@@ -142,11 +156,23 @@ exports.signup = (req, res) => {
                 phone,
                 addressString,
                 vetInfo,
-                entryNote
+                entryNote,
+                providerId
             });
         })
-        .then(user => {
-            return res.status(201).json(user.serialize());
+        .then(createdUser => {
+            console.log(providerId);
+            createdUserId = createdUser.id;
+            createdUserData = createdUser;
+            return Users.findOne({ _id: req.body.providerId });
+        })
+        .then((provider) => {
+            console.log(provider);
+            provider.clients.push(createdUserId);
+            return provider.save();
+        })
+        .then(() => {
+            return res.status(201).json(createdUserData.serialize());
         })
         .catch(err => {
             console.log(err);

@@ -36,15 +36,44 @@ exports.visitsGetClientUpcoming = (req, res) => {
 
 //POST: add a visit for the client of an authenticated provider (client's can't add visits)
 exports.visitsPost = (req, res) => {
+    let createdVisitId = '';
     Visits
         .create({
-            provider: req.body.provider,
-            client: req.body.client,
+            providerId: req.body.providerId,
+            clientId: req.body.clientId,
             startTime: req.body.startTime,
             endTime: req.body.endTime,
             recurrence: req.body.recurrence,
         })
-        .then(visit => res.status(201).json(visit))
+        .then(visit => {
+            //add visit to client's doc
+            createdVisitId = visit.id;
+            return Users.findOne({ _id: req.body.clientId })
+        })
+        .then((user) => {
+            //save client's doc
+            user.visits.push(createdVisitId);
+            return user.save();
+        })
+        .then(() => {
+            //add visit to provider's doc
+            return Users.findOne({ _id: req.body.providerId })
+        })
+        .then((user) => {
+            //save provider's doc
+            user.visits.push(createdVisitId);
+            return user.save();
+        })
+        .then(() => {
+            //get provider and return their populated doc
+            return Users.findOne({ '_id': req.body.providerId })
+                .populate('pets')
+                .populate({ path: 'visits', options: { sort: { startTime: -1 } } })
+                .populate('tasks')
+                .populate('provider')
+                .populate('clients')
+        })
+        .then(user => res.status(201).json(user))
         .catch(err => {
             console.error(err);
             res.status(500).json({ message: "Internal server error" });

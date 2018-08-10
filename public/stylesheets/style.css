@@ -20,8 +20,9 @@ a {
 .compactHeader h1 {
   padding-top: 10px;
 }
-.dashBoardLink {
+.navLink {
   float: right;
+  margin-right: 15px;
 }
 .fullHeader {
   text-align: center;

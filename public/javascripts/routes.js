@@ -3,40 +3,75 @@
 ///////////////////////////////////////////
 const router = new Navigo('localhost:8080', true, '#!');
 
+// For all routes
+// router.hooks({
+//     before: function (done, params) {
+//         if (!window.localStorage.getItem('AUTH_TOKEN')) {
+//             console.log('Not logged in');
+//             window.location.replace('../');
+//             done(false);
+//         }
+//         else {
+//             done();
+//         }
+//     },
+// });
+
+router.on(
+    'clientDashboard',
+    function () {
+        displayCompactSiteHeader('client');
+        getMeAndDisplayClientDashboard();
+    },
+    {
+        before: function (done, params) {
+            if (!window.localStorage.getItem('AUTH_TOKEN')) {
+                window.location.replace('../');
+                done(false);
+            } else {
+                done()
+            }
+        }
+    }
+);
+
 router
     .on({
         'login': () => {
             displayLoginForm();
             handleLoginSubmit();
         },
+        'logout': () => {
+            logout();
+            window.location.replace('../');
+        },
         'signup': () => {
             displaySignupTypeForm();
             handleSignupTypeSubmit();
         },
         'providerSignup': () => {
-            console.log('Handling provider signup button');
             displayProviderSignupForm();
             handleProviderSignupSubmit();
         },
-        'clientDashboard': () => {
-            // checkForToken(); if exists and isn't expired, use navigo hooks
-            displayCompactSiteHeader();
-            getMeAndDisplayClientDashboard();
-        },
+        // 'clientDashboard': () => {
+        //     // checkForToken(); if exists and isn't expired, use navigo hooks
+        //     displayCompactSiteHeader('client');
+        //     getMeAndDisplayClientDashboard();
+        // },
         'providerDashboard': () => {
-            displayCompactSiteHeader();
-            getVisitsAndDisplayProviderDashboard();
+            displayCompactSiteHeader('provider');
+            getMeAndDisplayProviderDashboard();
         },
         'addClient': () => {
             displayClientSignupForm();
         },
         'updateClient/:userID': (params) => {
-            displayCompactSiteHeader();
+            displayCompactSiteHeader('client');
             getClientUserAndDisplayClientUpdateForm(params.userID);
         },
-        'updateProvider/:userID': (params) => {
-            displayCompactSiteHeader();
-            getProviderUserAndDisplayUpdateForm(params.userID);
+        'updateProvider': () => {
+            displayCompactSiteHeader('provider');
+            getProviderUserAndDisplayUpdateForm();
         },
         'pet/add': () => {
             console.log("Getting update my pet form");
@@ -46,7 +81,6 @@ router
             getMyPetAndDisplayPetDetail(params.id);
         },
         'pet/:petID/:action': (params) => {
-            displayCompactSiteHeader();
             if (params.action === 'delete') {
                 displayDeleteMyPetConfirmation(params.petID);
             }
@@ -55,7 +89,6 @@ router
             }
         },
         'user/:userID/pet/:petID/:action': (params) => {
-            displayCompactSiteHeader();
             if (params.action === 'add') {
                 displayAndHandleAddClientPetForm(params.userID);
             }
@@ -73,7 +106,6 @@ router
             displayAndHandleAddMyTaskForm();
         },
         'user/:userID/task/:taskID/:action': (params) => {
-            displayCompactSiteHeader();
             if (params.action === 'add') {
                 displayAddClientTaskForm(params.userID);
             }
@@ -81,26 +113,27 @@ router
                 displayDeleteMyTaskConfirmation(params.taskID);
             }
         },
-        'user/:userID/visit/:visitID/:action': (params) => {
-            displayCompactSiteHeader();
-            if (params.action === 'add') {
-                getMyClientsAndDisplayAddVisitForm(params.userID);
-            }
-            else if (params.action === 'delete') {
-                displayDeleteVisitConfirmation(params.visitID);
-            }
+        'visits': () => {
+            displayCompactSiteHeader('provider');
+            getAndDisplayAllVisits();
         },
-        'user/:userID/visits': (params) => {
-            displayCompactSiteHeader();
-            getAndDisplayAllVisits(params.userID);
+        'visits/add': () => {
+            getMyClientsAndDisplayAddVisitForm();
         },
-        'user/:userID/clients': (params) => {
-            displayCompactSiteHeader();
-            getAndDisplayAllClients(params.userID);
+        'visits/:id/delete': (params) => {
+                displayDeleteVisitConfirmation(params.id);
+        },
+        'clients': () => {
+            displayCompactSiteHeader('provider');
+            getAndDisplayAllClients();
+        },
+        'clients/add': () => {
+            displayCompactSiteHeader('provider');
+            displayAddClientForm();
         },
         //click from client list
         'user/:userID/clientDetail': (params) => {
-            displayCompactSiteHeader();
+            displayCompactSiteHeader('provider');
             getClientUserAndDisplayClientDashboard(params.userID);
         },
     })

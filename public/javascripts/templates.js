@@ -77,9 +77,20 @@ const loginFormTemplate = `<div class="boxed">
     </form>
     </div>`;
 
-const compactHeaderTemplate = `
+const compactHeaderClientTemplate = `
     <div class="compactHeader">
-    <a href="#clientDashboard" class="dashBoardLink">Dashboard</a>
+    <a href="#logout" class="navLink">Logout</a>
+    <a href="#clientDashboard" class="navLink">Dashboard</a>
+    <a href="index.html">
+            <img src="images/logo.svg" alt="Pet Pal">
+        </a>
+        <h1>Pet Pal</h1>
+    </div>`;
+
+const compactHeaderProviderTemplate = `
+    <div class="compactHeader">
+    <a href="#logout" class="navLink">Logout</a>
+    <a href="#providerDashboard" class="navLink">Dashboard</a>
     <a href="index.html">
             <img src="images/logo.svg" alt="Pet Pal">
         </a>
@@ -133,13 +144,13 @@ const providerDashboardTemplate = `
     <div class="boxed">
     <h2>Visits</h2>
     <div id="js-visits-list"></div>
-    <a class="buttonSmall" id="js-all-visits-button" href="#">View All</a>
-    <a class="buttonSmall" id="js-add-visit-button" href="#">Add</a>
+    <a class="buttonSmall" id="js-all-visits-button" href="#visits">View All</a>
+    <a class="buttonSmall" id="js-add-visit-button" href="#visits/add">Add</a>
     </div>
     <div class="boxed">
     <h2>Clients</h2>
-    <a class="buttonSmall" id="js-all-clients-button" href="#">View All</a>
-    <a class="buttonSmall" id="js-add-client-button" href="#">Add</a>
+    <a class="buttonSmall" id="js-all-clients-button" href="#clients">View All</a>
+    <a class="buttonSmall" id="js-add-client-button" href="#clients/add">Add</a>
     <form id="js-search-client">
         <fieldset name="clientSearch">
             <label for="lastName" class="visuallyhidden">Search by last name</label>
@@ -148,19 +159,18 @@ const providerDashboardTemplate = `
         </fieldset>
     </form>
     </div>
-    <a class="button" id="js-update-profile-button" href="#">Update My Info</a>`;
+    <a class="button" id="js-update-profile-button" href="#updateProvider">Update My Info</a>`;
 
 const addVisitFormTemplate = `
     <div class="boxed">
     <h2>Add a Visit</h2>
     <form id="js-add-visit-form">
         <fieldset name="addVisit">
+            <input type="hidden" id="provider" title="Provider ID"></input> 
             <label for="client" class="visuallyhidden">Client</label>
                 <select id="js-client-list" title="Client" required>
                     <option value="" disabled selected hidden>Client</option>
                 </select>
-            <label for="date" class="visuallyhidden">Date</label>
-            <input type="text" id="date" title="Date" placeholder="Date"></input>
             <label for="startTime" class="visuallyhidden">Start Time</label>
             <input type="text" id="startTime" title="Start Time" placeholder="Start Time" required></input>
             <label for="endTime" class="visuallyhidden">End Time</label>
