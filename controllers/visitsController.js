@@ -5,18 +5,7 @@ const Visits = require('../models/visitsModel');
 //AUTHENTICATED PROVIDERS ONLY
 ////////////////////////////////
 
-//GET upcoming visit for my client
-exports.visitsGetClientUpcoming = (req, res) => {
-    Visits
-        .find({'client': req.params.id })
-        .sort('-startTime')
-        .limit(1)
-        .then(visit => res.json(visit))
-        .catch(err => {
-            console.error(err);
-            res.status(500).json({ message: 'Internal server error' })
-        });
-}
+//GET handled by getMe()
 
 //POST: add a visit for the client of an authenticated provider (client's can't add visits)
 exports.visitsPost = (req, res) => {

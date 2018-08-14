@@ -5,6 +5,7 @@ const chaiHttp = require('chai-http');
 
 const { app, runServer, closeServer } = require('../server');
 const Users = require('../models/usersModel');
+const Tasks = require('../models/tasksModel');
 
 const expect = chai.expect;
 
@@ -29,35 +30,32 @@ describe('Protected tasks endpoint', function () {
     const lastName = 'User';
     const description = 'Test task';
     let createdClientId = '';
+    let createdTaskId = '';
 
     before(function () {
-        return runServer();
+        return runServer()
+        .then(() => {
+            return Users.hashPassword(password).then(password =>
+                Users.create({
+                    email,
+                    password,
+                    firstName,
+                    lastName
+                })
+                    .then(user => {
+                        createdClientId = user.id;
+                    })
+            );
+        })
     });
 
     after(function () {
-        return closeServer();
-    });
-
-    beforeEach(function () {
-        return Users.hashPassword(password).then(password =>
-            Users.create({
-                email,
-                password,
-                firstName,
-                lastName
-            })
-            .then(user => {
-                createdClientId = user.id;
-            })
-        );
-    });
-
-    afterEach(function () {
-        return Users.remove({});
+        return Users.remove({})
+            .then(() => closeServer())
     });
 
     describe('/api/tasks', function () {
-        it(`Should post task and associate it with current user`, function () {
+        it(`Should post task`, function () {
             return login(email, password)
                 .then((token) => {
                     return chai
@@ -69,13 +67,26 @@ describe('Protected tasks endpoint', function () {
                             description
                         })
                         .then(res => {
+                            createdTaskId = res.body._id;
                             expect(res).to.have.status(201);
                             expect(res.body).to.be.an('object');
-                            expect(res.body.email).to.deep.equal(email);
-                            expect(res.body.firstName).to.deep.equal(firstName);
-                            expect(res.body.lastName).to.deep.equal(lastName);
-                            expect(res.body.tasks[0].description).to.deep.equal(description);
+                            expect(res.body.clientId).to.deep.equal(createdClientId);
+                            expect(res.body.description).to.deep.equal(description);
                         });
+                })
+        });
+        it(`Should delete task`, function () {
+            return login(email, password)
+                .then((token) => {
+                    return (
+                        chai
+                            .request(app)
+                            .delete(`/api/tasks/${createdTaskId}`)
+                            .set('authorization', `Bearer ${token}`)
+                            .then(function (res) {
+                                expect(res).to.have.status(204);
+                            })
+                    );
                 })
         });
     });

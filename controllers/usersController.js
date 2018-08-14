@@ -8,17 +8,6 @@ const Users = require('../models/usersModel');
 
 // GET handled by getMe()
 
-// POST new client accessible by authenticated provider only
-exports.usersPostClient = (req, res) => {
-    res.send('NOT IMPLEMENTED: Add a client');
-};
-
-//PUT MY CLIENT: update client of an authenticated provider 
-exports.usersPutClient = (req, res) => {
-    res.send('NOT IMPLEMENTED: Update a client');
-};
-
-
 ////////////////////////////////
 // ALL AUTHENTICATED USERS
 ////////////////////////////////
@@ -29,12 +18,12 @@ exports.usersGetMe = (req, res) => {
         .findOne({ '_id': req.user._id })
         .populate('pets')
         // .populate('visits')
-        .populate({ path: 'visits', populate: {path: 'client', model: 'Users'}, options: { sort: { startTime: -1 } } })
+        .populate({ path: 'visits', populate: {path: 'client', model: 'Users'}, options: { sort: { startTime: 1 } } })
         .populate('tasks')
         .populate('provider')
         .populate({ path: 'clients', populate: { path: 'tasks', model: 'Tasks' } })
         .populate({ path: 'clients', populate: { path: 'pets', model: 'Pets' } })
-        .populate({ path: 'clients', populate: { path: 'visits', model: 'Visits' }, options: { sort: { startTime: -1 } } })
+        .populate({ path: 'clients', populate: { path: 'visits', model: 'Visits' }, options: { sort: { startTime: 1 } } })
         .then(user => {
             res.status(200).json(user.serialize());
         })
@@ -61,7 +50,7 @@ exports.usersPutMe = (req, res) => {
             }
         }
         console.log(`Updating user item \`${req.body._id}\``);
-        Users.update({
+        Users.findOneAndUpdate({
             _id: req.body._id
             },
             {
@@ -71,7 +60,8 @@ exports.usersPutMe = (req, res) => {
             addressString: req.body.addressString,
             entryNote: req.body.entryNote,
             vetInfo: req.body.vetInfo
-            })
+            },
+            { new: true }) //returns updated doc
             .then(response => {
                 res.json(response);
             })

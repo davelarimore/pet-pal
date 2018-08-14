@@ -157,13 +157,6 @@ const providerDashboardTemplate = `
     <h2>Clients</h2>
     <a class="buttonSmall" id="js-all-clients-button" href="#clients">View All</a>
     <a class="buttonSmall" id="js-add-client-button" href="#addClient">Add</a>
-    <form id="js-search-client">
-        <fieldset name="clientSearch">
-            <label for="lastName" class="visuallyhidden">Search by last name</label>
-            <input type="text" id="lastName" title="Client Last Name" placeholder="Client Last Name" required></input>
-            <input type="submit" value="Search" class="button">
-        </fieldset>
-    </form>
     </div>
     <a class="button" id="js-update-profile-button" href="#updateProvider">Update My Info</a>`;
 
@@ -195,3 +188,12 @@ const addVisitFormTemplate = `
 //        <option value="weekly">Weekly</option>
 //        <option value="none">None</option>
 //    </select>
+
+
+//<form id="js-search-client">
+//    <fieldset name="clientSearch">
+//        <label for="lastName" class="visuallyhidden">Search by last name</label>
+//        <input type="text" id="lastName" title="Client Last Name" placeholder="Client Last Name" required></input>
+//        <input type="submit" value="Search" class="button">
+//        </fieldset>
+//    </form>

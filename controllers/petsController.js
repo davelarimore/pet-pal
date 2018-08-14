@@ -36,7 +36,7 @@ exports.petsUpdate = (req, res) => {
                 return res.status(400).send(message);
             }
         }
-        Pets.update({
+        Pets.findOneAndUpdate({
             _id: req.body._id
         },
             {
@@ -45,9 +45,10 @@ exports.petsUpdate = (req, res) => {
                 breed: req.body.breed,
                 color: req.body.color,
                 food: req.body.food
-            })
+            },
+            { new: true }) //returns update doc
             .then(response => {
-                res.json(response);
+                res.status(200).json(response);
             })
             .catch(err => {
                 console.error(err);

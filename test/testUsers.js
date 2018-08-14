@@ -31,26 +31,22 @@ describe('Protected users endpoint', function () {
     const lastName = 'User';
 
     before(function () {
-        return runServer();
+        return runServer()
+        .then(() => {
+            return Users.hashPassword(password).then(password =>
+                Users.create({
+                    email,
+                    password,
+                    firstName,
+                    lastName
+                })
+            );
+        })
     });
 
     after(function () {
-        return closeServer();
-    });
-
-    beforeEach(function () {
-        return Users.hashPassword(password).then(password =>
-            Users.create({
-                email,
-                password,
-                firstName,
-                lastName
-            })
-        );
-    });
-
-    afterEach(function () {
-        return Users.remove({});
+        return Users.remove({})
+            .then(() => closeServer())
     });
 
     describe('/api/users/me', function () {
@@ -99,6 +95,31 @@ describe('Protected users endpoint', function () {
                         expect(res.body.lastName).to.deep.equal(lastName);
                     });
             })
+        });
+        it(`Should update user`, function () {
+            const updateData = {
+                _id: createdUserId,
+                firstName: 'foo',
+                lastName: 'bar',
+                phone: 'fizz',
+                addressString: 'buzz'
+            };
+            return login(email, password)
+                .then((token) => {
+                    return (
+                        chai
+                            .request(app)
+                            .put(`/api/users/me`)
+                            .set('authorization', `Bearer ${token}`)
+                            .send(updateData)
+                            .then((res) => {
+                                console.log(res.body);
+                                expect(res).to.have.status(200);
+                                expect(res.body).to.be.a("object");
+                                expect(res.body.lastName).to.deep.equal(updateData.lastName);
+                            })
+                    );
+                })
         });
     });
 });

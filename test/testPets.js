@@ -5,6 +5,7 @@ const chaiHttp = require('chai-http');
 
 const { app, runServer, closeServer } = require('../server');
 const Users = require('../models/usersModel');
+const Pets = require('../models/petsModel');
 
 const expect = chai.expect;
 
@@ -28,6 +29,7 @@ describe('Protected pets endpoint', function () {
     const firstName = 'Example';
     const lastName = 'User';
     let createdClientId = '';
+    let createdPetId = '';
 
     const name = 'Test cat';
     const type = 'Cat';
@@ -36,33 +38,29 @@ describe('Protected pets endpoint', function () {
     const food = 'Test food';
 
     before(function () {
-        return runServer();
+        return runServer()
+        .then(() => {
+            return Users.hashPassword(password).then(password =>
+                Users.create({
+                    email,
+                    password,
+                    firstName,
+                    lastName
+                })
+                    .then(user => {
+                        createdClientId = user.id;
+                    })
+            );
+        })
     });
 
     after(function () {
-        return closeServer();
-    });
-
-    beforeEach(function () {
-        return Users.hashPassword(password).then(password =>
-            Users.create({
-                email,
-                password,
-                firstName,
-                lastName
-            })
-                .then(user => {
-                    createdClientId = user.id;
-                })
-        );
-    });
-
-    afterEach(function () {
-        return Users.remove({});
+        return Users.remove({})
+        .then(() => closeServer())
     });
 
     describe('/api/pets', function () {
-        it(`Should post a pet and associate it with the current user`, function () {
+        it(`Should post a pet`, function () {
             return login(email, password)
                 .then((token) => {
                     return chai
@@ -78,17 +76,56 @@ describe('Protected pets endpoint', function () {
                             food
                         })
                         .then(res => {
+                            createdPetId = res.body._id;
                             expect(res).to.have.status(201);
                             expect(res.body).to.be.an('object');
-                            expect(res.body.email).to.deep.equal(email);
-                            expect(res.body.firstName).to.deep.equal(firstName);
-                            expect(res.body.lastName).to.deep.equal(lastName);
-                            expect(res.body.pets[0].name).to.deep.equal(name);
-                            expect(res.body.pets[0].type).to.deep.equal(type);
-                            expect(res.body.pets[0].breed).to.deep.equal(breed);
-                            expect(res.body.pets[0].color).to.deep.equal(color);
-                            expect(res.body.pets[0].food).to.deep.equal(food);
+                            expect(res.body.clientId).to.deep.equal(createdClientId);
+                            expect(res.body.name).to.deep.equal(name);
+                            expect(res.body.type).to.deep.equal(type);
+                            expect(res.body.breed).to.deep.equal(breed);
+                            expect(res.body.color).to.deep.equal(color);
+                            expect(res.body.food).to.deep.equal(food);
                         });
+                })
+        });
+        it(`Should update pet`, function () {
+            const updateData = {
+                _id: createdPetId,
+                name: 'foo',
+                type: 'bar',
+                breed: 'fizz',
+                color: 'buzz',
+                food: 'test'
+            };
+            return login(email, password)
+                .then((token) => {
+                    return (
+                        chai
+                            .request(app)
+                            .put(`/api/pets/${createdPetId}`)
+                            .set('authorization', `Bearer ${token}`)
+                            .send(updateData)
+                            .then((res) => {
+                                console.log(res.body);
+                                expect(res).to.have.status(200);
+                                expect(res.body).to.be.a("object");
+                                expect(res.body.name).to.deep.equal(updateData.name);
+                            })
+                    );
+                })
+        });
+        it(`Should delete pet`, function () {
+            return login(email, password)
+                .then((token) => {
+                    return (
+                        chai
+                            .request(app)
+                            .delete(`/api/pets/${createdPetId}`)
+                            .set('authorization', `Bearer ${token}`)
+                            .then(function (res) {
+                                expect(res).to.have.status(204);
+                            })
+                    );
                 })
         });
     });

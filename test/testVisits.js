@@ -5,6 +5,7 @@ const chaiHttp = require('chai-http');
 
 const { app, runServer, closeServer } = require('../server');
 const Users = require('../models/usersModel');
+const Visits = require('../models/visitsModel');
 
 const expect = chai.expect;
 
@@ -28,6 +29,7 @@ describe('Protected visits endpoint', function () {
     const firstName = 'Example';
     const lastName = 'User';
     let createdClientId = '';
+    let createdVisitId = '';
 
     const providerEmail = 'exampleProvider@test.biz';
     const providerPassword = 'examplePass';
@@ -37,49 +39,45 @@ describe('Protected visits endpoint', function () {
 
     const startTime = '2001-08-30T14:30:00.000Z';
     const endTime = '2001-08-30T15:00:00.000Z';
-    const recurrence = 'Daily';
 
     before(function () {
-        return runServer();
+        return runServer()
+        .then(() => {
+        return Users.hashPassword(providerPassword).then(password =>
+            Users.create({
+                email: providerEmail,
+                password,
+                firstName: providerFirstName,
+                lastName: providerLastName
+            })
+                .then(user => {
+                    createdProviderId = user.id;
+                })
+            )
+        })
+            .then(() => {
+                return Users.hashPassword(password).then(password =>
+                    Users.create({
+                        email,
+                        password,
+                        firstName,
+                        lastName,
+                        providerId: createdProviderId
+                    })
+                        .then(user => {
+                            createdClientId = user.id;
+                        })
+                )
+            })
     });
 
     after(function () {
-        return closeServer();
-    });
-
-    beforeEach(function () {
-        return Users.hashPassword(password).then(password =>
-            Users.create({
-                email,
-                password,
-                firstName,
-                lastName
-            })
-                .then(user => {
-                    createdClientId = user.id;
-                })
-        )
-        .then(() => {
-            return Users.hashPassword(providerPassword).then(password =>
-                Users.create({
-                    email: providerEmail,
-                    password,
-                    firstName: providerFirstName,
-                    lastName: providerLastName
-                })
-                    .then(user => {
-                        createdProviderId = user.id;
-                    })
-            );
-        })
-    });
-
-    afterEach(function () {
-        return Users.remove({});
+        return Users.remove({})
+            .then(() => closeServer())
     });
 
     describe('/api/clients/visits', function () {
-        it(`Should post a visit and associate it with the client and their provider`, function () {
+        it(`Should post a visit`, function () {
             return login(providerEmail, providerPassword)
                 .then((token) => {
                     return chai
@@ -88,21 +86,33 @@ describe('Protected visits endpoint', function () {
                         .set('authorization', `Bearer ${token}`)
                         .send({
                             providerId: createdProviderId,
-                            clientId: createdClientId,
+                            client: createdClientId,
                             startTime,
-                            endTime,
-                            recurrence
+                            endTime
                         })
                         .then(res => {
+                            createdVisitId = res.body.visits[0]._id;
                             expect(res).to.have.status(201);
                             expect(res.body).to.be.an('object');
-                            expect(res.body.email).to.deep.equal(providerEmail);
-                            expect(res.body.visits[0].clientId).to.deep.equal(createdClientId);
+                            expect(res.body.visits[0].client._id).to.deep.equal(createdClientId);
                             expect(res.body.visits[0].providerId).to.deep.equal(createdProviderId);
                             expect(res.body.visits[0].startTime).to.deep.equal(startTime);
                             expect(res.body.visits[0].endTime).to.deep.equal(endTime);
-                            expect(res.body.visits[0].recurrence).to.deep.equal(recurrence);
                         });
+                })
+        });
+        it(`Should delete visit`, function () {
+            return login(email, password)
+                .then((token) => {
+                    return (
+                        chai
+                            .request(app)
+                            .delete(`/api/clients/visits/${createdVisitId}`)
+                            .set('authorization', `Bearer ${token}`)
+                            .then(function (res) {
+                                expect(res).to.have.status(204);
+                            })
+                    );
                 })
         });
     });

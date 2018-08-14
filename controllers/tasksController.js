@@ -1,28 +1,8 @@
 const Tasks = require('../models/tasksModel');
 
-////////////////////////////////
-//AUTHENTICATED PROVIDERS ONLY
-////////////////////////////////
-
 //GET is handled by getMe
 
-//POST: add task to the client of an authenticated provider
-exports.tasksClientPost = (req, res) => {
-    res.send('NOT IMPLEMENTED: Add task to my client');
-};
-
-// DELETE: delete task belonging to the client of an authenticated provider
-exports.tasksClientDelete = (req, res) => {
-    res.send('NOT IMPLEMENTED: Delete task belonging to my client');
-};
-
-////////////////////////////////
-//AUTHENTICATED CLIENTS ONLY
-////////////////////////////////
-
-//GET is handled by getMe
-
-//POST: add task to the authenticated client
+//POST: add task to the authenticated client or client of provider
 exports.tasksPost = (req, res) => {
     let createdTaskId = '';
     Tasks

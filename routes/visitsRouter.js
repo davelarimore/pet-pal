@@ -8,7 +8,7 @@ const visitsController = require('../controllers/visitsController');
 ////////////////////////////////
 
 //GET upcoming visit (one) for my client
-router.get('/clients/:id/visits', visitsController.visitsGetClientUpcoming);
+// router.get('/clients/:id/visits', visitsController.visitsGetClientUpcoming);
 
 //POST: add a visit for the client of an authenticated provider (client's can't add visits)
 router.post('/clients/visits', visitsController.visitsPost);
