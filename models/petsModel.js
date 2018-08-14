@@ -5,9 +5,10 @@ const mongoose = require('mongoose');
 ///////////////////////////
 
 const petSchema = mongoose.Schema({
-    client: {
+    // client: { type: String, required: true },
+    clientId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'users'
+        ref: 'Users'
     },
     name: { type: String, required: true },
     type: { type: String, required: true },
@@ -15,5 +16,35 @@ const petSchema = mongoose.Schema({
     color: { type: String },
     food: { type: String }
 })
+
+// Push new pet reference to the client's document
+petSchema.pre('save', function (next) {
+    const pet = this;
+    if (pet.isNew) {
+        pet.model('Users').update({ _id: this.clientId }, {
+            $push: { pets: pet._id }
+        })
+        .then(() => {
+            next();
+        })
+        .catch((err) => {
+            next(err);
+        })
+    }
+});
+
+// Remove deleted pet's reference from the client's document
+petSchema.pre('remove', function (next) {
+    const pet = this;
+        pet.model('Users').update({ _id: this.clientId }, {
+            $pull: { pets: pet._id }
+        })
+            .then(() => {
+                next();
+            })
+            .catch((err) => {
+                next(err);
+            })
+});
 
 module.exports = mongoose.model('Pets', petSchema, 'pets');

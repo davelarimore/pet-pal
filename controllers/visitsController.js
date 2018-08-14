@@ -1,98 +1,51 @@
+const Users = require('../models/usersModel');
 const Visits = require('../models/visitsModel');
 
 ////////////////////////////////
 //AUTHENTICATED PROVIDERS ONLY
 ////////////////////////////////
 
-//GET: get all visits belonging to an authenticated provider
-exports.visits_get_list = (req, res) => {
-    console.log(req.params.id);
-    Visits
-        .find({'provider': req.params.id })
-        .then(visits => {
-            console.log(visits);
-            res.json(visits)
-        })
-        .catch(err => {
-            console.error(err);
-            res.status(500).json({ message: 'Internal server error' })
-        });
-}
-
-//GET upcoming visit for my client
-exports.visits_get_client_upcoming = (req, res) => {
-    Visits
-        .find({'client': req.params.id })
-        .sort('-startTime')
-        .limit(1)
-        .then(visit => res.json(visit))
-        .catch(err => {
-            console.error(err);
-            res.status(500).json({ message: 'Internal server error' })
-        });
-}
+//GET handled by getMe()
 
 //POST: add a visit for the client of an authenticated provider (client's can't add visits)
-exports.visits_post = (req, res) => {
-    res.send('NOT IMPLEMENTED: Add a visit to my client');
+exports.visitsPost = (req, res) => {
+    if (req.user.clients.includes(req.body.client)) {
+        Visits
+            .create({
+                providerId: req.body.providerId,
+                client: req.body.client,
+                startTime: req.body.startTime,
+                endTime: req.body.endTime,
+                recurrence: req.body.recurrence,
+            })
+            .then(() => {
+                //get provider and return their populated doc
+                return Users.findOne({ '_id': req.body.providerId })
+                    .populate('pets')
+                    .populate({ path: 'visits', populate: { path: 'client', model: 'Users' }, options: { sort: { startTime: -1 } } })
+                    .populate('tasks')
+                    .populate('provider')
+                    .populate('clients')
+            })
+            .then(user => res.status(201).json(user))
+            .catch(err => {
+                console.error(err);
+                res.status(500).json({ message: "Internal server error" });
+            });
+    }
 }
 
 // DELETE: delete a visit for the client of an authenticated provider (client's can't delete visits)
-exports.visits_delete = (req, res) => {
-    res.send('NOT IMPLEMENTED: Delete visit beloning to my client');
+exports.visitsDelete = (req, res) => {
+    if (req.user.visits.includes(req.params.id)) {
+        Visits
+            .findByIdAndRemove(req.params.id)
+            .then(() => {
+                res.status(204).json({ message: 'Visit deleted' });
+            })
+            .catch(err => {
+                console.error(err);
+                res.status(500).json({ error: 'Internal server error' });
+            });
+    }
 }
-
-////////////////////////////////
-// AUTHENTICATED CLIENTS ONLY
-////////////////////////////////
-
-//GET my upcoming visit 
-exports.visits_get_my_upcoming = (req, res) => {
-    res.send('NOT IMPLEMENTED: get my upcoming visit');
-}
-
-// //GET: get all visits belonging to an authenticated provider
-// visitSchema.get((req, res) => {
-
-//         .find()
-//         .catch(err => {
-//             console.error(err);
-//             res.status(500).json({ message: 'Inernal server error' })
-//         });
-// });
-
-
-// //GET upcoming: get the (one) upcoming visit for an authenticated client,
-// // or for the client of an authenticated provider
-
-// //POST: add a visit for the client of an authenticated provider (client's can't add visits)
-// router.post('/', (req, res) => {
-//     const requiredFields = ['user', 'client', 'startTime', 'endTime', 'recurrence'];
-//     for (let i = 0; i < requiredFields.length; i++) {
-//         const field = requiredFields[i];
-//         if (!(field in req.body)) {
-//             const message = `Missing \`${field}\` in request body`;
-//             console.error(message);
-//             return res.status(400).send(message);
-//         }
-//     }
-//     const item = Visit.create({
-//         user: req.body.user,
-//         client: req.body.client,
-//         startTime: req.body.startTime,
-//         endTime: req.body.endTime,
-//         recurrence: req.body.recurrence
-//     });
-//     res.status(201).json(item);
-// });
-
-// //PUT N/A
-
-// // DELETE: delete a visit for the client of an authenticated provider (client's can't delete visits)
-// router.delete('/:id', (req, res) => {
-//     Visit.delete(req.params.id);
-//     console.log(`Deleted visit \`${req.params.ID}\``);
-//     res.status(204).end();
-// });
-
-// module.exports = router;

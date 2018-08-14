@@ -1,29 +1,19 @@
 const express = require('express');
 const router = express.Router();
 
-const visits_controller = require('../controllers/visitsController');
+const visitsController = require('../controllers/visitsController');
 
 ////////////////////////////////
 //AUTHENTICATED PROVIDERS ONLY
 ////////////////////////////////
 
-//GET: get all visits belonging to an authenticated provider
-router.get('/visits/:id', visits_controller.visits_get_list);
-
-//GET upcoming visit for my client
-router.get('/visits/my_client/:id/upcoming', visits_controller.visits_get_client_upcoming);
+//GET upcoming visit (one) for my client
+// router.get('/clients/:id/visits', visitsController.visitsGetClientUpcoming);
 
 //POST: add a visit for the client of an authenticated provider (client's can't add visits)
-router.post('/visits/my_client/:id', visits_controller.visits_post);
+router.post('/clients/visits', visitsController.visitsPost);
 
 // DELETE: delete a visit for the client of an authenticated provider (client's can't delete visits)
-router.delete('/visits/my_client/:id', visits_controller.visits_delete);
-
-////////////////////////////////
-// AUTHENTICATED CLIENTS ONLY
-////////////////////////////////
-
-//GET my upcoming visit 
-router.get('/visits/my_upcoming', visits_controller.visits_get_my_upcoming);
+router.delete('/clients/visits/:id', visitsController.visitsDelete);
 
 module.exports = router;
