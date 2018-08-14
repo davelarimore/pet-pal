@@ -29,6 +29,7 @@ describe('Protected users endpoint', function () {
     const password = 'examplePass';
     const firstName = 'Example';
     const lastName = 'User';
+    let createdUserId = '';
 
     before(function () {
         return runServer()
@@ -40,7 +41,11 @@ describe('Protected users endpoint', function () {
                     firstName,
                     lastName
                 })
+                    .then(user => {
+                        createdUserId = user.id;
+                    })
             );
+
         })
     });
 
