@@ -16,7 +16,8 @@ const clientSignupFormTemplate = `
     <h2>Create an account</h2>
     <form id="js-client-signup-form">
         <fieldset name="clientSignup">
-            <input type="hidden" id="provider" title="Provider ID"></input> 
+            <input type="hidden" id="provider" title="Provider ID"></input>
+            <input type="hidden" id="clientId" title="Client ID"></input> 
             <label for="firstName" class="visuallyhidden">First Name</label>
             <input type="text" id="firstName" title="First Name" placeholder="First Name" required></input>
             <label for="lastName" class="visuallyhidden">Last Name</label>
@@ -27,6 +28,8 @@ const clientSignupFormTemplate = `
             <input type="text" id="phone" title="Phone Number" placeholder="Phone" required></input>
             <label for="streetAddress" class="visuallyhidden">Street Address</label>
             <input type="text" id="streetAddress" title="Street Address" placeholder="Address" required></input>
+            <label for="entryNote" class="visuallyhidden">Entry Note</label>
+            <input type="text" id="entryNote" title="Entry Note" placeholder="Entry Note"></input>
             <label for="vetInfo" class="visuallyhidden">Veterinarian Name</label>
             <input type="text" id="vetInfo" title="Veterinarian Name" placeholder="Veterinarian Name"></input>
             <label for="password" class="visuallyhidden">Password</label>
@@ -42,7 +45,8 @@ const providerSignupFormTemplate = `
     <div class="boxed">
     <h2>Create an account</h2>
     <form id="js-provider-signup-form">
-        <fieldset name="clientSignup">
+        <fieldset name="providerSignup">
+            <input type="hidden" id="providerId" title="Provider ID"></input>
             <label for="companyName" class="visuallyhidden">Company Name</label>
                 <input type="text" id="companyName" title="Company Name" placeholder="Company Name" required></input>
             <label for="firstName" class="visuallyhidden">First Name</label>
@@ -81,7 +85,7 @@ const compactHeaderClientTemplate = `
     <div class="compactHeader">
     <a href="#logout" class="navLink">Logout</a>
     <a href="#clientDashboard" class="navLink">Dashboard</a>
-    <a href="index.html">
+    <a href="#clientDashboard">
             <img src="images/logo.svg" alt="Pet Pal">
         </a>
         <h1>Pet Pal</h1>
@@ -91,7 +95,7 @@ const compactHeaderProviderTemplate = `
     <div class="compactHeader">
     <a href="#logout" class="navLink">Logout</a>
     <a href="#providerDashboard" class="navLink">Dashboard</a>
-    <a href="index.html">
+    <a href="#providerDashboard">
             <img src="images/logo.svg" alt="Pet Pal">
         </a>
         <h1>Pet Pal</h1>
@@ -102,6 +106,7 @@ const addPetFormTemplate = `
         <h2>Add a Pet</h2>
         <form id="js-add-pet-form">
             <fieldset name="addPet">
+                <input type="hidden" id="clientId" title="Client ID"></input> 
                 <input type="hidden" id="_id" title="Pet ID"></input> 
                 <label for="petName" class="visuallyhidden">Name</label>
                 <input type="text" id="petName" title="Pet Name" placeholder="Name" required></input>                  
@@ -133,6 +138,7 @@ const addTaskFormTemplate = `
     <h2>Add a Task</h2>
     <form id="js-add-task-form">
         <fieldset name="addTask">
+            <input type="hidden" id="clientId" title="Client ID"></input> 
             <label for="taskDescription" class="visuallyhidden">Description</label>
             <input type="text" id="taskDescription" title="Task Description" placeholder="Description" required></input>                  
             <input type="submit" value="Submit" class="button">
@@ -145,12 +151,12 @@ const providerDashboardTemplate = `
     <h2>Visits</h2>
     <div id="js-visits-list"></div>
     <a class="buttonSmall" id="js-all-visits-button" href="#visits">View All</a>
-    <a class="buttonSmall" id="js-add-visit-button" href="#visits/add">Add</a>
+    <a class="buttonSmall" id="js-add-visit-button" href="#addVisit">Add</a>
     </div>
     <div class="boxed">
     <h2>Clients</h2>
     <a class="buttonSmall" id="js-all-clients-button" href="#clients">View All</a>
-    <a class="buttonSmall" id="js-add-client-button" href="#clients/add">Add</a>
+    <a class="buttonSmall" id="js-add-client-button" href="#addClient">Add</a>
     <form id="js-search-client">
         <fieldset name="clientSearch">
             <label for="lastName" class="visuallyhidden">Search by last name</label>
@@ -175,15 +181,17 @@ const addVisitFormTemplate = `
             <input type="text" id="startTime" title="Start Time" placeholder="Start Time" required></input>
             <label for="endTime" class="visuallyhidden">End Time</label>
             <input type="text" id="endTime" title="End Time" placeholder="End Time" required></input>
-            <label for="recurrence" class="visuallyhidden">Recurrence</label>
-                <select id="recurrence" title="Recurrence" required>
-                    <option value="" disabled selected hidden>Recurrence</option>
-                    <option value="daily">Daily</option>
-                    <option value="mondayFriday">Monday-Friday</option>
-                    <option value="weekly">Weekly</option>
-                    <option value="none">None</option>
-                </select>
             <input type="submit" value="Submit" class="button" placeholder="">
         </fieldset>
     </form>
     </div>`;
+
+
+// <label for="recurrence" class="visuallyhidden">Recurrence</label>
+//   <select id="recurrence" title="Recurrence" required>
+//        <option value="" disabled selected hidden>Recurrence</option>
+//        <option value="daily">Daily</option>
+//        <option value="mondayFriday">Monday-Friday</option>
+//        <option value="weekly">Weekly</option>
+//        <option value="none">None</option>
+//    </select>

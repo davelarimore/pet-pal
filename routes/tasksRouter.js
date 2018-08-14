@@ -7,9 +7,6 @@ const tasksController = require('../controllers/tasksController');
 //AUTHENTICATED PROVIDERS ONLY
 ////////////////////////////////
 
-//GET: get all tasks belonging to the client of an authenticated provider
-router.get('/clients/:id/tasks', tasksController.tasksClientGetList);
-
 //POST: add task to the client of an authenticated provider
 router.post('/clients/tasks', tasksController.tasksClientPost);
 

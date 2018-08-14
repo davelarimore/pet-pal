@@ -28,6 +28,8 @@ exports.authenticate = (req, res) => {
 // Signup
 exports.signup = (req, res) => {
 
+    console.log('Initiating signup');
+
     const requiredFields = ['email', 'password'];
     const missingField = requiredFields.find(field => !(field in req.body));
 
@@ -160,19 +162,8 @@ exports.signup = (req, res) => {
                 providerId
             });
         })
-        .then(createdUser => {
-            console.log(providerId);
-            createdUserId = createdUser.id;
-            createdUserData = createdUser;
-            return Users.findOne({ _id: req.body.providerId });
-        })
-        .then((provider) => {
-            console.log(provider);
-            provider.clients.push(createdUserId);
-            return provider.save();
-        })
-        .then(() => {
-            return res.status(201).json(createdUserData.serialize());
+        .then((user) => {
+            return res.status(201).json(user.serialize());
         })
         .catch(err => {
             console.log(err);

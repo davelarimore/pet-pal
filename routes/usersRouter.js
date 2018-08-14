@@ -9,14 +9,7 @@ const usersController = require('../controllers/usersController');
 //AUTHENTICATED PROVIDERS ONLY
 ////////////////////////////////
 
-// GET: all my clients, authenticated providers only
-router.get('/users/clients', usersController.usersGetClientList);
-
-// GET one of my clients by ID, accessible by authenticated provider only
-router.get('/users/clients/:id', usersController.usersGetClient);
-
-// GET one of my clients by lastName, accessible by authenticated provider only
-router.get('/users/clients/:lastName', usersController.usersGetClientByName);
+// GET is handled by getMe
 
 // POST new client accessible by authenticated provider only
 router.post('/users/clients', usersController.usersPostClient);
@@ -32,7 +25,7 @@ router.put('/users/clients/:id', usersController.usersPutClient);
 router.get('/users/me', usersController.usersGetMe);
 
 //POST: create a user via the signup forms
-router.post('/users', jsonParser, usersController.usersPost);
+// router.post('/users', jsonParser, usersController.usersPost);
 
 //PUT ME: update authenticated user (update me)
 router.put('/users/me', usersController.usersPutMe);

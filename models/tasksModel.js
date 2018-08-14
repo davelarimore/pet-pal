@@ -14,4 +14,33 @@ const taskSchema = mongoose.Schema({
     completed: { type: Boolean, default: false},
 })
 
+// Push new task reference to the client's document
+taskSchema.pre('save', function (next) {
+    const task = this;
+    if (task.isNew) {
+        task.model('Users').update({ _id: this.clientId }, {
+            $push: { tasks: task._id }
+        })
+            .then(() => {
+                next();
+            })
+            .catch((err) => {
+                next(err);
+            })
+    }
+});
+
+// Remove deleted task's reference from the client's document
+taskSchema.pre('remove', function (next) {
+    const task = this;
+    task.model('Users').update({ _id: this.clientId }, {
+        $pull: { tasks: task._id }
+    })
+        .then(() => {
+            next();
+        })
+        .catch((err) => {
+            next(err);
+        })
+});
 module.exports = mongoose.model('Tasks', taskSchema, 'tasks');

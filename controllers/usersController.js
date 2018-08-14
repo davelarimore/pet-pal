@@ -6,44 +6,7 @@ const Users = require('../models/usersModel');
 //AUTHENTICATED PROVIDERS ONLY
 ////////////////////////////////
 
-// GET: all my clients, authenticated providers only
-exports.usersGetClientList = (req, res) => {
-    Users
-        .find({ 'provider': 101 })
-        .then(clients => {
-            res.json(clients)
-        })
-        .catch(err => {
-            console.error(err);
-            res.status(500).json({ message: 'Internal server error' })
-    });
-}
-
-// GET one of my clients by ID, accessible by authenticated provider only
-exports.usersGetClient = (req, res) => {
-    Users
-        .findOne({ '_id': req.params.id })
-        .then(client => {
-            res.json(client)
-        })
-        .catch(err => {
-            console.error(err);
-            res.status(500).json({ message: 'Internal server error' })
-    });
-}
-
-// GET one of my clients by ID, accessible by authenticated provider only
-exports.usersGetClientByName = (req, res) => {
-    Users
-        .find({ 'lastName': Doe })
-        .then(client => {
-            res.json(client)
-        })
-        .catch(err => {
-            console.error(err);
-            res.status(500).json({ message: 'Internal server error' })
-    });
-}
+// GET handled by getMe()
 
 // POST new client accessible by authenticated provider only
 exports.usersPostClient = (req, res) => {
@@ -62,15 +25,16 @@ exports.usersPutClient = (req, res) => {
 
 // GET users/me: - get my client object only, accessible by any authenticated user
 exports.usersGetMe = (req, res) => {
-    // console.log('Getting user: ' + req.user.id);
     Users
-        .findOne({ '_id': req.user.id })
+        .findOne({ '_id': req.user._id })
         .populate('pets')
         // .populate('visits')
-        .populate({ path: 'visits', options: { sort: { startTime: -1 } } })
+        .populate({ path: 'visits', populate: {path: 'client', model: 'Users'}, options: { sort: { startTime: -1 } } })
         .populate('tasks')
         .populate('provider')
-        .populate('clients')
+        .populate({ path: 'clients', populate: { path: 'tasks', model: 'Tasks' } })
+        .populate({ path: 'clients', populate: { path: 'pets', model: 'Pets' } })
+        .populate({ path: 'clients', populate: { path: 'visits', model: 'Visits' }, options: { sort: { startTime: -1 } } })
         .then(user => {
             res.status(200).json(user.serialize());
         })
@@ -80,44 +44,43 @@ exports.usersGetMe = (req, res) => {
         });
 }
 
-//PUT ME: update authenticated user (update me)
+//PUT ME: update client or client of provider
 exports.usersPutMe = (req, res) => {
-    console.log('Updating User');
+    console.log(req.user);
     console.log(req.body);
-    const requiredFields = ['firstName', 'lastName', 'email', 'phone', 'addressString', 'vetInfo'];
-    for (let i = 0; i < requiredFields.length; i++) {
-        const field = requiredFields[i];
-        if (!(field in req.body)) {
-            const message = `Missing \`${field}\` in request body`;
-            console.error(message);
-            return res.status(400).send(message);
+    if (req.user._id === req.body._id || req.user.clients.includes(req.body._id)) {
+        console.log('Updating User');
+        console.log(req.body);
+        const requiredFields = ['firstName', 'lastName', 'phone', 'addressString'];
+        for (let i = 0; i < requiredFields.length; i++) {
+            const field = requiredFields[i];
+            if (!(field in req.body)) {
+                const message = `Missing \`${field}\` in request body`;
+                console.error(message);
+                return res.status(400).send(message);
+            }
         }
-    }
-    console.log(`Updating user item \`${req.body.id}\``);
-    Users.update({
-        _id: req.user.id
-        },
-        {
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        email: req.body.email,
-        phone: req.body.phone,
-        addressString: req.body.addressString,
-        vetInfo: req.body.vetInfo
-        })
-        .then(response => {
-            res.json(response);
-        })
-        .catch(err => {
-            console.error(err);
-            res.status(500).json({ message: 'Internal server error' })
-        })
-};
-
-//POST: create a user via the signup forms
-exports.usersPost = (req, res) => {
-    res.send('NOT IMPLEMENTED: Users post');
-};
+        console.log(`Updating user item \`${req.body._id}\``);
+        Users.update({
+            _id: req.body._id
+            },
+            {
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            phone: req.body.phone,
+            addressString: req.body.addressString,
+            entryNote: req.body.entryNote,
+            vetInfo: req.body.vetInfo
+            })
+            .then(response => {
+                res.json(response);
+            })
+            .catch(err => {
+                console.error(err);
+                res.status(500).json({ message: 'Internal server error' })
+            })
+    };
+}
 
 ////////////////////////////////
 // DEV ONLY

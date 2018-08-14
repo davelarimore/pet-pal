@@ -17,23 +17,23 @@ const router = new Navigo('localhost:8080', true, '#!');
 //     },
 // });
 
-router.on(
-    'clientDashboard',
-    function () {
-        displayCompactSiteHeader('client');
-        getMeAndDisplayClientDashboard();
-    },
-    {
-        before: function (done, params) {
-            if (!window.localStorage.getItem('AUTH_TOKEN')) {
-                window.location.replace('../');
-                done(false);
-            } else {
-                done()
-            }
-        }
-    }
-);
+// router.on(
+//     'clientDashboard',
+//     function () {
+//         displayCompactSiteHeader('client');
+//         getMeAndDisplayClientDashboard();
+//     },
+//     {
+//         before: function (done, params) {
+//             if (!window.localStorage.getItem('AUTH_TOKEN')) {
+//                 window.location.replace('../');
+//                 done(false);
+//             } else {
+//                 done()
+//             }
+//         }
+//     }
+// );
 
 router
     .on({
@@ -53,18 +53,17 @@ router
             displayProviderSignupForm();
             handleProviderSignupSubmit();
         },
-        // 'clientDashboard': () => {
-        //     // checkForToken(); if exists and isn't expired, use navigo hooks
-        //     displayCompactSiteHeader('client');
-        //     getMeAndDisplayClientDashboard();
-        // },
+        'clientDashboard': () => {
+            displayCompactSiteHeader('client');
+            getMeAndDisplayClientDashboard();
+        },
         'providerDashboard': () => {
             displayCompactSiteHeader('provider');
             getMeAndDisplayProviderDashboard();
         },
-        'addClient': () => {
-            displayClientSignupForm();
-        },
+        // 'addClient': () => {
+        //     displayClientSignupForm();
+        // },
         'updateClient/:userID': (params) => {
             displayCompactSiteHeader('client');
             getClientUserAndDisplayClientUpdateForm(params.userID);
@@ -73,68 +72,78 @@ router
             displayCompactSiteHeader('provider');
             getProviderUserAndDisplayUpdateForm();
         },
-        'pet/add': () => {
+        'addPet/:id': (params) => {
+            console.log('geting add pet form');
             console.log("Getting update my pet form");
-            displayAndHandleAddMyPetForm();
-            },
+            displayAndHandleAddMyPetForm(params.id);
+        },
         'pet/:id': (params) => {
-            getMyPetAndDisplayPetDetail(params.id);
+            getPetAndDisplayPetDetail(params.id);
         },
-        'pet/:petID/:action': (params) => {
-            if (params.action === 'delete') {
-                displayDeleteMyPetConfirmation(params.petID);
-            }
-            else if (params.action === 'update') {
-                getMyPetAndDisplayUpdateForm(params.petID);
-            }
+        'updatePet/:id': (params) => {
+            getPetAndDisplayUpdateForm(params.id);
         },
-        'user/:userID/pet/:petID/:action': (params) => {
-            if (params.action === 'add') {
-                displayAndHandleAddClientPetForm(params.userID);
-            }
-            else if (params.action === 'delete') {
-                displayDeleteClientPetConfirmation(params.petID);
-            }
-            else if (params.action === 'update') {
-                getClientsPetAndDisplayUpdateForm(params.petID);
-            }
-            else {
-                getClientsPetAndDisplayPetDetail(params.petID);
-            }
+        'deletePet/:id': (params) => {
+            displayDeletePetConfirmation(params.id);
         },
-        'task/add': () => {
-            displayAndHandleAddMyTaskForm();
+        // 'pet/:petID/:action': (params) => {
+        //     if (params.action === 'delete') {
+        //         displayDeleteMyPetConfirmation(params.petID);
+        //     }
+        //     else if (params.action === 'update') {
+        //         getPetAndDisplayUpdateForm(params.petID);
+        //     }
+        // },
+        // 'user/:userID/pet/:petID/:action': (params) => {
+        //     if (params.action === 'add') {
+        //         displayAndHandleAddClientPetForm(params.userID);
+        //     }
+        //     else if (params.action === 'delete') {
+        //         displayDeleteClientPetConfirmation(params.petID);
+        //     }
+        //     else if (params.action === 'update') {
+        //         getClientsPetAndDisplayUpdateForm(params.petID);
+        //     }
+        //     else {
+        //         getClientsPetAndDisplayPetDetail(params.petID);
+        //     }
+        // },
+        'addTask/:id': (params) => {
+            displayAndHandleAddTaskForm(params.id);
         },
-        'user/:userID/task/:taskID/:action': (params) => {
-            if (params.action === 'add') {
-                displayAddClientTaskForm(params.userID);
-            }
-            else if (params.action === 'delete') {
-                displayDeleteMyTaskConfirmation(params.taskID);
-            }
+        'deleteTask/:id': (params) => {
+            displayDeleteTaskConfirmation(params.id);
         },
+        // 'user/:userID/task/:taskID/:action': (params) => {
+        //     if (params.action === 'add') {
+        //         displayAddClientTaskForm(params.userID);
+        //     }
+        //     else if (params.action === 'delete') {
+        //         displayDeleteMyTaskConfirmation(params.taskID);
+        //     }
+        // },
         'visits': () => {
             displayCompactSiteHeader('provider');
             getAndDisplayAllVisits();
         },
-        'visits/add': () => {
+        'addVisit': () => {
             getMyClientsAndDisplayAddVisitForm();
         },
-        'visits/:id/delete': (params) => {
-                displayDeleteVisitConfirmation(params.id);
+        'deleteVisit/:id': (params) => {
+            displayDeleteVisitConfirmation(params.id);
         },
         'clients': () => {
             displayCompactSiteHeader('provider');
             getAndDisplayAllClients();
         },
-        'clients/add': () => {
+        'addClient': () => {
             displayCompactSiteHeader('provider');
             displayAddClientForm();
         },
         //click from client list
-        'user/:userID/clientDetail': (params) => {
+        'clientDetail/:id': (params) => {
             displayCompactSiteHeader('provider');
-            getClientUserAndDisplayClientDashboard(params.userID);
+            getClientAndDisplayClientDetail(params.id);
         },
     })
     .resolve();

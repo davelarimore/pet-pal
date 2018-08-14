@@ -1,4 +1,4 @@
-//Helpers
+//Date Formatter
 
 function formatDate(rawStartDate, rawEndDate) {
     const startDate = new Date(rawStartDate);
@@ -14,57 +14,62 @@ function formatDate(rawStartDate, rawEndDate) {
         ', ' + startDate.toTimeString().substr(0, 5) + '-' + endDate.toTimeString().substr(0, 5);
 }
 
+//Logout
 function logout() {
     window.localStorage.removeItem('AUTH_TOKEN');
 }
 
+
 ///////////////////////////////////////////
 //Update Provider Info Screen
 ///////////////////////////////////////////
-// function getProviderUserAndDisplayUpdateForm() {
-//     getMe()
-//     .then(displayProviderProfileUpdateForm)
-//     .catch (() => console.log('not found'));
-// }
-// function displayProviderProfileUpdateForm(providerData) {
-//     //pre-fill form
-//     const element = $(providerSignupFormTemplate);
-//     element.find('#js-provider-signup-form').attr('id', 'js-provider-update-form');
-//     element.find('h2').text('Update Provider Profile');
-//     element.find('#companyName').val(providerData.companyName);
-//     element.find('#firstName').val(providerData.firstName);
-//     element.find('#lastName').val(providerData.lastName);
-//     element.find('#email').val(providerData.email);
-//     element.find('#phone').val(providerData.phone);
-//     element.find('#streetAddress').val(providerData.address.addressString);
-//     //remove password fields from template
-//     element.find('label[for=password], input#password').remove();
-//     element.find('label[for=confirmPassword], input#confirmPassword').remove();
-//     $('#js-main').html(element);
-// }
-// function handleProviderProfileUpdateSubmit() {
-//     $('#js-main').on('submit', '#js-provider-update-form', event => {
-//         event.preventDefault();
-//         const userData = {
-//             companyName: $(event.currentTarget).find('#companyName').val(),
-//             firstName: $(event.currentTarget).find('#firstName').val(),
-//             lastName: $(event.currentTarget).find('#lastName').val(),
-//             email: $(event.currentTarget).find('#email').val(),
-//             address: {
-//                 addressString: $(event.currentTarget).find('#streetAddress').val(),
-//             }
-//         };
-//         updateMeAndDisplayAlertDialog(userData);
-//     }); 
-// }
-// $(handleClientProfileUpdateSubmit);
-// function updateMeAndDisplayAlertDialog(userData) {
-//     updateMe(userData)
-//         .then(() => {
-//             window.location.href = `./#clientDashboard`
-//         })
-//     .catch(() => console.error('Error updating profile'));
-// }
+function getProviderUserAndDisplayUpdateForm() {
+    getMe()
+    .then(displayProviderProfileUpdateForm)
+    .catch (() => console.log('not found'));
+}
+function displayProviderProfileUpdateForm(providerData) {
+    //pre-fill form
+    const element = $(providerSignupFormTemplate);
+    element.find('#js-provider-signup-form').attr('id', 'js-provider-update-form');
+    element.find('h2').text('Update Provider Profile');
+    element.find('#providerId').val(providerData._id);
+    element.find('#companyName').val(providerData.companyName);
+    element.find('#firstName').val(providerData.firstName);
+    element.find('#lastName').val(providerData.lastName);
+    element.find('#phone').val(providerData.phone);
+    element.find('#streetAddress').val(providerData.addressString);
+    //remove credentials fields from template
+    element.find('label[for=email], input#email').remove();
+    element.find('label[for=password], input#password').remove();
+    element.find('label[for=confirmPassword], input#confirmPassword').remove();
+    $('#js-main').html(element);
+    new google.maps.places.Autocomplete((document.getElementById('streetAddress')), {
+        types: ['geocode']
+    });
+}
+function handleProviderProfileUpdateSubmit() {
+    $('#js-main').on('submit', '#js-provider-update-form', event => {
+        event.preventDefault();
+        const userData = {
+            _id: $(event.currentTarget).find('#providerId').val(),
+            companyName: $(event.currentTarget).find('#companyName').val(),
+            firstName: $(event.currentTarget).find('#firstName').val(),
+            lastName: $(event.currentTarget).find('#lastName').val(),
+            phone: $(event.currentTarget).find('#phone').val(),
+            addressString: $(event.currentTarget).find('#streetAddress').val(),
+        };
+        updateProviderAndDisplayAlertDialog(userData);
+    }); 
+}
+$(handleProviderProfileUpdateSubmit);
+function updateProviderAndDisplayAlertDialog(userData) {
+    updateMe(userData)
+        .then(() => {
+            window.location.href = `./#providerDashboard`
+        })
+    .catch(() => console.error('Error updating profile'));
+}
 ///////////////////////////////////////////
 //Add Visit Screen
 ///////////////////////////////////////////
@@ -76,11 +81,11 @@ function getMyClientsAndDisplayAddVisitForm() {
 function displayAddVisitForm(providerData) {
     const clientListHTML = generateClientListHTML(providerData.clients);
     const element = $(addVisitFormTemplate);
-    element.find('#provider').data('id', providerData.id);
+    element.find('#provider').data('id', providerData._id);
     element.find('#js-client-list').append(clientListHTML);
     $('#js-main').html(element);
 }
-//Get list of clients for the form
+//Geenerate list of clients for the form
 function generateClientHTML(client) {
     if (!client.provider) {
         return `
@@ -97,13 +102,9 @@ function handleAddVisitSubmit() {
         event.preventDefault();
         const visitData = {
             providerId: $(event.currentTarget).find('#provider').data('id'),
-            clientId: $(event.currentTarget).find(':selected').data('id'),
+            client: $(event.currentTarget).find(':selected').data('id'),
             startTime: $(event.currentTarget).find('#startTime').val(),
             endTime: $(event.currentTarget).find('#endTime').val(),
-            address: {
-                addressString: $(event.currentTarget).find('#streetAddress').val()
-            },
-            recurrence: $(event.currentTarget).find('#recurrence').val()
         };
         addVisitAndDisplayAlertDialog(visitData);
     }); 
@@ -124,7 +125,7 @@ function getAndDisplayAllVisits() {
 function generateVisitItemHTML(visit) {
     return `
     <div class='listItem'>
-                <a href='#user/${visit.client}/visit/${visit.id}/delete'><img src='images/delete.svg' title='Delete Visit' alt='Delete Visit' /></a>
+                <a href='#user/${visit.client}/visit/${visit._id}/delete'><img src='images/delete.svg' title='Delete Visit' alt='Delete Visit' /></a>
                 <h3>${visit.startTime}</h3>
                 <p>${visit.client}</p>
             </div>`;
@@ -141,9 +142,24 @@ function displayAllVisits(providerData) {
         <div id='js-visits-list'>
             ${visitsListHTML}
         </div>
-        <a class='button' href='#visits/add'>Add Visit</a>
+        <a class='button' href='#addVisit'>Add Visit</a>
     </div>`);
 }
+///////////////////////////////////////////
+//Client Detail Screen
+///////////////////////////////////////////
+function getClientAndDisplayClientDetail(clientId) {
+    getMe()
+        .then((providerData) => {
+            const clientIndex = providerData.clients.findIndex(client => client._id === clientId);
+            if (clientIndex >= 0) {
+                displayClientDashboard(providerData.clients[clientIndex], 'provider');
+            } else {
+                console.error('Client not found')
+            }
+        })
+}
+
 ///////////////////////////////////////////
 //All Clients Screen
 ///////////////////////////////////////////
@@ -154,7 +170,7 @@ function getAndDisplayAllClients() {
 }
 function generateClientItemHTML(client) {
     return `
-    <a href='#user/${client.id}/' class='listItemLink'><div class='listItem'>
+    <a href='#clientDetail/${client._id}/' class='listItemLink'><div class='listItem'>
                 <img src='images/arrow.svg' title='View Client' alt='View Client' />
                 <h3>${client.firstName} ${client.lastName}</h3>
                 <p>${client.addressString}</p>
@@ -182,9 +198,12 @@ function displayAddClientForm() {
     getMe()
     .then(providerData => {
         const element = $(clientSignupFormTemplate);
-        element.find('#provider').data('id', providerData.id);
+        element.find('#provider').data('id', providerData._id);
         element.find('#js-client-signup-form').attr('id', 'js-add-client-form');
         $('#js-main').html(element);
+        new google.maps.places.Autocomplete((document.getElementById('streetAddress')), {
+            types: ['geocode']
+        });
     })
 };
 function handleAddClientSubmit() {
@@ -197,6 +216,7 @@ function handleAddClientSubmit() {
             email: $(event.currentTarget).find('#email').val(),
             phone: $(event.currentTarget).find('#phone').val(),
             addressString: $(event.currentTarget).find('#streetAddress').val(),
+            entryNote: $(event.currentTarget).find('#entryNote').val(),
             vetInfo: $(event.currentTarget).find('#vetInfo').val(),
             password: $(event.currentTarget).find('#password').val(),
         };
@@ -216,7 +236,6 @@ function getMeAndDisplayProviderDashboard() {
 }
 
 function displayProviderDashboard(userData) {
-    console.log(userData);
     const recentVisitsHTML = userData.visits && userData.visits.length > 0 ? generateUpcomingVisitsHTML(userData.visits) : `<p>No visits scheduled</p>`;
     const element = $(providerDashboardTemplate);
     element.find('#js-visits-list').html(recentVisitsHTML);
@@ -226,9 +245,9 @@ function generateVisitItemHTML(visit) {
     const formattedStartTime = formatDate(visit.startTime, visit.endTime)
     return `
     <div class='listItem'>
-        <a href='#visits/${visit._id}/delete'><img src='images/delete.svg' title='Delete Visit' alt='Delete Visit' /></a>
+        <a href='#deleteVisit/${visit._id}'><img src='images/delete.svg' title='Delete Visit' alt='Delete Visit' /></a>
         <h3>${formattedStartTime}</h3>
-        <p>${visit.clientId}</p>
+        <p>${visit.client.firstName} ${visit.client.lastName}</p>
     </div>`;
 }
 function generateUpcomingVisitsHTML(visitsData) {
@@ -241,36 +260,40 @@ function generateUpcomingVisitsHTML(visitsData) {
 function displayDeleteVisitConfirmation(visitId) {
     if (confirm('Delete visit?')) {
         deleteVisit(visitId)
-        .then(displayAlertDialog('Visit Deleted'));;
+        .then(displayAlertDialog('Visit Deleted'));
+        // window.location.href = `./#providerDashboard`;
      } else {
         alert('Action Cancelled');
      } 
 }
-//Client Actions
-function handleSearchForClientSubmit() {
-    $('#js-main').on('submit', '#js-search-client', event => {
-        event.preventDefault();
-        let query = $(event.currentTarget).find('#lastName').val();
-        getClientByNameAndDisplayClient(lastName);
-    }); 
-}
-$(handleSearchForClientSubmit);
-function getClientByNameAndDisplayClient(lastName) {
-    getClientByName(lastName)
-    .then(redirectToClientDetail);
-}
-function redirectToClientDetail(userId) {
-        window.location.href = `./#user/${userId}/clientDetail`;
-}
+
 
 ///////////////////////////////////////////
-//Update Pet Screen - Client
+//Update Pet Screen
 ///////////////////////////////////////////
-function getMyPetAndDisplayUpdateForm(petId) {
-    getMyPet(petId)
-    .then(displayUpdateMyPetForm);
+function getPetAndDisplayUpdateForm(petId) {
+    getMe()
+        .then((userData) => {
+            if (userData.role === 'provider') {
+                let petData = [];
+                const clientData = userData.clients.find(client => client.pets.filter(pet => pet._id === petId));
+                userData.clients.forEach(client => { client.pets.map(pet => pet._id == petId && petData.push(pet)) });
+                if (petData) {
+                    displayUpdatePetForm(petData[0])
+                } else {
+                    console.error('Pet not found')
+                }
+            } else {
+                const petIndex = userData.pets.findIndex(pet => pet._id === petId);
+                if (petIndex >= 0) {
+                    displayUpdatePetForm(userData.pets[petIndex]);
+                } else {
+                    console.error('Pet not found')
+                }
+            }
+        })
 }
-function displayUpdateMyPetForm(petData) {
+function displayUpdatePetForm(petData) {
     const element = $(addPetFormTemplate);
     element.find('#js-add-pet-form').attr('id', 'js-update-pet-form');
     element.find('h2').text('Update Pet');
@@ -283,7 +306,7 @@ function displayUpdateMyPetForm(petData) {
     element.find('#petFood').val(petData.food);
     $('#js-main').html(element);
 }
-function handleUpdateMyPetFormSubmit() {
+function handleUpdatePetFormSubmit() {
     $('#js-main').on('submit', '#js-update-pet-form', event => {
         event.preventDefault();
         const petId = $(event.currentTarget).find('#_id').val();
@@ -295,149 +318,171 @@ function handleUpdateMyPetFormSubmit() {
             color: $(event.currentTarget).find('#petColor').val(),
             food: $(event.currentTarget).find('#petFood').val(),
         };
-        updateMyPetAndDisplayAlertDialog(petId, petData);
-        window.location.href = `./#pet/:petId`;
+        updatePetAndDisplayAlertDialog(petId, petData);
+        // window.location.href = `./#pet/${petId}`;
+        window.history.back();
         //displayCompactSiteHeader();
         //getClientsPetAndDisplayPetDetail();
     });
 }
-$(handleUpdateMyPetFormSubmit);
+$(handleUpdatePetFormSubmit);
 
+// function handleMyProfileUpdateSubmit() {
+//     $('#js-main').on('submit', '#js-client-update-form', event => {
+//         event.preventDefault();
+//         return getMe()
+//             .then(currentUserData => {
+//                 const userData = {
+//                     id: currentUserData._id,
+//                     firstName: $(event.currentTarget).find('#firstName').val(),
+//                     lastName: $(event.currentTarget).find('#lastName').val(),
+//                     email: $(event.currentTarget).find('#email').val(),
+//                     phone: $(event.currentTarget).find('#phone').val(),
+//                     addressString: $(event.currentTarget).find('#streetAddress').val(),
+//                     vetInfo: $(event.currentTarget).find('#vetInfo').val(),
+//                 };
+//                 updateMeAndDisplayAlertDialog(userData);
+//             });
+//     })
+// }
 
-function handleMyProfileUpdateSubmit() {
-    $('#js-main').on('submit', '#js-client-update-form', event => {
-        event.preventDefault();
-        return getMe()
-            .then(currentUserData => {
-                const userData = {
-                    id: currentUserData.id,
-                    firstName: $(event.currentTarget).find('#firstName').val(),
-                    lastName: $(event.currentTarget).find('#lastName').val(),
-                    email: $(event.currentTarget).find('#email').val(),
-                    phone: $(event.currentTarget).find('#phone').val(),
-                    addressString: $(event.currentTarget).find('#streetAddress').val(),
-                    vetInfo: $(event.currentTarget).find('#vetInfo').val(),
-                };
-                updateMeAndDisplayAlertDialog(userData);
-            });
-    })
-}
-
-function updateMyPetAndDisplayAlertDialog(petId, petData) {
-    updateMyPet(petId, petData)
+function updatePetAndDisplayAlertDialog(petId, petData) {
+    updatePet(petId, petData)
     .then(displayAlertDialog('Pet Updated'));
 }
 ///////////////////////////////////////////
-//Add Task Screen - Client
+//Add Task Screen
 ///////////////////////////////////////////
-function displayAndHandleAddMyTaskForm() {
-    $('#js-main').html(addTaskFormTemplate);
+function displayAndHandleAddTaskForm(clientId) {
+    const element = $(addTaskFormTemplate);
+    element.find('#clientId').val(clientId);
+    $('#js-main').html(element);
 }
-function handleAddMyTaskSubmit() {
+function handleAddTaskSubmit() {
     $('#js-main').on('submit', '#js-add-task-form', event => {
         event.preventDefault();
-        return getMe()
-            .then(userData => {
-                const taskData = {
-                    clientId: userData.id,
-                    description: $(event.currentTarget).find('#taskDescription').val(),
-                };
-                addMyTaskAndDisplayAlertDialog(taskData);
-            })
+        const taskData = {
+            clientId: $(event.currentTarget).find('#clientId').val(),
+            description: $(event.currentTarget).find('#taskDescription').val(),
+        };
+        addTaskAndDisplayAlertDialog(taskData);
     });
 }
-$(handleAddMyTaskSubmit)
-function addMyTaskAndDisplayAlertDialog(taskData) {
-    addMyTask(taskData)
+$(handleAddTaskSubmit)
+function addTaskAndDisplayAlertDialog(taskData) {
+    addTask(taskData)
         .then(() => {
-            window.location.href = `./#clientDashboard`;
+            // window.location.href = `./#clientDashboard`;
+            window.history.back();
         })
         .catch(() => console.error('Error adding task'));
 }
-///////////////////////////////////////////
-//Add Task Screen - Provider
-///////////////////////////////////////////
-// function displayAndHandleAddClientTaskForm() {
-//     $('#js-main').html(addTaskFormTemplate);
-// }
-// function handleAddClientTaskSubmit() {
-//     $('#js-main').on('submit', '#js-add-task-form', event => {
-//         return getMe()
-//             .then(userData => {
-//                 event.preventDefault();
-//                 const taskData = {
-//                     user: userData.id,
-//                     description: $(event.currentTarget).find('#taskDescription').val(),
-//                 };
-//                 addClientTaskAndDisplayAlertDialog(taskData);
-//                 displayCompactSiteHeader();
-//                 getClientUserAndDisplayClientDashboard(userId);
-//             })
-//     });
-// }
-// $(handleAddClientTaskSubmit)
-// function addClientTaskAndDisplayAlertDialog(taskData) {
-//     addClientTask(taskData)
-//         .then(displayAlertDialog('Task Added'));
-// }
+
 ///////////////////////////////////////////
 //Add Pet Screen - Provider
 ///////////////////////////////////////////
-function displayAndHandleAddClientPetForm(userId) {
-    $('#js-main').html(addPetFormTemplate);
-    $(handleAddClientPetSubmit(userId));
-}
-function handleAddClientPetSubmit(userId) {
-    $('#js-main').on('submit', '#js-add-pet-form', event => {
-        event.preventDefault();
-        const petData = {
-            user: userId,
-            name: $(event.currentTarget).find('#petName').val(),
-            type: $(event.currentTarget).find('#petType').val(),
-            breed: $(event.currentTarget).find('#petBreed').val(),
-            color: $(event.currentTarget).find('#petColor').val(),
-            food: $(event.currentTarget).find('#petFood').val(),
-        };
-        addClientPetAndDisplayAlertDialog(petData);
-        displayCompactSiteHeader('provider');
-        //show detail for added pet
-        //getClientsPetAndDisplayPetDetail();
-    }); 
-}
-function addClientPetAndDisplayAlertDialog(petData) {
-    addClientPet(petData)
-    .then(displayAlertDialog('Pet Added'));
-}
+// function displayAndHandleAddClientPetForm(userId) {
+//     $('#js-main').html(addPetFormTemplate);
+//     $(handleAddClientPetSubmit(userId));
+// }
+// function handleAddClientPetSubmit(userId) {
+//     $('#js-main').on('submit', '#js-add-pet-form', event => {
+//         event.preventDefault();
+//         const petData = {
+//             user: userId,
+//             name: $(event.currentTarget).find('#petName').val(),
+//             type: $(event.currentTarget).find('#petType').val(),
+//             breed: $(event.currentTarget).find('#petBreed').val(),
+//             color: $(event.currentTarget).find('#petColor').val(),
+//             food: $(event.currentTarget).find('#petFood').val(),
+//         };
+//         addClientPetAndDisplayAlertDialog(petData);
+//         displayCompactSiteHeader('provider');
+//         window.location.href = `./#clientDashboard`;
+//         //show detail for added pet
+//         //getClientsPetAndDisplayPetDetail();
+//     }); 
+// }
+// function addClientPetAndDisplayAlertDialog(petData) {
+//     addClientPet(petData)
+//     .then(displayAlertDialog('Pet Added'));
+// }
 ///////////////////////////////////////////
 //Pet Detail Screen - Provider View
 ///////////////////////////////////////////
-function getClientsPetAndDisplayPetDetail(petId) {
-    getClientsPetDetail(petId)
-    .then(displayPetDetail);
-}
-function getClientsPetDetail(petId) {
-    const STORE = { petData: [], userData: [], visitData: [] };
-    return getClientsPet(petId)
-        .then(petData => {
-            STORE.petData = petData;
-            return getClient(petData.client);
-        })
-        .then(userData => {
-            STORE.userData = userData;
-            return getClientsUpcomingVisit(petData.client);
-        })
-        .then(visitData => {
-            STORE.visitData = visitData;
-        })
-        .then(() => {
-            return STORE;
-        })
-        .catch(() => console.error('error'));
+// function getClientsPetAndDisplayPetDetail(petId) {
+//     getClientsPetDetail(petId)
+//     .then(displayPetDetail);
+// }
+// function getClientsPetDetail(petId) {
+//     const STORE = { petData: [], userData: [], visitData: [] };
+//     return getClientsPet(petId)
+//         .then(petData => {
+//             STORE.petData = petData;
+//             return getClient(petData.client);
+//         })
+//         .then(userData => {
+//             STORE.userData = userData;
+//             return getClientsUpcomingVisit(petData.client);
+//         })
+//         .then(visitData => {
+//             STORE.visitData = visitData;
+//         })
+//         .then(() => {
+//             return STORE;
+//         })
+//         .catch(() => console.error('error'));
+// }
+
+// function displayPetDetail(STORE) {
+//     const clientHeader = generateClientHeaderHTML(STORE.userData, STORE.visitData);
+//     const petDetail = generatePetInfoHTML(STORE.petData);
+//     $('#js-main').html(`
+//         ${clientHeader}
+//         ${petDetail}
+//         <a class='button' href='#user/${STORE.userData._id}/pet/${STORE.petData._id}/update'>Update Pet</a>
+//         <a class='button' href='#user/${STORE.userData._id}/pet/${STORE.petData._id}/delete'>Delete Pet</a>`
+//     );
+// }
+//rewrite delete pet
+// function displayDeleteClientPetConfirmation(petId) {
+//     if (confirm('Delete pet?')) {
+//         deleteClientPet(petId)
+//         .then(displayAlertDialog('Pet Deleted'));;
+//      } else {
+//         alert('Action Cancelled');
+//      } 
+// }
+
+///////////////////////////////////////////
+//Pet Detail Screen
+///////////////////////////////////////////
+function getPetAndDisplayPetDetail(petId) {
+    getMe()
+        .then((userData) => {
+            if (userData.role === 'provider') {
+                let petData = [];
+                const clientData = userData.clients.find(client => client.pets.filter(pet => pet._id === petId));
+                userData.clients.forEach(client => { client.pets.map(pet => pet._id == petId && petData.push(pet)) });
+                if (petData) {
+                    displayPetDetail(clientData, petData[0])
+                } else {
+                    console.error('Pet not found')
+                }
+            } else {
+                const petIndex = userData.pets.findIndex(pet => pet._id === petId);
+                if (petIndex >= 0) {
+                    displayPetDetail(userData, userData.pets[petIndex]);
+                } else {
+                    console.error('Pet not found')
+                }
+            }
+    })
 }
 function generatePetInfoHTML(pet) {
     return `
     <div class='petsList'>
-            <a href=#user/${pet.user}/pet/${pet.id}/add class='petThumbnail'>
+            <a href=#user/${pet.clientId}/pet/${pet._id}/add class='petThumbnail'>
                 <div>
                     <img src='images/logo.svg' alt='Fluffy'>
                     <p>${pet.name}</p>
@@ -452,53 +497,19 @@ function generatePetInfoHTML(pet) {
             <div class='boxedInfoItem'><p>Food: ${pet.food}</p></div>
         </div>`;
 }
-function displayPetDetail(STORE) {
-    const clientHeader = generateClientHeaderHTML(STORE.userData, STORE.visitData);
-    const petDetail = generatePetInfoHTML(STORE.petData);
-    $('#js-main').html(`
-        ${clientHeader}
-        ${petDetail}
-        <a class='button' href='#user/${STORE.userData.id}/pet/${STORE.petData.id}/update'>Update Pet</a>
-        <a class='button' href='#user/${STORE.userData.id}/pet/${STORE.petData.id}/delete'>Delete Pet</a>`
-    );
-}
-//rewrite delete pet
-function displayDeleteClientPetConfirmation(petId) {
-    if (confirm('Delete pet?')) {
-        deleteClientPet(petId)
-        .then(displayAlertDialog('Pet Deleted'));;
-     } else {
-        alert('Action Cancelled');
-     } 
-}
-
-///////////////////////////////////////////
-//Pet Detail Screen - Client
-///////////////////////////////////////////
-function getMyPetAndDisplayPetDetail(petId) {
-    getMe()
-        .then((userData) => {
-            const petIndex = userData.pets.findIndex(pet => pet._id === petId);
-            if (petIndex) {
-                displayMyPetDetail(userData, userData.pets[petIndex]);
-            } else {
-                console.error('Pet not found')
-            }
-    })
-}
-function displayMyPetDetail(userData, petData) {
+function displayPetDetail(userData, petData) {
     const clientHeader = generateClientHeaderHTML(userData);
     const petDetail = generatePetInfoHTML(petData);
     $('#js-main').html(`
         ${clientHeader}
         ${petDetail}
-        <a class='button' href='#pet/${petData._id}/update'>Update Pet</a>
-        <a class='button' href='#pet/${petData._id}/delete'>Delete Pet</a>`
+        <a class='button' href='#updatePet/${petData._id}'>Update Pet</a>
+        <a class='button' href='#deletePet/${petData._id}'>Delete Pet</a>`
     );
 }
-function displayDeleteMyPetConfirmation(petId) {
+function displayDeletePetConfirmation(petId) {
     if (confirm('Delete pet?')) {
-        deleteMyPet(petId)
+        deletePet(petId)
             .then(
                 window.location.href = `./#clientDashboard`
             );
@@ -510,25 +521,46 @@ function displayDeleteMyPetConfirmation(petId) {
 ///////////////////////////////////////////
 //Update Client Profile Screen
 ///////////////////////////////////////////
-function getClientUserAndDisplayClientUpdateForm(userId) {
-    getClient(userId)
-    .then(displayClientProfileUpdateForm);
+function getClientUserAndDisplayClientUpdateForm(petId) {
+    getMe()
+        .then((userData) => {
+            if (userData.role === 'provider') {
+                const clientData = userData.clients.find(client => client.pets.filter(pet => pet._id === petId));
+                if (clientData) {
+                    displayClientProfileUpdateForm(clientData)
+                } else {
+                    console.error('User not found')
+                }
+            } else {
+                if (userData) {
+                    displayClientProfileUpdateForm(userData);
+                } else {
+                    console.error('User not found')
+                }
+            }
+        })
 }
 function displayClientProfileUpdateForm(clientData) {
     const element = $(clientSignupFormTemplate);
     element.find('#js-client-signup-form').attr('id', 'js-client-update-form');
     element.find('h2').text('Update Profile');
     //pre-fill form
+    element.find('#clientId').val(clientData._id);
     element.find('#firstName').val(clientData.firstName);
     element.find('#lastName').val(clientData.lastName);
     element.find('#email').val(clientData.email);
     element.find('#phone').val(clientData.phone);
     element.find('#streetAddress').val(clientData.addressString);
+    element.find('#entryNote').val(clientData.entryNote);
     element.find('#vetInfo').val(clientData.vetInfo);
-    //remove password fields
+    //remove password and provider fields
+    element.find('label[for=provider], input#provider').remove();
     element.find('label[for=password], input#password').remove();
     element.find('label[for=confirmPassword], input#confirmPassword').remove();
     $('#js-main').html(element);
+    new google.maps.places.Autocomplete((document.getElementById('streetAddress')), {
+        types: ['geocode']
+    });
 }
 function handleMyProfileUpdateSubmit() {
     $('#js-main').on('submit', '#js-client-update-form', event => {
@@ -536,12 +568,13 @@ function handleMyProfileUpdateSubmit() {
         return getMe()
             .then(currentUserData => {
                 const userData = {
-                    id: currentUserData.id,
+                    _id: $(event.currentTarget).find('#clientId').val(),
                     firstName: $(event.currentTarget).find('#firstName').val(),
                     lastName: $(event.currentTarget).find('#lastName').val(),
                     email: $(event.currentTarget).find('#email').val(),
                     phone: $(event.currentTarget).find('#phone').val(),
                     addressString: $(event.currentTarget).find('#streetAddress').val(),
+                    entryNote: $(event.currentTarget).find('#entryNote').val(),
                     vetInfo: $(event.currentTarget).find('#vetInfo').val(),
                 };
                 updateMeAndDisplayAlertDialog(userData);
@@ -552,50 +585,50 @@ $(handleMyProfileUpdateSubmit);
 function updateMeAndDisplayAlertDialog(userData) {
     updateMe(userData)
         .then(() => {
-            window.location.href = `./#clientDashboard`
+            window.history.back();
         })
     .catch(() => console.error('Error updating profile'));
 }
 ///////////////////////////////////////////
-//Add Pet Screen - Client
+//Add Pet Screen
 ///////////////////////////////////////////
-function displayAndHandleAddMyPetForm() {
-    $('#js-main').html(addPetFormTemplate);
+function displayAndHandleAddMyPetForm(clientId) {
+    const element = $(addPetFormTemplate);
+    element.find('#clientId').val(clientId);
+    $('#js-main').html(element);
 }
-
 function handleAddMyPetSubmit() {
-    $('#js-main').on('submit', '#js-add-my-pet-form', event => {
+    $('#js-main').on('submit', '#js-add-pet-form', event => {
         event.preventDefault();
-        return getMe()
-            .then(userData => {
-                const petData = {
-                    clientId: userData.id,
-                    name: $(event.currentTarget).find('#petName').val(),
-                    type: $(event.currentTarget).find('#petType').val(),
-                    breed: $(event.currentTarget).find('#petBreed').val(),
-                    color: $(event.currentTarget).find('#petColor').val(),
-                    food: $(event.currentTarget).find('#petFood').val()
-                };
-                addMyPetAndDisplayAlertDialog(petData);
-            })
+        const petData = {
+            clientId: $(event.currentTarget).find('#clientId').val(),
+            name: $(event.currentTarget).find('#petName').val(),
+            type: $(event.currentTarget).find('#petType').val(),
+            breed: $(event.currentTarget).find('#petBreed').val(),
+            color: $(event.currentTarget).find('#petColor').val(),
+            food: $(event.currentTarget).find('#petFood').val()
+        };
+        console.log(petData);
+        addPetAndDisplayAlertDialog(petData);
     });
 }
 $(handleAddMyPetSubmit);
-function addMyPetAndDisplayAlertDialog(petData) {
-    addMyPet(petData)
+function addPetAndDisplayAlertDialog(petData) {
+    addPet(petData)
         .then(() => {
-            window.location.href = `./#clientDashboard`
+            // window.location.href = `./#clientDashboard`
+            window.history.back();
         })
         .catch(() => console.error('Error adding pet'));
 }
 ///////////////////////////////////////////
-//Client Dashboard - NOT Provider Client Detail
+//Client Dashboard
 ///////////////////////////////////////////
 function getMeAndDisplayClientDashboard() {
     getMe().then(displayClientDashboard);
 }
 
-function displayClientDashboard(userData) {
+function displayClientDashboard(userData, role) {
     const clientHeader = generateClientHeaderHTML(userData);
     const clientInfo = generateClientInfoHTML(userData);
     const petsList = generatePetsHTML(userData.pets);
@@ -603,22 +636,13 @@ function displayClientDashboard(userData) {
     $('#js-main').html(`
     ${clientHeader}${clientInfo}
     <div class='petsList'>${petsList}</div>
-    <a class='button' href='#pet/add'>Add Pet</a>
+    <a class='button' href='#addPet/${userData._id}'>Add Pet</a>
     <div id='js-tasks'>${tasksList}</div>
-    <a class='button' href='#task/add'>Add Task</a>
+    <a class='button' href='#addTask/${userData._id}'>Add Task</a>
     `);
 }
 // Client Info
-function generateClientInfoHTML(client, user) {
-    const entryNoteHTML = '';
-    // show additional field if current user is provider
-    // if (user.provider === true) {
-    //     entryNoteHTML = `
-    //     <a class='boxedInfoItem' href='#0'>
-    //     <img src='images/house.svg' alt='Entry Note'>
-    //     <p>${client.entryNote}</p>
-    // </a>`;
-    // }
+function generateClientInfoHTML(client) {
     return `
     <div><a class='boxedInfoItem' href='tel:${client.phone}'>
                 <img src='images/phone.svg' alt='Phone'>
@@ -628,11 +652,14 @@ function generateClientInfoHTML(client, user) {
                     <img src='images/email.svg' alt='Email'>
                 <p>${client.email}</p>
             </a>
-            <a class='boxedInfoItem' href='https://www.google.com/maps/@${client.latLon}'>
+            <a class='boxedInfoItem' target='_blank' href='https://www.google.com/maps/search/${client.addressString}'>
                 <img src='images/location.svg' alt='Address'>
                 <p>${client.addressString}</p>
             </a>
-            ${entryNoteHTML}
+            <a class='boxedInfoItem' href='#0'>
+                <img src='images/house.svg' alt='Entry Note'>
+                <p>${client.entryNote}</p>
+            </a>           
             <a class='boxedInfoItem' href='#0'>
                 <img src='images/vet.svg' alt='Veterinarian'>
                 <p>${client.vetInfo}</p>
@@ -651,16 +678,16 @@ function generatePetsHTML(petsData) {
 // Tasks
 function generateTaskHTML(task) {
     return `
-    <a class='boxedInfoItem' href='#0'><img src='images/checkbox.svg' alt='Task'>
-    <p>${task.description}</p></a>`;
+    <div class='boxedInfoItem'><a href='#deleteTask/${task._id}'><img src='images/delete.svg' alt='Task'></a>
+    <p>${task.description}</p></div>`;
 }
 function generateTasksHTML(tasksList) {
     const items = tasksList.map((item, index) => generateTaskHTML(item, index));  
     return items.join('');
 }
-function displayDeleteMyTaskConfirmation(taskId) {
+function displayDeleteTaskConfirmation(taskId) {
     if (confirm('Delete task?')) {
-        deleteMyTask(taskId)
+        deleteTask(taskId)
             .then(displayAlertDialog('Task Deleted'));;
     } else {
         alert('Action Cancelled');
@@ -670,10 +697,11 @@ function displayDeleteMyTaskConfirmation(taskId) {
 // Client Header (Multiple Screens)
 ///////////////////////////////////////////
 function generateClientHeaderHTML(userData) {
+    console.log('Data for header: ', userData);
     const nextVisit = userData.visits && userData.visits.length > 0 ? `<p>Next Visit: ${formatDate(userData.visits[0].startTime, userData.visits[0].endTime)}</p></div>` : `<p>No visits scheduled</p>`;
     return `
     <div class='clientHeader'>
-    <a class='buttonSmall' href='#updateClient/${userData.id}'>Edit</a>
+    <a class='buttonSmall' href='#updateClient/${userData._id}'>Edit</a>
             <h2>${userData.firstName} ${userData.lastName}</h2>
             ${nextVisit}</div>`;
 }
@@ -693,6 +721,7 @@ function displayCompactSiteHeader(role) {
 ///////////////////////////////////////////
 function displayAlertDialog(string) {
     alert(string);
+    window.history.back();
 }
 function displayConfirmDialog(string) {
     confirm(string);
@@ -702,6 +731,9 @@ function displayConfirmDialog(string) {
 ///////////////////////////////////////////
 function displayProviderSignupForm() {
     $('#js-main').html(providerSignupFormTemplate);
+    new google.maps.places.Autocomplete((document.getElementById('streetAddress')), {
+        types: ['geocode']
+    });
 }
 function handleProviderSignupSubmit() {
     $('#js-main').on('submit', '#js-provider-signup-form', event => {
@@ -734,12 +766,16 @@ function displayClientSignupForm(providerID) {
     const element = $(clientSignupFormTemplate);
     element.find('#provider').data('id', providerID);
     $('#js-main').html(element);
+    new google.maps.places.Autocomplete((document.getElementById('streetAddress')), {
+            types: ['geocode']
+        });
 };
 function handleClientSignupSubmit() {
     $('#js-main').on('submit', '#js-client-signup-form', event => {
+        console.log('Handling client signup');
         event.preventDefault();
         let userData = {
-            provider: $(event.currentTarget).find('#provider').data('id'),
+            providerId: $(event.currentTarget).find('#provider').data('id'),
             firstName: $(event.currentTarget).find('#firstName').val(),
             lastName: $(event.currentTarget).find('#lastName').val(),
             email: $(event.currentTarget).find('#email').val(),
@@ -748,11 +784,14 @@ function handleClientSignupSubmit() {
             vetInfo: $(event.currentTarget).find('#vetInfo').val(),
             password: $(event.currentTarget).find('#password').val(),
         };
+        console.log(userData);
         addUser(userData)
         .then(() => {
             loginUser({ email: userData.email, password: userData.password })
             .then((response) => {
                 window.localStorage.setItem('AUTH_TOKEN', response.authToken);
+            })
+            .then(() => {
                 window.location.href = `./#clientDashboard`;
             })
     })

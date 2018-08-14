@@ -17,4 +17,34 @@ const petSchema = mongoose.Schema({
     food: { type: String }
 })
 
+// Push new pet reference to the client's document
+petSchema.pre('save', function (next) {
+    const pet = this;
+    if (pet.isNew) {
+        pet.model('Users').update({ _id: this.clientId }, {
+            $push: { pets: pet._id }
+        })
+        .then(() => {
+            next();
+        })
+        .catch((err) => {
+            next(err);
+        })
+    }
+});
+
+// Remove deleted pet's reference from the client's document
+petSchema.pre('remove', function (next) {
+    const pet = this;
+        pet.model('Users').update({ _id: this.clientId }, {
+            $pull: { pets: pet._id }
+        })
+            .then(() => {
+                next();
+            })
+            .catch((err) => {
+                next(err);
+            })
+});
+
 module.exports = mongoose.model('Pets', petSchema, 'pets');

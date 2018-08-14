@@ -9,15 +9,15 @@ const mongoose = require('mongoose');
 const userSchema = mongoose.Schema({
     firstName: { type: String, required: true, default: '' },
     lastName: { type: String, required: true, default: '' },
-    companyName: { type: String, default: '' }, // provider only
+    companyName: { type: String, default: '' },
     email: { type: String, required: true, unique: true },
     phone: { type: String, default: '' },
-    vetInfo: { type: String, default: '' }, // client only
+    vetInfo: { type: String, default: '' },
     addressString: { type: String, default: '' },
     latLon: { type: String, default: '' },
     entryNote: { type: String, default: '' },
     role: { type: String, required: true, default: "client" },
-    password: { type: String, required: true },
+    password: { type: String, required: true, select: false },
     pets: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Pets'}],
     visits: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Visits'}],
     tasks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tasks'}],
@@ -32,7 +32,7 @@ userSchema.virtual("fullName").get(function () {
 
 userSchema.methods.serialize = function () {
     return {
-        id: this._id,
+        _id: this._id,
         firstName: this.firstName,
         lastName: this.lastName,
         companyName: this.companyName,
@@ -58,5 +58,37 @@ userSchema.methods.validatePassword = function (password) {
 userSchema.statics.hashPassword = function (password) {
     return bcrypt.hash(password, 10);
 };
+
+// Push new client references to their provider's document
+userSchema.pre('save', function (next) {
+    const user = this;
+    if (user.role === 'client' && user.isNew) {
+        user.model('Users').update({ _id: this.providerId}, {
+            $push: { clients: user._id }
+        }) 
+        .then(() => {
+            next();
+        })
+        .catch((err) => {
+            next(err);
+        })
+    }
+});
+
+// Pull deleted client references from their provider's document
+userSchema.pre('remove', function (next) {
+    const user = this;
+    if (user.role === 'client' && user.isNew) {
+        user.model('Users').update({ _id: this.providerId }, {
+            $pull: { clients: user._id }
+        })
+            .then(() => {
+                next();
+            })
+            .catch((err) => {
+                next(err);
+            })
+    }
+});
 
 module.exports = mongoose.model('Users', userSchema, 'users');
