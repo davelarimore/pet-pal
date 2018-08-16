@@ -59,7 +59,7 @@ h1, h2, p {
   max-width: 145px;
 }
 .buttonSmall:first-of-type {
-  margin-right: 10px;
+  margin-left: 15px;
 }
 .boxed {
   padding: 20px;
@@ -130,7 +130,8 @@ fieldset {
 }
 .clientHeader > .buttonSmall {
   float: right;
-  margin: 0;
+  margin-top: 0;
+  margin-bottom: 0;
 }
 .boxedInfoItem {
   display: inline-block;

@@ -78,7 +78,7 @@ userSchema.pre('save', function (next) {
 // Pull deleted client references from their provider's document
 userSchema.pre('remove', function (next) {
     const user = this;
-    if (user.role === 'client' && user.isNew) {
+    if (user.role === 'client') {
         user.model('Users').update({ _id: this.providerId }, {
             $pull: { clients: user._id }
         })

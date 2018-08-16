@@ -11,7 +11,8 @@ function ajaxCall(method, url, data) {
             'Content-Type': 'application/json',
         },
         url: url,
-        data: JSON.stringify(data) || ""
+        data: JSON.stringify(data) || "",
+        // success: callback
     })
 }
 
@@ -28,19 +29,13 @@ function loginUser(credentials) {
 
 //Users
 function getMe() {
-    return ajaxCall('GET', 'api/users/me');
+    return ajaxCall('GET', 'api/users');
 }
-function getClient(userId) {
-    return ajaxCall('GET', `api/users/clients/${userId}`);
+function updateUser(userData) {
+    return ajaxCall('PUT', 'api/users', userData);
 }
-function updateMe(userData) {
-    return ajaxCall('PUT', 'api/users/me', userData);
-}
-function updateMyClient(userId, userData) {
-    return ajaxCall('PUT', `api/users/clients/${userId}`, userData);
-}
-function getClientByName(lastName) {
-    return ajaxCall('GET', `api/users/clients/${lastName}`);
+function deleteClient(clientId) {
+    return ajaxCall('DELETE', `api/users/${clientId}`);
 }
 
 //Pets
@@ -61,6 +56,7 @@ function addVisit(visitData) {
 function deleteVisit(visitId) {
     return ajaxCall('DELETE', `api/clients/visits/${visitId}`);
 }
+
 //Tasks
 function addTask(taskData) {
     return ajaxCall('POST', 'api/tasks', taskData);

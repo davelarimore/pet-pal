@@ -5,11 +5,14 @@ const jsonParser = bodyParser.json();
 
 const usersController = require('../controllers/usersController');
 
-// GET users/me: - get my client object only, accessible by any authenticated user
-router.get('/users/me', usersController.usersGetMe);
+//GET: get my user object
+router.get('/users', usersController.usersGetMe);
 
-//PUT ME: update authenticated user (update me)
-router.put('/users/me', usersController.usersPutMe);
+//PUT: update a user object
+router.put('/users', usersController.usersPut);
+
+//DELETE: delete a user object
+router.delete('/users/:id', usersController.usersDelete);
 
 ////////////////////////////////
 // DEV TESTING ONLY

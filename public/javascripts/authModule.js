@@ -21,23 +21,29 @@ const auth = (function () {
             })
             .then(response => {
                 _setToken(response.authToken);
-
                 return getMe();
             })
             .then(response => {
-                currentuser = response;
+                currentUser = response;
                 console.log(response);
             });
+    };
+
+    function _updateCurrentUser() {
+        return getMe()
+        .then(response => {
+            currentUser = response;
+        })
     }
 
     function _logout() {
         window.localStorage.removeItem("AUTH_TOKEN");
-        window.location.replace = '../';
     }
 
     return {
         login: _login,
         logout: _logout,
+        updateCurrentUser: _updateCurrentUser,
         isProvider: function () {
             console.log(currentUser.role);
             return currentUser.role === "provider";

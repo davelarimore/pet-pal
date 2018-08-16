@@ -44,7 +44,6 @@ visitSchema.pre('save', function(next) {
 // Remove deleted visits's reference from client and provider
 visitSchema.pre('remove', function(next) {
     const visit = this;
-    if (visit.isNew) {
         visit.model('Users').update({ _id: this.client}, {
             $pull: { visits: visit._id }
         })
@@ -59,7 +58,6 @@ visitSchema.pre('remove', function(next) {
         .catch((err) => {
             next(err);
         })
-    }
 });
 
 module.exports = mongoose.model('Visits', visitSchema, 'visits');

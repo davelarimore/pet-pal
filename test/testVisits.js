@@ -115,5 +115,19 @@ describe('Protected visits endpoint', function () {
                     );
                 })
         });
+        it(`Should prevent unauthorized user from deleting visit`, function () {
+            return login(email, 'wrongPassword')
+                .then((token) => {
+                    return (
+                        chai
+                            .request(app)
+                            .delete(`/api/clients/visits/${createdVisitId}`)
+                            .set('authorization', `Bearer ${token}`)
+                            .then(function (res) {
+                                expect(res).to.have.status(401);
+                            })
+                    );
+                })
+        });
     });
 });
