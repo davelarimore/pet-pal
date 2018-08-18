@@ -1,5 +1,5 @@
 'use strict';
-global.DATABASE_URL = 'mongodb://localhost:27017/test-pet-pal';
+const { TEST_DATABASE_URL } = require('../config');
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 
@@ -33,7 +33,7 @@ describe('Protected tasks endpoint', function () {
     let createdTaskId = '';
 
     before(function () {
-        return runServer()
+        return runServer(TEST_DATABASE_URL)
         .then(() => {
             return Users.hashPassword(password).then(password =>
                 Users.create({

@@ -18,23 +18,23 @@ const templates = {
             <fieldset name="clientSignup">
                 <input type="hidden" id="provider" title="Provider ID"></input>
                 <input type="hidden" id="clientId" title="Client ID"></input> 
-                <label for="firstName" class="visuallyhidden">First Name</label>
+                <label for="firstName" class="visuallyhidden">First Name*</label>
                 <input type="text" id="firstName" title="First Name" placeholder="First Name" required></input>
-                <label for="lastName" class="visuallyhidden">Last Name</label>
+                <label for="lastName" class="visuallyhidden">Last Name*</label>
                 <input type="text" id="lastName" title="Last Name" placeholder="Last Name" required></input>
-                <label for="email" class="visuallyhidden">Email</label>
+                <label for="email" class="visuallyhidden">Email*</label>
                 <input type="email" id="email" title="Email Address" placeholder="Email" required></input>
-                <label for="phone" class="visuallyhidden">Phone</label>
+                <label for="phone" class="visuallyhidden">Phone*</label>
                 <input type="text" id="phone" title="Phone Number" placeholder="Phone" required></input>
-                <label for="streetAddress" class="visuallyhidden">Street Address</label>
+                <label for="streetAddress" class="visuallyhidden">Street Address*</label>
                 <input type="text" id="streetAddress" title="Street Address" placeholder="Address" required></input>
                 <label for="entryNote" class="visuallyhidden">Entry Note</label>
                 <input type="text" id="entryNote" title="Entry Note" placeholder="Entry Note"></input>
                 <label for="vetInfo" class="visuallyhidden">Veterinarian Name</label>
                 <input type="text" id="vetInfo" title="Veterinarian Name" placeholder="Veterinarian Name"></input>
-                <label for="password" class="visuallyhidden">Password</label>
+                <label for="password" class="visuallyhidden">Password*</label>
                 <input type="password" pattern=".{6,10}" id="password" title="Password must be 6-10 characters" placeholder="Password" required></input>
-                <label for="confirmPassword" class="visuallyhidden">Confirm Password</label>
+                <label for="confirmPassword" class="visuallyhidden">Confirm Password*</label>
                 <input type="password" id="confirmPassword" title="Confirm Password" placeholder="Confirm Password" required></input>
                 <p id="message"></p>
                 <input type="submit" value="Submit" class="button">
@@ -47,21 +47,21 @@ const templates = {
         <form id="js-provider-signup-form">
             <fieldset name="providerSignup">
                 <input type="hidden" id="providerId" title="Provider ID"></input>
-                <label for="companyName" class="visuallyhidden">Company Name</label>
+                <label for="companyName" class="visuallyhidden">Company Name*</label>
                 <input type="text" id="companyName" title="Company Name" placeholder="Company Name" required></input>
-                <label for="firstName" class="visuallyhidden">First Name</label>
+                <label for="firstName" class="visuallyhidden">First Name*</label>
                 <input type="text" id="firstName" title="First Name" placeholder="First Name" required></input>
-                <label for="lastName" class="visuallyhidden">Last Name</label>
+                <label for="lastName" class="visuallyhidden">Last Name*</label>
                 <input type="text" id="lastName" title="Last Name" placeholder="Last Name" required></input>
-                <label for="email" class="visuallyhidden">Email</label>
+                <label for="email" class="visuallyhidden">Email*</label>
                 <input type="email" id="email" title="Email Address" placeholder="Email" required></input>
-                <label for="phone" class="visuallyhidden">Phone</label>
+                <label for="phone" class="visuallyhidden">Phone*</label>
                 <input type="text" id="phone" title="Phone Number" placeholder="Phone" required></input>
-                <label for="streetAddress" class="visuallyhidden">Street Address</label>
+                <label for="streetAddress" class="visuallyhidden">Street Address*</label>
                 <input type="text" id="streetAddress" title="Street Address" placeholder="Address" required></input>
-                <label for="password" class="visuallyhidden">Password</label>
+                <label for="password" class="visuallyhidden">Password*</label>
                 <input type="password" pattern=".{6,10}" id="password" title="Password must be 6-10 characters" placeholder="Password" required></input>
-                <label for="confirmPassword" class="visuallyhidden">Confirm Password</label>
+                <label for="confirmPassword" class="visuallyhidden">Confirm Password*</label>
                 <input type="password" id="confirmPassword" title="Confirm Password" placeholder="Confirm Password" required></input>
                 <p id="message"></p>
                 <input type="submit" value="Submit" class="button">
