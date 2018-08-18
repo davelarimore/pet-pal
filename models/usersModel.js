@@ -72,22 +72,26 @@ userSchema.pre('save', function (next) {
         .catch((err) => {
             next(err);
         })
-    }
+    } else {
+        next();
+    } 
 });
 
-// Pull deleted client references from their provider's document
+// Pull deleted client and visits references from their provider's document
 userSchema.pre('remove', function (next) {
     const user = this;
     if (user.role === 'client') {
         user.model('Users').update({ _id: this.providerId }, {
-            $pull: { clients: user._id }
+            $pull: { clients: user._id },
         })
-            .then(() => {
-                next();
-            })
-            .catch((err) => {
-                next(err);
-            })
+        .then(() => {
+            next();
+        })
+        .catch((err) => {
+            next(err);
+        })
+    } else {
+        next();
     }
 });
 

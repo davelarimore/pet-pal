@@ -21,18 +21,20 @@ const auth = (function () {
             })
             .then(response => {
                 _setToken(response.authToken);
-                return getMe();
+                return api.getMe();
             })
             .then(response => {
                 currentUser = response;
-                console.log(response);
+                console.log('Current user:', response);
             });
     };
 
     function _updateCurrentUser() {
-        return getMe()
+        return api.getMe()
         .then(response => {
+            console.log("Refreshing current user");
             currentUser = response;
+            console.log(currentUser);
         })
     }
 
@@ -43,9 +45,9 @@ const auth = (function () {
     return {
         login: _login,
         logout: _logout,
+        getToken: _getToken,
         updateCurrentUser: _updateCurrentUser,
         isProvider: function () {
-            console.log(currentUser.role);
             return currentUser.role === "provider";
         },
         getCurrentUser: function () {

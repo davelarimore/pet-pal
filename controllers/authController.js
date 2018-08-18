@@ -28,7 +28,7 @@ exports.authenticate = (req, res) => {
 // Signup
 exports.signup = (req, res) => {
 
-    console.log('Initiating signup');
+    console.log('Initiating signup', req.body);
 
     const requiredFields = ['email', 'password'];
     const missingField = requiredFields.find(field => !(field in req.body));
@@ -129,8 +129,6 @@ exports.signup = (req, res) => {
     // before this
     firstName = firstName.trim();
     lastName = lastName.trim();
-    let createdUserId = '';
-    let createdUserData = '';
 
     return Users.find({ email })
         .count()
@@ -148,6 +146,7 @@ exports.signup = (req, res) => {
             return Users.hashPassword(password);
         })
         .then(hash => {
+            console.log('validations passed, writing record');
             return Users.create({
                 email,
                 password: hash,
@@ -163,6 +162,7 @@ exports.signup = (req, res) => {
             });
         })
         .then((user) => {
+            console.log('returning response');
             return res.status(201).json(user.serialize());
         })
         .catch(err => {

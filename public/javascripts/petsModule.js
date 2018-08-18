@@ -1,5 +1,8 @@
 const pets = (function () {
-    //Pet Detail Screen
+
+    ///////////////////////////////////////////
+    //Pet Detail
+    ///////////////////////////////////////////
     function _displayPetDetail(petId) {
         const userData = auth.getCurrentUser();
         if (auth.isProvider()) {
@@ -35,23 +38,35 @@ const pets = (function () {
         </div>`;
     }
     function _generatePetDetail(userData, petData) {
-        const clientHeader = generateClientHeaderHTML(userData);
+        const clientHeader = users.generateClientHeaderHTML(userData);
         const petDetail = _generatePetInfoHTML(petData);
         $('#js-main').html(`
         ${clientHeader}
         ${petDetail}
         <a class='button' href='#updatePet/${petData._id}'>Update Pet</a>
-        <a class='button' href='#deletePet/${petData._id}'>Delete Pet</a>`
+        <a class='button' id='js-delete-pet' href='#' data-id='${petData._id}'>Delete Pet</a>`
         );
     }
 
-    //Add pet screen
+    function _generatePetsHTML(petsData) {
+        const items = petsData.map((item, index) => _generatePetHTML(item, index));
+        return items.join('');
+    }
+    function _generatePetHTML(pet) {
+        return `
+    <a href='#pet/${pet._id}/' class='petThumbnail'>
+    <div><img src='images/logo.svg' alt='${pet.name}'><p>${pet.name}</p></div></a>`;
+    }
+
+    ///////////////////////////////////////////
+    //Add Pet
+    ///////////////////////////////////////////
     function _displayAndHandleAddPetForm(clientId) {
         const element = $(templates.addPetForm);
         element.find('#clientId').val(clientId);
         $('#js-main').html(element);
     }
-    function handleAddMyPetSubmit() {
+    function _handleAddMyPetSubmit() {
         $('#js-main').on('submit', '#js-add-pet-form', event => {
             event.preventDefault();
             const petData = {
@@ -62,20 +77,25 @@ const pets = (function () {
                 color: $(event.currentTarget).find('#petColor').val(),
                 food: $(event.currentTarget).find('#petFood').val()
             };
-            console.log(petData);
             _addPetAndDisplayAlertDialog(petData);
         });
     }
-    $(handleAddMyPetSubmit);
+    $(_handleAddMyPetSubmit);
     function _addPetAndDisplayAlertDialog(petData) {
-        addPet(petData)
+        api.addPet(petData)
             .then(() => {
-                window.history.back();
+                if (auth.isProvider()) {
+                    window.location.replace(`./#clientDetail/${petData.clientId}`);
+                } else {
+                    window.location.replace(`./#clientDashboard`);
+                }            
             })
             .catch(() => console.error('Error adding pet'));
     }
 
-    //Update Pet Screen
+    ///////////////////////////////////////////
+    //Update Pet
+    ///////////////////////////////////////////
     function _displayUpdatePetForm(petId) {
         const userData = auth.getCurrentUser();
         if (auth.isProvider()) {
@@ -122,27 +142,40 @@ const pets = (function () {
     }
     $(_handleUpdatePetFormSubmit);
     function _updatePetAndDisplayAlertDialog(petId, petData) {
-        updatePet(petId, petData)
-            .then(displayAlertDialog('Pet Updated'));
+        api.updatePet(petId, petData)
+        .then(users.displayAlertDialog('Pet Updated'));
     }
 
-    //Delete pet
-    function _displayDeletePetConfirmation(petId) {
-        if (confirm('Delete pet?')) {
-            deletePet(petId)
-                .then(
-                    window.location.href = `./#clientDashboard`
-                );
-        } else {
-            alert('Action Cancelled');
-            window.location.href = `./#pet/${petId}`;
-        }
+    ///////////////////////////////////////////
+    //Delete Pet
+    ///////////////////////////////////////////
+    function _handleDeletePet() {
+        $('#js-main').on('click', '#js-delete-pet', event => {
+            event.preventDefault();
+            const petId = $(event.currentTarget).data('id');
+            const clientId = $('#js-main').find('.clientHeader').data('id');
+            if (confirm('Delete pet?')) {
+                api.deletePet(petId)
+                    .then(() => auth.updateCurrentUser())
+                    .then(() => users.displayAlertDialog('Pet Deleted'))
+                    .then(() => {
+                        if (auth.isProvider()) {
+                            users.displayClientDetail(clientId);
+                        } else {
+                            users.displayClientDashboard();
+                        }
+                    })
+            } else {
+                alert('Action Cancelled');
+            }
+        })
     }
+    $(_handleDeletePet)
 
     return {
         displayPetDetail: _displayPetDetail,
+        generatePetsHTML: _generatePetsHTML,
         displayUpdatePetForm: _displayUpdatePetForm,
         displayAndHandleAddPetForm: _displayAndHandleAddPetForm,
-        displayDeletePetConfirmation: _displayDeletePetConfirmation
     };
 })();
