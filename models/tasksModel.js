@@ -27,6 +27,8 @@ taskSchema.pre('save', function (next) {
             .catch((err) => {
                 next(err);
             })
+    } else {
+        next();
     }
 });
 

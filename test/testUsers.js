@@ -6,13 +6,12 @@ const jwt = require('jsonwebtoken');
 
 const { app, runServer, closeServer } = require('../server');
 const Users = require('../models/usersModel');
-const { JWT_SECRET } = require('../config');
 
 const expect = chai.expect;
 
 chai.use(chaiHttp);
 
-//Helpers
+//Helper
 function login(email, password) {
     return chai
         .request(app)
@@ -39,7 +38,7 @@ describe('Protected users endpoint', function () {
                     email,
                     password,
                     firstName,
-                    lastName
+                    lastName,
                 })
                     .then(user => {
                         createdUserId = user.id;
@@ -54,11 +53,11 @@ describe('Protected users endpoint', function () {
             .then(() => closeServer())
     });
 
-    describe('/api/users/me', function () {
+    describe('/api/users', function () {
         it('Should reject requests with no credentials', function () {
             return chai
                 .request(app)
-                .get('/api/users/me')
+                .get('/api/users')
                 .then((res) => {
                     expect(res).to.have.status(401);
                 })
@@ -79,7 +78,7 @@ describe('Protected users endpoint', function () {
             );
             return chai
                 .request(app)
-                .get('/api/users/me')
+                .get('/api/users')
                 .set('Authorization', `Bearer ${token}`)
                 .then((res) => {
                     expect(res).to.have.status(401);
@@ -90,7 +89,7 @@ describe('Protected users endpoint', function () {
             .then((token) => {
                 return chai
                     .request(app)
-                    .get('/api/users/me')
+                    .get('/api/users')
                     .set('authorization', `Bearer ${token}`)
                     .then(res => {
                         expect(res).to.have.status(200);
@@ -114,14 +113,49 @@ describe('Protected users endpoint', function () {
                     return (
                         chai
                             .request(app)
-                            .put(`/api/users/me`)
+                            .put(`/api/users`)
                             .set('authorization', `Bearer ${token}`)
                             .send(updateData)
                             .then((res) => {
-                                console.log(res.body);
                                 expect(res).to.have.status(200);
                                 expect(res.body).to.be.a("object");
                                 expect(res.body.lastName).to.deep.equal(updateData.lastName);
+                            })
+                    );
+                })
+        });
+        it(`Should prevent unauthorized user from updating user`, function () {
+            const updateData = {
+                _id: createdUserId,
+                firstName: 'foo',
+                lastName: 'bar',
+                phone: 'fizz',
+                addressString: 'buzz'
+            };
+            return login(email, 'wrongPassword')
+                .then((token) => {
+                    return (
+                        chai
+                            .request(app)
+                            .put(`/api/users`)
+                            .set('authorization', `Bearer ${token}`)
+                            .send(updateData)
+                            .then((res) => {
+                                expect(res).to.have.status(401);
+                            })
+                    );
+                })
+        });
+        it(`Should prevent unauthorized user from deleting user`, function () {
+            return login(email, 'wrongPassword')
+                .then((token) => {
+                    return (
+                        chai
+                            .request(app)
+                            .delete(`/api/users/${createdUserId}`)
+                            .set('authorization', `Bearer ${token}`)
+                            .then((res) => {
+                                expect(res).to.have.status(401);
                             })
                     );
                 })

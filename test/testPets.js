@@ -114,6 +114,30 @@ describe('Protected pets endpoint', function () {
                     );
                 })
         });
+        it(`Should prevent unauthorized user from updating pet`, function () {
+            const updateData = {
+                _id: createdPetId,
+                name: 'foo',
+                type: 'bar',
+                breed: 'fizz',
+                color: 'buzz',
+                food: 'test'
+            };
+            return login(email, 'wrongPassword')
+                .then((token) => {
+                    return (
+                        chai
+                            .request(app)
+                            .put(`/api/pets/${createdPetId}`)
+                            .set('authorization', `Bearer ${token}`)
+                            .send(updateData)
+                            .then((res) => {
+                                console.log(res.body);
+                                expect(res).to.have.status(401);
+                            })
+                    );
+                })
+        });
         it(`Should delete pet`, function () {
             return login(email, password)
                 .then((token) => {
@@ -124,6 +148,20 @@ describe('Protected pets endpoint', function () {
                             .set('authorization', `Bearer ${token}`)
                             .then(function (res) {
                                 expect(res).to.have.status(204);
+                            })
+                    );
+                })
+        });
+        it(`Should prevent unauthorized user from deleting pet`, function () {
+            return login(email, 'wrongPassword')
+                .then((token) => {
+                    return (
+                        chai
+                            .request(app)
+                            .delete(`/api/pets/${createdPetId}`)
+                            .set('authorization', `Bearer ${token}`)
+                            .then(function (res) {
+                                expect(res).to.have.status(401);
                             })
                     );
                 })

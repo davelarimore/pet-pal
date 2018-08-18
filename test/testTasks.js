@@ -89,5 +89,19 @@ describe('Protected tasks endpoint', function () {
                     );
                 })
         });
+        it(`Should prevent unauthorized user from deleting task`, function () {
+            return login(email, 'wrongPassword')
+                .then((token) => {
+                    return (
+                        chai
+                            .request(app)
+                            .delete(`/api/tasks/${createdTaskId}`)
+                            .set('authorization', `Bearer ${token}`)
+                            .then(function (res) {
+                                expect(res).to.have.status(401);
+                            })
+                    );
+                })
+        });
     });
 });

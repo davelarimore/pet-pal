@@ -49,3 +49,18 @@ exports.visitsDelete = (req, res) => {
             });
     }
 }
+
+// DELETE: delete all visits for the client of an authenticated provider (client's can't delete visits)
+exports.visitsDeleteAll = (req, res) => {
+    if (req.user.clients.includes(req.params.id)) {
+        Visits
+            .remove({client: req.params.id})
+            .then(() => {
+                res.status(204).json({ message: 'Visits deleted' });
+            })
+            .catch(err => {
+                console.error(err);
+                res.status(500).json({ error: 'Internal server error' });
+            });
+    }
+}

@@ -17,7 +17,6 @@ exports.usersGetMe = (req, res) => {
     Users
         .findOne({ '_id': req.user._id })
         .populate('pets')
-        // .populate('visits')
         .populate({ path: 'visits', populate: {path: 'client', model: 'Users'}, options: { sort: { startTime: 1 } } })
         .populate('tasks')
         .populate('provider')
@@ -33,13 +32,9 @@ exports.usersGetMe = (req, res) => {
         });
 }
 
-//PUT ME: update client or client of provider
-exports.usersPutMe = (req, res) => {
-    console.log(req.user);
-    console.log(req.body);
+//PUT: update client or client of provider
+exports.usersPut = (req, res) => {
     if (req.user._id === req.body._id || req.user.clients.includes(req.body._id)) {
-        console.log('Updating User');
-        console.log(req.body);
         const requiredFields = ['firstName', 'lastName', 'phone', 'addressString'];
         for (let i = 0; i < requiredFields.length; i++) {
             const field = requiredFields[i];
@@ -69,6 +64,21 @@ exports.usersPutMe = (req, res) => {
                 console.error(err);
                 res.status(500).json({ message: 'Internal server error' })
             })
+    };
+}
+
+//DELETE: delete client of provider
+exports.usersDelete = (req, res) => {
+    if (req.user.clients.includes(req.params.id)) {
+        console.log(`Deleting user item \`${req.params.id}\``);
+        Users.findByIdAndRemove(req.params.id)
+            .then(() => {
+                res.status(204).json({ message: 'User deleted' });
+            })
+            .catch(err => {
+                console.error(err);
+                res.status(500).json({ error: 'Internal server error' });
+            });
     };
 }
 

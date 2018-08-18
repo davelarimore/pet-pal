@@ -21,25 +21,33 @@ const auth = (function () {
             })
             .then(response => {
                 _setToken(response.authToken);
-
-                return getMe();
+                return api.getMe();
             })
             .then(response => {
-                currentuser = response;
-                console.log(response);
+                currentUser = response;
+                console.log('Current user:', response);
             });
+    };
+
+    function _updateCurrentUser() {
+        return api.getMe()
+        .then(response => {
+            console.log("Refreshing current user");
+            currentUser = response;
+            console.log(currentUser);
+        })
     }
 
     function _logout() {
         window.localStorage.removeItem("AUTH_TOKEN");
-        window.location.replace = '../';
     }
 
     return {
         login: _login,
         logout: _logout,
+        getToken: _getToken,
+        updateCurrentUser: _updateCurrentUser,
         isProvider: function () {
-            console.log(currentUser.role);
             return currentUser.role === "provider";
         },
         getCurrentUser: function () {
