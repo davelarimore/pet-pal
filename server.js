@@ -8,6 +8,13 @@ app.use(morgan('common'));
 app.use(express.static('public'));
 app.use(express.json());
 
+//errors
+process.on('unhandledRejection', error => {
+  // Will print "unhandledRejection err is not defined"
+  console.log('unhandledRejection', error.message);
+});
+
+
 //Auth
 const { localStrategy, jwtStrategy } = require('./lib/authStrategy');
 passport.use(localStrategy);
