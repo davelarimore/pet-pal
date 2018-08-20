@@ -23,9 +23,6 @@ const api = (function () {
     function _getProviders() {
         return _ajaxCall('GET', 'auth/providers');
     }
-    // function _loginUser(credentials) {
-    //     return _ajaxCall('POST', 'auth/login', credentials);
-    // }
 
     ///////////////////////////////////////////
     //Users
@@ -79,7 +76,6 @@ const api = (function () {
     return {
         addUser: _addUser,
         getProviders: _getProviders,
-        // loginUser: _loginUser,
         getMe: _getMe,
         updateUser: _updateUser,
         deleteClient: _deleteClient,

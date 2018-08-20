@@ -4,11 +4,12 @@ const visits = (function () {
     //All Visits Screen
     ///////////////////////////////////////////
     function _displayAllVisits() {
-        console.log(auth.getCurrentUser().visits);
+        const providerHeader = common.generateProviderHeaderHTML(auth.getCurrentUser());
         const visitsListHTML = _generateAllVisitsHTML(auth.getCurrentUser().visits);
         $('#js-main').html(`
+        ${providerHeader}
         <div class='boxed'>
-            <h2>Visits</h2>
+            <h2>All Visits</h2>
             <div id='js-visits-list'>
                 ${visitsListHTML}
             </div>
@@ -48,6 +49,8 @@ const visits = (function () {
         element.find('#provider').data('id', auth.getCurrentUser()._id);
         element.find('#js-client-list').append(clientListHTML);
         $('#js-main').html(element);
+        $('#startTime').datetimepicker();
+        $('#endTime').datetimepicker();
     }
     function _generateClientOptionHTML(client) {
         if (!client.provider) {
@@ -75,7 +78,10 @@ const visits = (function () {
     function _addVisitAndDisplayAlertDialog(data) {
         api.addVisit(data)
         .then(auth.updateCurrentUser())
-        .then(window.location.href = `./#providerDashboard`);
+        .then(() => {
+            window.location.href = `./#visits`;
+            common.displayAlertDialog('Visit Added');
+        });
     }
     
     ///////////////////////////////////////////
@@ -85,19 +91,21 @@ const visits = (function () {
         $('#js-main').on('click', '.js-delete-visit', event => {
             event.preventDefault();
             const visitId = $(event.currentTarget).data('id');
-            if (confirm('Delete pet?')) {
-                api.deleteVisit(visitId)
-                    .then(() => auth.updateCurrentUser())
-                    .then(() => users.displayAlertDialog('Visit Deleted'))
-                    .then(() => {
-                        users.displayProviderDashboard();
-                    })
-            } else {
-                alert('Action Cancelled');
-            }
+            common.displayConfirmDialog('Delete visit?',
+                () => { _deleteVisit(visitId) },
+            )
         })
     }
     $(_handleDeleteVisit)
+
+    function _deleteVisit(visitId) {
+        api.deleteVisit(visitId)
+            .then(() => auth.updateCurrentUser())
+            .then(() => {
+                window.location.href = `./#visits`;
+                common.displayAlertDialog('Visit Deleted')
+            })
+    }
 
     ///////////////////////////////////////////
     //Date Formatter

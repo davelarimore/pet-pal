@@ -4,6 +4,9 @@
 body {
   padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
 }
 a {
   color: #00B7FF;
@@ -120,24 +123,24 @@ fieldset {
   height: 24px;
   float: right;
 }
-.listItemLink {
+/* .listItemLink {
   color: black;
   text-decoration: none;
-}
-.clientHeader {
+} */
+.clientHeader, .providerHeader {
   text-align: left;
   margin-bottom: 20px;
 }
-.clientHeader > .buttonSmall {
+.clientHeader > .buttonSmall, .providerHeader > .buttonSmall {
   float: right;
   margin-top: 0;
   margin-bottom: 0;
 }
 .boxedInfoItem {
   display: inline-block;
-  color: black;
+  /* color: black; */
   text-align: left;
-  text-decoration: none;
+  /* text-decoration: none; */
   width: 100%;
   min-width: 278px;
   padding: 10px;
@@ -173,6 +176,32 @@ fieldset {
 }
 .petThumbnail img {
   height: 50px;
+}
+.popupOverlay {
+  visibility: hidden;
+  background: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+.popupContent {
+  position: absolute;
+  background-color: white;
+  width: 100%;
+  max-width: 300px;
+  padding: 50px 50px 35px 50px;
+  text-align: center;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.popupContent h2, p {
+  margin-bottom: 20px;
+}
+.popupOverlay.active{
+visibility:visible;
 }
 .visuallyhidden {
   /*border: 0;

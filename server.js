@@ -8,12 +8,10 @@ app.use(morgan('common'));
 app.use(express.static('public'));
 app.use(express.json());
 
-//errors
+//catch for unhandled promise rejections
 process.on('unhandledRejection', error => {
-  // Will print "unhandledRejection err is not defined"
   console.log('unhandledRejection', error.message);
 });
-
 
 //Auth
 const { localStrategy, jwtStrategy } = require('./lib/authStrategy');
@@ -30,7 +28,6 @@ app.get("/", (req, res) => {
   res.sendFile(__dirname + "/views/index.html");
 });
 
-
 //App
 app.use('/auth', require('./routes/authRouter'))
 
@@ -41,11 +38,6 @@ app.use('/api', [
   require('./routes/visitsRouter'),
   require('./routes/tasksRouter'),
 ]);
-
-
-// this function starts our server and returns a Promise.
-// In our test code, we need a way of asynchronously starting
-// our server, since we'll be dealing with promises there.
 
 function runServer(databaseUrl, port = PORT) {
   return new Promise((resolve, reject) => {
@@ -64,10 +56,6 @@ function runServer(databaseUrl, port = PORT) {
     });
   });
 }
-
-// like `runServer`, this function also needs to return a promise.
-// `server.close` does not return a promise on its own, so we manually
-// create one.
 
 function closeServer() {
   return mongoose.disconnect().then(() => {

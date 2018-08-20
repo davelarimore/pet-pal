@@ -38,7 +38,7 @@ const pets = (function () {
         </div>`;
     }
     function _generatePetDetail(userData, petData) {
-        const clientHeader = users.generateClientHeaderHTML(userData);
+        const clientHeader = common.generateClientHeaderHTML(userData);
         const petDetail = _generatePetInfoHTML(petData);
         $('#js-main').html(`
         ${clientHeader}
@@ -86,8 +86,10 @@ const pets = (function () {
             .then(() => {
                 if (auth.isProvider()) {
                     window.location.replace(`./#clientDetail/${petData.clientId}`);
+                    common.displayAlertDialog('Pet added');
                 } else {
                     window.location.replace(`./#clientDashboard`);
+                    common.displayAlertDialog('Pet added')
                 }            
             })
             .catch(() => console.error('Error adding pet'));
@@ -143,7 +145,7 @@ const pets = (function () {
     $(_handleUpdatePetFormSubmit);
     function _updatePetAndDisplayAlertDialog(petId, petData) {
         api.updatePet(petId, petData)
-        .then(users.displayAlertDialog('Pet Updated'));
+        .then(common.displayAlertDialog('Pet Updated'));
     }
 
     ///////////////////////////////////////////
@@ -154,23 +156,26 @@ const pets = (function () {
             event.preventDefault();
             const petId = $(event.currentTarget).data('id');
             const clientId = $('#js-main').find('.clientHeader').data('id');
-            if (confirm('Delete pet?')) {
-                api.deletePet(petId)
-                    .then(() => auth.updateCurrentUser())
-                    .then(() => users.displayAlertDialog('Pet Deleted'))
-                    .then(() => {
-                        if (auth.isProvider()) {
-                            users.displayClientDetail(clientId);
-                        } else {
-                            users.displayClientDashboard();
-                        }
-                    })
-            } else {
-                alert('Action Cancelled');
-            }
+            common.displayConfirmDialog('Delete pet?',
+                () => { _deletePet(petId, clientId) },
+            )
         })
     }
     $(_handleDeletePet)
+
+    function _deletePet(petId, clientId) {
+        api.deletePet(petId)
+            .then(() => auth.updateCurrentUser())
+            .then(() => {
+                if (auth.isProvider()) {
+                    window.location.href = `./#clientDetail/${clientId}`;
+                    common.displayAlertDialog('Pet Deleted');
+                } else {
+                    window.location.href = `./#clientDashboard`;
+                    common.displayAlertDialog('Pet Deleted');
+                }
+            })
+    }
 
     return {
         displayPetDetail: _displayPetDetail,

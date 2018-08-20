@@ -7,6 +7,8 @@
     <title>Pet Pal - Home</title>
     <meta name="description" content="Pet Pal allows pet care providers and their clients to share and update their information">
     <link rel="stylesheet" href="stylesheets/style.css">
+    <link rel="stylesheet" href="stylesheets/timepicker.css">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 </head>
 <body>
     <header role="banner" id="js-header">
@@ -22,15 +24,20 @@
         <a class="button" href="./#login">Login</a>
         <a class="button" href="./#signup">Sign Up</a>
     </main>
+    <!--Creates the popup body-->
+    <div id="js-popup-overlay" class="popupOverlay"></div>
+    </div>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js" integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30=" crossorigin="anonymous"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDy8TJO_D0Ewh8Y7WXBfO8O0GalpZwqyfU&libraries=places"></script>
+    <script src="javascripts/jquery-ui-timepicker-addon.js"></script>
     <script src="//unpkg.com/navigo@6"></script>
     <script src="javascripts/apiModule.js"></script>
     <script src="javascripts/templates.js"></script>
     <script src="javascripts/authModule.js"></script>
     <script src="javascripts/tasksModule.js"></script>
     <script src="javascripts/petsModule.js"></script>
-    <script src="javascripts/usersModule.js"></script>
+    <script src="javascripts/commonModule.js"></script>
     <script src="javascripts/visitsModule.js"></script>
     <script src="javascripts/routes.js"></script>
 </body>

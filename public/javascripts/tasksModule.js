@@ -24,25 +24,28 @@ const tasks = (function () {
         element.find('#clientId').val(clientId);
         $('#js-main').html(element);
     }
-    function _handleAddTaskSubmit() {
+    function _handleAddTask() {
         $('#js-main').on('submit', '#js-add-task-form', event => {
             event.preventDefault();
             const taskData = {
                 clientId: $(event.currentTarget).find('#clientId').val(),
                 description: $(event.currentTarget).find('#taskDescription').val(),
             };
-            _addTaskAndDisplayAlertDialog(taskData);
+            _addTask(taskData);
         });
     }
-    $(_handleAddTaskSubmit)
-    function _addTaskAndDisplayAlertDialog(taskData) {
+    $(_handleAddTask)
+    function _addTask(taskData) {
         api.addTask(taskData)
-        .then(auth.updateCurrentUser())
+        // .then(auth.updateCurrentUser())
         .then(() => {
+            console.log(auth.getCurrentUser());
             if (auth.isProvider()) {
                 window.location.replace(`./#clientDetail/${taskData.clientId}`);
+                common.displayAlertDialog('Task added')
             } else {
-                window.location.replace(`./#clientDashboard`);
+                window.location.replace('./#clientDashboard');
+                common.displayAlertDialog('Task added')
             }
         })
         .catch(() => console.error('Error adding task'));
@@ -56,23 +59,29 @@ const tasks = (function () {
             event.preventDefault();
             const taskId = $(event.currentTarget).data('id');
             const clientId = $('#js-main').find('.clientHeader').data('id');
-            if (confirm('Delete task?')) {
-                api.deleteTask(taskId)
-                .then(() => auth.updateCurrentUser())
-                .then(() => users.displayAlertDialog('Task Deleted'))
-                .then(() => {
-                    if (auth.isProvider()) {
-                        users.displayClientDetail(clientId);
-                    } else {
-                        users.displayClientDashboard();
-                    }
-                })  
-            } else {
-                alert('Action Cancelled');
-            }
+            common.displayConfirmDialog('Delete task?',
+                () => { _deleteTask(taskId, clientId) },
+            )
         })
     }
     $(_handleDeleteTask)
+
+    function _deleteTask(taskId, clientId) {
+        let userData = '';
+        api.deleteTask(taskId)
+            .then(auth.updateCurrentUser())
+            .then(() => {
+                userData = auth.getCurrentUser().tasks;
+                console.log(userData);
+                if (auth.isProvider()) {
+                    window.location.replace(`./#clientDetail/${clientId}`);
+                    common.displayAlertDialog('Task Deleted');
+                } else {
+                    window.location.replace('./#clientDashboard');
+                    common.displayAlertDialog('Task Deleted');
+                }
+            }) 
+    }
 
     return {
         generateTasksHTML: _generateTasksHTML,

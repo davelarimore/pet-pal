@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node server.js",
+    "start": "nodemon server.js",
+    "start:debug": "nodemon --inspect server.js",
     "test": "mocha --exit"
   },
   "dependencies": {

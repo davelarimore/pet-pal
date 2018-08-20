@@ -1,10 +1,10 @@
+const Users = require('../models/usersModel');
 const Tasks = require('../models/tasksModel');
 
 //GET is handled by getMe
 
 //POST: add task to the authenticated client or client of provider
 exports.tasksPost = (req, res) => {
-    let createdTaskId = '';
     Tasks
         .create({
             clientId: req.body.clientId,
@@ -21,7 +21,9 @@ exports.tasksPost = (req, res) => {
 
 // DELETE: delete task belonging to the client or client of provider
 exports.tasksDelete = (req, res) => {
-    if (req.user.tasks.includes(req.params.id) || req.user.clients.filter(tasks => tasks.includes(req.params.id))) {
+    Users.findById(req.user._id).populate('clients').populate('tasks')
+        .then((user) => {
+        if (user.tasks.includes(req.params.id) || user.clients.filter(client => client.tasks.includes(req.params.id))) {
         Tasks
             .findByIdAndRemove(req.params.id)
             .then(() => {
@@ -31,7 +33,8 @@ exports.tasksDelete = (req, res) => {
                 console.error(err);
                 res.status(500).json({ error: 'Internal server error' });
             });
-    } else {
-        res.status(403).json({ error: 'User does not own task' })
-    }
+        } else {
+            res.status(403).json('Not authorized to access resource');
+        }
+    })
 }

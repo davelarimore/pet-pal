@@ -92,6 +92,8 @@ const templates = {
     compactHeaderProvider: `
         <div class="compactHeader">
         <a href="#logout" class="navLink">Logout</a>
+        <a href="#clients" class="navLink">Clients</a>
+        <a href="#visits" class="navLink">Visits</a>
         <a href="#providerDashboard" class="navLink">Dashboard</a>
         <a href="#providerDashboard">
                 <img src="images/logo.svg" alt="Pet Pal">
@@ -143,7 +145,7 @@ const templates = {
         </div>`,
     providerDashboard: `
         <div class="boxed">
-        <h2>Visits</h2>
+        <h2>Upcoming Visits</h2>
         <div id="js-visits-list"></div>
         <a class="buttonSmall" id="js-all-visits-button" href="#visits">View All</a>
         <a class="buttonSmall" id="js-add-visit-button" href="#addVisit">Add</a>
@@ -152,8 +154,7 @@ const templates = {
         <h2>Clients</h2>
         <a class="buttonSmall" id="js-all-clients-button" href="#clients">View All</a>
         <a class="buttonSmall" id="js-add-client-button" href="#addClient">Add</a>
-        </div>
-        <a class="button" id="js-update-profile-button" href="#updateProvider">Update My Info</a>`,
+        </div>`,
     addVisitForm: `
         <div class="boxed">
         <h2>Add a Visit</h2>
@@ -165,9 +166,9 @@ const templates = {
                         <option value="" disabled selected hidden>Client</option>
                     </select>
                 <label for="startTime" class="visuallyhidden">Start Time</label>
-                <input type="text" id="startTime" title="Start Time" placeholder="Start Time" required></input>
+                <input type="text" id="startTime" title="Start Time" placeholder="Start Time" autocomplete="off" required></input>
                 <label for="endTime" class="visuallyhidden">End Time</label>
-                <input type="text" id="endTime" title="End Time" placeholder="End Time" required></input>
+                <input type="text" id="endTime" title="End Time" placeholder="End Time" autocomplete="off" required></input>
                 <input type="submit" value="Submit" class="button" placeholder="">
             </fieldset>
         </form>
@@ -180,22 +181,3 @@ const templates = {
             <p>Pet Pal allows pet care providers and their clients to share and update their information</p>
         </div>`
 }
-
-
-// <label for="recurrence" class="visuallyhidden">Recurrence</label>
-//   <select id="recurrence" title="Recurrence" required>
-//        <option value="" disabled selected hidden>Recurrence</option>
-//        <option value="daily">Daily</option>
-//        <option value="mondayFriday">Monday-Friday</option>
-//        <option value="weekly">Weekly</option>
-//        <option value="none">None</option>
-//    </select>
-
-
-//<form id="js-search-client">
-//    <fieldset name="clientSearch">
-//        <label for="lastName" class="visuallyhidden">Search by last name</label>
-//        <input type="text" id="lastName" title="Client Last Name" placeholder="Client Last Name" required></input>
-//        <input type="submit" value="Search" class="button">
-//        </fieldset>
-//    </form>

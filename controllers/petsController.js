@@ -1,10 +1,11 @@
+const Users = require('../models/usersModel');
 const Pets = require('../models/petsModel');
-
-//GET is handled by getMe()
 
 //POST: add a pet to client or client of provider
 exports.petsPost = (req, res) => {
-    if (req.user._id === req.body.clientId || req.user.clients.includes(req.body.clientId)) {
+    Users.findById(req.user._id).populate('clients')
+        .then((user) => {
+        if (user._id === req.body.clientId || user.clients.some((client) => { return client.id === req.body.clientId })) {
         Pets
             .create({
                 clientId: req.body.clientId,
@@ -21,12 +22,17 @@ exports.petsPost = (req, res) => {
                 console.error(err);
                 res.status(500).json({ message: "Internal server error" });
             });
-    }
+        } else {
+            res.status(403).json('Not authorized to access resource');
+        }
+    })
 }
 
 //PUT: update pet belonging to client or client of provider
 exports.petsUpdate = (req, res) => {
-    if (req.user.pets.includes(req.body._id) || req.user.clients.filter(pets => pets.includes(req.body._id))) {
+    Users.findById(req.user._id).populate('clients')
+        .then((user) => {
+        if (user.pets.includes(req.params.id) || user.clients.filter(client => client.pets.includes(req.params.id))) {
         const requiredFields = ['name', 'type', 'breed', 'color', 'food'];
         for (let i = 0; i < requiredFields.length; i++) {
             const field = requiredFields[i];
@@ -54,15 +60,18 @@ exports.petsUpdate = (req, res) => {
                 console.error(err);
                 res.status(500).json({ message: 'Internal server error' })
             })
+        } else {
+            res.status(403).json('Not authorized to access resource');
         }
-    else {
-        res.status(403).json({ error: 'User does not own pet', usersPets: req.user.pets, petToDelete: req.params.id })
-    }
+    })
 };
 
 // DELETE: delete pet belonging to the authenticated client
 exports.petsDelete = (req, res) => {
-    if (req.user.pets.includes(req.params.id) || req.user.clients.filter(pets => pets.includes(req.params.id))) {
+    Users.findById(req.user._id).populate('clients')
+        .then((user) => {
+        if (user.pets.includes(req.params.id) || user.clients.filter(client => client.pets.includes(req.params.id))) {
+        // if (user._id === req.body.clientId || user.clients.some((client) => { return client.id === req.body.clientId })) {
         Pets
             .findByIdAndRemove(req.params.id)
             .then(() => {
@@ -72,7 +81,8 @@ exports.petsDelete = (req, res) => {
                 console.error(err);
                 res.status(500).json({ error: 'Internal server error' });
             });
-    } else {
-        res.status(403).json({ error: 'User does not own pet', usersPets: req.user.pets, petToDelete: req.params.id })
-    }
+        } else {
+            res.status(403).json('Not authorized to access resource');
+        }
+    })
 }

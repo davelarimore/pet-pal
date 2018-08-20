@@ -1,4 +1,4 @@
-const users = (function () {
+const common = (function () {
 
     ///////////////////////////////////////////
     //Login screen
@@ -17,7 +17,10 @@ const users = (function () {
                     return auth.isProvider()
                         ? window.location.href = `./#providerDashboard`
                         : window.location.href = `./#clientDashboard`;
-                });
+                })
+                .catch(() => {
+                    _displayAlertDialog('Login Error', 'Incorrect email or password.')
+                })
         })
     }
     $(_handleLoginSubmit);
@@ -81,16 +84,9 @@ const users = (function () {
             api.addUser(userData)
                 .then(() => {
                     auth.login(userData.email, userData.password)
-                    // loginUser({ email: userData.email, password: userData.password })
                 .then(() => {
                         window.location.href = `./#clientDashboard`
                 });
-                // .then((response) => {
-                //     window.localStorage.setItem('AUTH_TOKEN', response.authToken);
-                // })
-                // .then(() => {
-                //     window.location.href = `./#clientDashboard`;
-                // })
                 })
         });
     }
@@ -124,13 +120,6 @@ const users = (function () {
                         .then(() => {
                             window.location.href = `./#providerDashboard`
                         });
-                // .then(() => {
-                //     loginUser({ email: userData.email, password: userData.password })
-                //         .then((response) => {
-                //             window.localStorage.setItem('AUTH_TOKEN', response.authToken);
-                //             window.location.href = `./#providerDashboard`;
-                //         })
-                // })
             });
         })
     }
@@ -168,14 +157,14 @@ const users = (function () {
                     <img src='images/location.svg' alt='Address'>
                     <p>${client.addressString}</p>
                 </a>
-                <a class='boxedInfoItem' href='#0'>
+                <div class='boxedInfoItem'>
                     <img src='images/house.svg' alt='Entry Note'>
                     <p>${client.entryNote}</p>
-                </a>           
-                <a class='boxedInfoItem' href='#0'>
+                </div>           
+                <div class='boxedInfoItem'>
                     <img src='images/vet.svg' alt='Veterinarian'>
                     <p>${client.vetInfo}</p>
-                </a></div>`;
+                </div></div>`;
     }
     ///////////////////////////////////////////
     // Client Header
@@ -187,12 +176,26 @@ const users = (function () {
         const clientDeleteButton = auth.isProvider()
             ? `<a class='buttonSmall' id='js-delete-client' href='#' data-id='${userData._id}'>Delete</a>`
             : '';
+        const clientFullName = auth.isProvider()
+            ? `<h2><a href='#clientDetail/${userData._id}'>${userData.firstName} ${userData.lastName}</a></h2>`
+            : `<h2>${userData.firstName} ${userData.lastName}</h2>`;
         return `
         <div class='clientHeader' data-id='${userData._id}'>
         ${clientDeleteButton}
         <a class='buttonSmall' href='#updateClient/${userData._id}'>Edit</a>
-                <h2>${userData.firstName} ${userData.lastName}</h2>
+                ${clientFullName}
                 ${nextVisit}</div>`;
+    }
+    
+    ///////////////////////////////////////////
+    // Provider Header
+    ///////////////////////////////////////////
+    function _generateProviderHeaderHTML(userData) {
+        return `
+        <div class='providerHeader'>
+        <a class='buttonSmall' id="js-update-profile-button" href='#updateProvider'>Edit</a>
+                <h2>${userData.companyName}</h2>
+                <p>${userData.firstName} ${userData.lastName}</div>`;
     }
 
     ///////////////////////////////////////////
@@ -200,12 +203,14 @@ const users = (function () {
     ///////////////////////////////////////////
     function _displayProviderDashboard() {
         const providerData = auth.getCurrentUser();
+        const providerHeader = _generateProviderHeaderHTML(providerData);
         const recentVisitsHTML = providerData.visits && providerData.visits.length > 0
             ? visits.generateUpcomingVisitsHTML(providerData.visits)
             : `<p>No visits scheduled</p>`;
         const element = $(templates.providerDashboard);
         element.find('#js-visits-list').html(recentVisitsHTML);
-        $('#js-main').html(element);
+        $('#js-main').html(providerHeader);
+        $('#js-main').append(element);
     }
 
     ///////////////////////////////////////////
@@ -249,7 +254,10 @@ const users = (function () {
     $(_handleProviderProfileUpdateSubmit);
     function _updateProviderAndDisplayAlertDialog(userData) {
         api.updateUser(userData)
-        .then(() => { window.location.href = `./#providerDashboard` })
+        .then(() => {
+            window.location.href = `./#providerDashboard`;
+            common.displayAlertDialog('Profile updated');
+        })
         .catch(() => console.error('Error updating profile'));
     }
 
@@ -258,10 +266,12 @@ const users = (function () {
     ///////////////////////////////////////////
     function _displayAllClients() {
         providerData = auth.getCurrentUser();
+        const providerHeader = _generateProviderHeaderHTML(providerData);
         const clientsListHTML = providerData.clients && providerData.clients.length > 0
             ? _generateAllClientsHTML(providerData.clients)
             : `<p>No clients found</p>`;
         $('#js-main').html(`
+        ${providerHeader}
         <div class='boxed'>
             <h2>Clients</h2>
             <div id='js-clients-list'>
@@ -337,21 +347,22 @@ const users = (function () {
         $('#js-main').on('click', '#js-delete-client', event => {
             event.preventDefault();
             const clientId = $(event.currentTarget).data('id');
-            if (confirm('Delete client?')) {
-                api.deleteClientsVisits(clientId)
-                .then(() => api.deleteClient(clientId))
-                .then(() => auth.updateCurrentUser())
-                .then(() => _displayAlertDialog('Client Deleted'))
-                .then(() => {
-                    // _displayProviderDashboard();
-                    _displayAllClients();
-                })
-            } else {
-                alert('Action Cancelled');
-            }
+            common.displayConfirmDialog('Delete visit?',
+                () => { _deleteClient(clientId) },
+            )
         })
     }
     $(_handleDeleteClient)
+
+    function _deleteClient(clientId) {
+        api.deleteClientsVisits(clientId)
+            .then(() => api.deleteClient(clientId))
+            .then(() => auth.updateCurrentUser())
+            .then(() => {
+                _displayAllClients();
+                _displayAlertDialog('Client Deleted');
+            })
+    }
     
     ///////////////////////////////////////////
     //Update Client Profile Screen
@@ -411,8 +422,16 @@ const users = (function () {
     function _updateClientAndDisplayAlertDialog(userData) {
         console.log('updating client');
         api.updateUser(userData)
-        .then(_displayAlertDialog('Profile Updated'))
-        .then(() => { window.history.back(); })
+        .then(() => auth.updateCurrentUser())
+        .then(() => {
+            if (auth.isProvider()) {
+                window.location.href = `./#clientDetail/${userData._id}`;
+                common.displayAlertDialog('User updated');
+            } else {
+                window.location.href = `./#clientDashboard`;
+                common.displayAlertDialog('Profile updated');
+            }
+        })
         .catch(() => console.error('Error updating profile'));
     }
     
@@ -435,13 +454,53 @@ const users = (function () {
     ///////////////////////////////////////////
     //Dialogs
     ///////////////////////////////////////////
-    function _displayAlertDialog(string) {
-        alert(string);
-        // window.history.back();
+    function _displayConfirmDialog(message, yesCallback, noCallback) {
+        const confirmHTML = `
+        <div class="popupContent">
+            <h2>Confirm</h2>
+            <p>${message}</p>
+            <button class="button confirm">OK</button>
+            <button class="button cancel">Cancel</button>
+        </div>`
+        $('#js-popup-overlay').html(confirmHTML);
+        $(".popupOverlay").addClass("active");
+
+        $('.confirm').on('click', function () {
+            $(".popupOverlay").removeClass("active");
+            $('#js-popup-overlay').html('');
+            yesCallback();
+        });
+        $('.cancel').on('click', function () {
+            $(".popupOverlay").removeClass("active");
+            $('#js-popup-overlay').html('');
+            noCallback();
+        });
     }
-    function _displayConfirmDialog(string) {
-        confirm(string);
+
+    function _displayAlertDialog(title, message, button) {
+        let messageHTML = '';
+        if (message) { messageHTML = `<p>${message}</p>` };
+        const alertHTML = `
+        <div class="popupContent">
+            <h2>${title}</h2>
+            ${messageHTML}
+            <button class="button close">${button || 'OK'}</button>
+        </div>`
+        $('#js-popup-overlay').html(alertHTML);
+        $(".popupOverlay").addClass("active");
+        $(".close").on("click", function () {
+            $(".popupOverlay").removeClass("active");
+            $('#js-popup-overlay').html('');
+        });
     }
+
+    // function _handlePopupClose() {
+    //     $(".close, .popupOverlay").on("click", function () {
+    //         $(".popupOverlay").removeClass("active");
+    //         $('#js-popup-overlay').html('');
+    //     });
+    // }
+    // $(_handlePopupClose);
 
     ///////////////////////////////////////////
     //Confirm Password
@@ -461,6 +520,7 @@ const users = (function () {
         displayClientDetail: _displayClientDetail,
         displayAllClients: _displayAllClients,
         displayAddClientForm: _displayAddClientForm,
+        generateProviderHeaderHTML: _generateProviderHeaderHTML,
         displayProviderDashboard: _displayProviderDashboard,
         displayClientUpdateForm: _displayClientUpdateForm,
         displayClientDashboard: _displayClientDashboard,

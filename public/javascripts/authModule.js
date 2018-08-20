@@ -25,18 +25,31 @@ const auth = (function () {
             })
             .then(response => {
                 currentUser = response;
-                console.log('Current user:', response);
-            });
+            })
     };
 
     function _updateCurrentUser() {
         return api.getMe()
         .then(response => {
-            console.log("Refreshing current user");
             currentUser = response;
-            console.log(currentUser);
         })
     }
+
+
+//     function _updateCurrentUser() {
+//         return new Promise((resolve, reject) => {
+//         api.getMe()
+//             .then(response => {
+//                 currentUser = response;
+//             })
+//             .then(resolve())
+//         // do something asynchronous which eventually calls either:
+//         //
+//         //   resolve(someValue); // fulfilled
+//         // or
+//         //   reject("failure reason"); // rejected
+//     })
+// }
 
     function _logout() {
         window.localStorage.removeItem("AUTH_TOKEN");

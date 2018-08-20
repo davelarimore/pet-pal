@@ -64,7 +64,9 @@ exports.usersPut = (req, res) => {
                 console.error(err);
                 res.status(500).json({ message: 'Internal server error' })
             })
-    };
+    } else {
+        res.status(403).json('Not authorized to access resource');
+    }
 }
 
 //DELETE: delete client of provider
@@ -79,7 +81,9 @@ exports.usersDelete = (req, res) => {
                 console.error(err);
                 res.status(500).json({ error: 'Internal server error' });
             });
-    };
+    } else {
+        res.status(403).json('Not authorized to access resource');
+    }
 }
 
 ////////////////////////////////

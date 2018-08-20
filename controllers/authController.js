@@ -18,7 +18,7 @@ const Users = require('../models/usersModel');
 const localAuth = passport.authenticate('local', { session: false });
 
 // Authenticate
-exports.authenticate = (req, res) => {
+exports.authenticate = (req, res, next) => {
     console.log("HANDLING AUTH");
     const authToken = createAuthToken(req.user.serialize());
     const role = req.user.role;

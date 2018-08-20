@@ -17,16 +17,16 @@ const checkLoggedIn = function(done) {
 router
     .on({
         'login': () => {
-            users.displayFullSiteHeader();
-            users.displayLoginForm();
+            common.displayFullSiteHeader();
+            common.displayLoginForm();
         },
         'signup': () => {
-            users.displayFullSiteHeader();
-            users.displaySignupTypeForm();
+            common.displayFullSiteHeader();
+            common.displaySignupTypeForm();
         },
         'providerSignup': () => {
-            users.displayFullSiteHeader();
-            users.displayProviderSignupForm();
+            common.displayFullSiteHeader();
+            common.displayProviderSignupForm();
         },
     })
     .resolve();
@@ -34,92 +34,92 @@ router
 //authenticated routes
 router.on(
     'clientDashboard', () => {
-        users.displayCompactSiteHeader();
-        users.displayClientDashboard();
+        common.displayCompactSiteHeader();
+        common.displayClientDashboard();
     },
     { before: checkLoggedIn }
 );
 router.on(
     'providerDashboard', () => {
-        users.displayCompactSiteHeader();
-        users.displayProviderDashboard();
+        common.displayCompactSiteHeader();
+        common.displayProviderDashboard();
     },
     { before: checkLoggedIn }
 );
 router.on(
     'updateClient/:userID', (params) => {
-        users.displayCompactSiteHeader();
-        users.displayClientUpdateForm(params.userID);
+        common.displayCompactSiteHeader();
+        common.displayClientUpdateForm(params.userID);
     },
     { before: checkLoggedIn }
 );
 router.on(
     'updateProvider', () => {
-        users.displayCompactSiteHeader();
-        users.displayProviderProfileUpdateForm();
+        common.displayCompactSiteHeader();
+        common.displayProviderProfileUpdateForm();
     },
     { before: checkLoggedIn }
 );
 router.on(
     'addPet/:id', (params) => {
-        users.displayCompactSiteHeader();
+        common.displayCompactSiteHeader();
         pets.displayAndHandleAddPetForm(params.id)
     },
     { before: checkLoggedIn }
 );
 router.on(
     'pet/:id', (params) => {
-        users.displayCompactSiteHeader();
+        common.displayCompactSiteHeader();
         pets.displayPetDetail(params.id);
     },
     { before: checkLoggedIn }
 );
 router.on(
     'updatePet/:id', (params) => {
-        users.displayCompactSiteHeader();
+        common.displayCompactSiteHeader();
         pets.displayUpdatePetForm(params.id);
     },
     { before: checkLoggedIn }
 );
 router.on(
     'addTask/:id', (params) => {
-        users.displayCompactSiteHeader();
+        common.displayCompactSiteHeader();
         tasks.displayAndHandleAddTaskForm(params.id);
     },
     { before: checkLoggedIn }
 );
 router.on(
     'visits', () => {
-        users.displayCompactSiteHeader();
+        common.displayCompactSiteHeader();
         visits.displayAllVisits();   
     },
     { before: checkLoggedIn }
 );
 router.on(
     'addVisit', () => {
-        users.displayCompactSiteHeader();
+        common.displayCompactSiteHeader();
         visits.displayAddVisitForm();
     },
     { before: checkLoggedIn }
 );
 router.on(
     'clients', () => {
-        users.displayCompactSiteHeader();
-        users.displayAllClients();   
+        common.displayCompactSiteHeader();
+        common.displayAllClients();   
     },
     { before: checkLoggedIn }
 );
 router.on(
     'addClient', () => {
-        users.displayCompactSiteHeader();
-        users.displayAddClientForm();   
+        common.displayCompactSiteHeader();
+        common.displayAddClientForm();   
     },
     { before: checkLoggedIn }
 );
 router.on(
     'clientDetail/:id', (params) => {
-        users.displayCompactSiteHeader();
-        users.displayClientDetail(params.id);  
+        common.displayCompactSiteHeader();
+        common.displayClientDetail(params.id);  
     },
     { before: checkLoggedIn }
 );
