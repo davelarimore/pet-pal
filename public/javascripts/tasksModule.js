@@ -39,7 +39,6 @@ const tasks = (function () {
         api.addTask(taskData)
         // .then(auth.updateCurrentUser())
         .then(() => {
-            console.log(auth.getCurrentUser());
             if (auth.isProvider()) {
                 window.location.replace(`./#clientDetail/${taskData.clientId}`);
                 common.displayAlertDialog('Task added')
@@ -72,7 +71,6 @@ const tasks = (function () {
             .then(auth.updateCurrentUser())
             .then(() => {
                 userData = auth.getCurrentUser().tasks;
-                console.log(userData);
                 if (auth.isProvider()) {
                     window.location.replace(`./#clientDetail/${clientId}`);
                     common.displayAlertDialog('Task Deleted');

@@ -19,7 +19,6 @@ const localAuth = passport.authenticate('local', { session: false });
 
 // Authenticate
 exports.authenticate = (req, res, next) => {
-    console.log("HANDLING AUTH");
     const authToken = createAuthToken(req.user.serialize());
     const role = req.user.role;
     res.status(200).json({ authToken, role });
@@ -146,7 +145,6 @@ exports.signup = (req, res) => {
             return Users.hashPassword(password);
         })
         .then(hash => {
-            console.log('validations passed, writing record');
             return Users.create({
                 email,
                 password: hash,
@@ -162,7 +160,6 @@ exports.signup = (req, res) => {
             });
         })
         .then((user) => {
-            console.log('returning response');
             return res.status(201).json(user.serialize());
         })
         .catch(err => {

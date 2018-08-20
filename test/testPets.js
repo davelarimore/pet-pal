@@ -106,7 +106,6 @@ describe('Protected pets endpoint', function () {
                             .set('authorization', `Bearer ${token}`)
                             .send(updateData)
                             .then((res) => {
-                                console.log(res.body);
                                 expect(res).to.have.status(200);
                                 expect(res.body).to.be.a("object");
                                 expect(res.body.name).to.deep.equal(updateData.name);
@@ -132,7 +131,6 @@ describe('Protected pets endpoint', function () {
                             .set('authorization', `Bearer ${token}`)
                             .send(updateData)
                             .then((res) => {
-                                console.log(res.body);
                                 expect(res).to.have.status(401);
                             })
                     );
