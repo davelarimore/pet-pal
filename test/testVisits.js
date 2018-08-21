@@ -101,6 +101,24 @@ describe('Protected visits endpoint', function () {
                         });
                 })
         });
+        it(`Should prevent unauthorized user from posting a visit`, function () {
+            return login(providerEmail, providerPassword)
+                .then((token) => {
+                    return chai
+                        .request(app)
+                        .post('/api/clients/visits')
+                        .set('authorization', `Bearer ${token}`)
+                        .send({
+                            providerId: '12345',
+                            client: '12345',
+                            startTime,
+                            endTime
+                        })
+                        .then(res => {
+                            expect(res).to.have.status(403);
+                        });
+                })
+        });
         it(`Should delete visit`, function () {
             return login(email, password)
                 .then((token) => {

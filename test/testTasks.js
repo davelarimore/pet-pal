@@ -75,6 +75,22 @@ describe('Protected tasks endpoint', function () {
                         });
                 })
         });
+        it(`Should prevent unauthorized user from posting task`, function () {
+            return login(email, password)
+                .then((token) => {
+                    return chai
+                        .request(app)
+                        .post('/api/tasks')
+                        .set('authorization', `Bearer ${token}`)
+                        .send({
+                            clientId: '12345',
+                            description
+                        })
+                        .then(res => {
+                            expect(res).to.have.status(403);
+                        });
+                })
+        });
         it(`Should delete task`, function () {
             return login(email, password)
                 .then((token) => {

@@ -88,6 +88,26 @@ describe('Protected pets endpoint', function () {
                         });
                 })
         });
+        it(`Should prevent unauthorized usser from posting a pet`, function () {
+            return login(email, password)
+                .then((token) => {
+                    return chai
+                        .request(app)
+                        .post('/api/pets')
+                        .set('authorization', `Bearer ${token}`)
+                        .send({
+                            clientId: '12345',
+                            name,
+                            type,
+                            breed,
+                            color,
+                            food
+                        })
+                        .then(res => {
+                            expect(res).to.have.status(403);
+                        });
+                })
+        });
         it(`Should update pet`, function () {
             const updateData = {
                 _id: createdPetId,
