@@ -59,7 +59,7 @@ const tasks = (function () {
             const taskId = $(event.currentTarget).data('id');
             const clientId = $('#js-main').find('.clientHeader').data('id');
             common.displayConfirmDialog('Delete task?',
-                () => { _deleteTask(taskId, clientId) },
+                () => { _deleteTask(taskId, clientId) }
             )
         })
     }

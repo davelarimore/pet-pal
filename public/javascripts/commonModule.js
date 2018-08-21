@@ -170,23 +170,26 @@ const common = (function () {
     // Client Header
     ///////////////////////////////////////////
     function _generateClientHeaderHTML(userData) {
-        const nextVisit = userData.visits && userData.visits.length > 0
-            ? `<p>Next Visit: ${visits.formatDate(userData.visits[0].startTime, userData.visits[0].endTime)}</p></div>`
-            : `<p>No visits scheduled. <a href='#addVisit'>Add a visit</a></p>`;
-        const clientDeleteButton = auth.isProvider()
-            ? `<a class='buttonSmall' id='js-delete-client' href='#' data-id='${userData._id}'>Delete</a>`
-            : '';
-        const clientFullName = auth.isProvider()
-            ? `<h2><a href='#clientDetail/${userData._id}'>${userData.firstName} ${userData.lastName}</a></h2>`
-            : `<h2>${userData.firstName} ${userData.lastName}</h2>`;
-        return `
-        <div class='clientHeader' data-id='${userData._id}'>
-        ${clientDeleteButton}
-        <a class='buttonSmall' href='#updateClient/${userData._id}'>Edit</a>
-                ${clientFullName}
+        if (auth.isProvider()) {
+            const nextVisit = userData.visits && userData.visits.length > 0
+                ? `<p>Next Visit: ${visits.formatDate(userData.visits[0].startTime, userData.visits[0].endTime)}</p></div>`
+                : `<p>No visits scheduled. <a href='#addVisit'>Add a visit</a></p>`;
+            return `<div class='clientHeader' data-id='${userData._id}'>
+                <a class="buttonSmall" id="js-delete-client" href="#" data-id="${userData._id}">Delete</a>  
+                <a class='buttonSmall' href='#updateClient/${userData._id}'>Edit</a>
+                <h2><a href='#clientDetail/${userData._id}'>${userData.firstName} ${userData.lastName}</a></h2>
                 ${nextVisit}</div>`;
+        } else {
+            const nextVisit = userData.visits && userData.visits.length > 0
+                ? `<p>Next Visit: ${visits.formatDate(userData.visits[0].startTime, userData.visits[0].endTime)}</p></div>`
+                : `<p>No visits scheduled.</p>`;
+            return `<div class='clientHeader' data-id='${userData._id}'>
+                <a class='buttonSmall' href='#updateClient/${userData._id}'>Edit</a>
+                <h2>${userData.firstName} ${userData.lastName}</h2>
+                ${nextVisit}</div>`;
+        }
     }
-    
+
     ///////////////////////////////////////////
     // Provider Header
     ///////////////////////////////////////////
@@ -347,8 +350,8 @@ const common = (function () {
         $('#js-main').on('click', '#js-delete-client', event => {
             event.preventDefault();
             const clientId = $(event.currentTarget).data('id');
-            common.displayConfirmDialog('Delete visit?',
-                () => { _deleteClient(clientId) },
+            common.displayConfirmDialog('Delete client?',
+                () => { _deleteClient(clientId) }
             )
         })
     }
@@ -420,7 +423,6 @@ const common = (function () {
     }
     $(_handleMyProfileUpdateSubmit);
     function _updateClientAndDisplayAlertDialog(userData) {
-        console.log('updating client');
         api.updateUser(userData)
         .then(() => auth.updateCurrentUser())
         .then(() => {
@@ -462,18 +464,19 @@ const common = (function () {
             <button class="button confirm">OK</button>
             <button class="button cancel">Cancel</button>
         </div>`
-        $('#js-popup-overlay').html(confirmHTML);
-        $(".popupOverlay").addClass("active");
-
+        $('.md-content').html(confirmHTML);
+        $(".md-modal").addClass("md-show");
         $('.confirm').on('click', function () {
-            $(".popupOverlay").removeClass("active");
-            $('#js-popup-overlay').html('');
+            $(".md-modal").removeClass("md-show");
+            $('.md-content').html('');
             yesCallback();
         });
         $('.cancel').on('click', function () {
-            $(".popupOverlay").removeClass("active");
-            $('#js-popup-overlay').html('');
-            noCallback();
+            $(".md-modal").removeClass("md-show");
+            $('.md-content').html('');
+            if (typeof noCallback === 'function' && noCallback()) {
+                noCallback();
+            }
         });
     }
 
@@ -481,26 +484,16 @@ const common = (function () {
         let messageHTML = '';
         if (message) { messageHTML = `<p>${message}</p>` };
         const alertHTML = `
-        <div class="popupContent">
             <h2>${title}</h2>
             ${messageHTML}
-            <button class="button close">${button || 'OK'}</button>
-        </div>`
-        $('#js-popup-overlay').html(alertHTML);
-        $(".popupOverlay").addClass("active");
+            <button class="button close">${button || 'OK'}</button>`
+        $('.md-content').html(alertHTML);
+        $(".md-modal").addClass("md-show");
         $(".close").on("click", function () {
-            $(".popupOverlay").removeClass("active");
-            $('#js-popup-overlay').html('');
+            $(".md-modal").removeClass("md-show");
+            $('.md-content').html('');
         });
     }
-
-    // function _handlePopupClose() {
-    //     $(".close, .popupOverlay").on("click", function () {
-    //         $(".popupOverlay").removeClass("active");
-    //         $('#js-popup-overlay').html('');
-    //     });
-    // }
-    // $(_handlePopupClose);
 
     ///////////////////////////////////////////
     //Confirm Password
