@@ -68,14 +68,18 @@ const tasks = (function () {
     function _deleteTask(taskId, clientId) {
         let userData = '';
         api.deleteTask(taskId)
-            .then(auth.updateCurrentUser())
+            .then(() => auth.updateCurrentUser())
             .then(() => {
                 userData = auth.getCurrentUser().tasks;
                 if (auth.isProvider()) {
-                    window.location.replace(`./#clientDetail/${clientId}`);
+                    // window.location.replace(`./#clientDetail/${clientId}`);
+                    common.displayCompactSiteHeader();
+                    common.displayClientDetail(clientId); 
                     common.displayAlertDialog('Task Deleted');
                 } else {
-                    window.location.replace('./#clientDashboard');
+                    // window.location.replace('./#clientDashboard');
+                    common.displayCompactSiteHeader();
+                    common.displayClientDashboard();
                     common.displayAlertDialog('Task Deleted');
                 }
             }) 
