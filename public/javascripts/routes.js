@@ -1,14 +1,18 @@
 ///////////////////////////////////////////
 //Client Routes
 ///////////////////////////////////////////
-const router = new Navigo('localhost:8080', true, '#!');
+const router = new Navigo(null, false);
 
 const checkLoggedIn = function(done) {
+    console.log('checking logged in');
+    console.log(window.localStorage.getItem('AUTH_TOKEN'));
     if (!window.localStorage.getItem('AUTH_TOKEN')) {
-        window.location.replace('../');
+        // window.location.replace('./login');
+        router.navigate('./login');
+        // window.location.href = '../';
         done(false);
     } else {
-        auth.updateCurrentUser()
+        return auth.updateCurrentUser()
         .then(() => done())
     }
 }
@@ -29,7 +33,6 @@ router
             common.displayProviderSignupForm();
         },
     })
-    .resolve();
 
 //authenticated routes
 router.on(
@@ -126,7 +129,24 @@ router.on(
 router.on(
     'logout', () => {
         auth.logout();
-        window.location.href = './';
+        router.navigate('./');
+        // window.location.href = './';
     },
     { before: checkLoggedIn }
-);
+)
+.resolve();
+
+router.on(function () {
+    console.log('root route');
+        if (auth.isProvider()) {
+            console.log('getting prov dash');
+            router.navigate('./providerDashboard');
+            // window.location.replace('../providerDashboard');
+        } else {
+            router.navigate('./clientDashboard');
+            // window.location.replace('../clientDashboard');
+        }
+},
+    { before: checkLoggedIn }
+)
+.resolve();

@@ -13,7 +13,7 @@ const visits = (function () {
             <div id='js-visits-list'>
                 ${visitsListHTML}
             </div>
-            <a class='button' href='#addVisit'>Add Visit</a>
+            <a class='button' href='addVisit'>Add Visit</a>
         </div>`);
     }
     function _generateAllVisitsHTML(visitsData) {
@@ -26,7 +26,7 @@ const visits = (function () {
         <div class='listItem'>
             <a href='#' class='js-delete-visit' data-id='${visit._id}'><img src='images/delete.svg' title='Delete Visit' alt='Delete Visit' /></a>
             <h3>${formattedStartTime}</h3>
-            <p><a href='#clientDetail/${visit.client._id}/'>${visit.client.firstName} ${visit.client.lastName}</a></p>
+            <p><a href='clientDetail/${visit.client._id}'>${visit.client.firstName} ${visit.client.lastName}</a></p>
             <p><a href='https://www.google.com/maps/search/${visit.client.addressString}'>${visit.client.addressString}</a></p>
         </div>`;
     }
@@ -79,7 +79,7 @@ const visits = (function () {
         api.addVisit(data)
         .then(auth.updateCurrentUser())
         .then(() => {
-            window.location.href = `./#visits`;
+            window.location.href = `./visits`;
             common.displayAlertDialog('Visit Added');
         });
     }
@@ -102,7 +102,7 @@ const visits = (function () {
         api.deleteVisit(visitId)
             .then(() => auth.updateCurrentUser())
             .then(() => {
-                window.location.href = `./#visits`;
+                window.location.href = `./visits`;
                 common.displayAlertDialog('Visit Deleted')
             })
     }

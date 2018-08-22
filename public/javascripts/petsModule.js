@@ -43,7 +43,7 @@ const pets = (function () {
         $('#js-main').html(`
         ${clientHeader}
         ${petDetail}
-        <a class='button' href='#updatePet/${petData._id}'>Update Pet</a>
+        <a class='button' href='updatePet/${petData._id}'>Update Pet</a>
         <a class='button' id='js-delete-pet' href='#' data-id='${petData._id}'>Delete Pet</a>`
         );
     }
@@ -54,7 +54,7 @@ const pets = (function () {
     }
     function _generatePetHTML(pet) {
         return `
-    <a href='#pet/${pet._id}/' class='petThumbnail'>
+    <a href='pet/${pet._id}/' class='petThumbnail'>
     <div><img src='images/logo.svg' alt='${pet.name}'><p>${pet.name}</p></div></a>`;
     }
 
@@ -63,8 +63,10 @@ const pets = (function () {
     ///////////////////////////////////////////
     function _displayAndHandleAddPetForm(clientId) {
         const element = $(templates.addPetForm);
+        // const userData = auth.getCurrentUser || get provider and find client
+        // const clientHeader = common.generateClientHeaderHTML(userData);
         element.find('#clientId').val(clientId);
-        $('#js-main').html(element);
+        $('#js-main').html(clientHeader, element);
     }
     function _handleAddMyPetSubmit() {
         $('#js-main').on('submit', '#js-add-pet-form', event => {
@@ -85,10 +87,10 @@ const pets = (function () {
         api.addPet(petData)
             .then(() => {
                 if (auth.isProvider()) {
-                    window.location.replace(`./#clientDetail/${petData.clientId}`);
+                    window.location.replace(`./clientDetail/${petData.clientId}`);
                     common.displayAlertDialog('Pet added');
                 } else {
-                    window.location.replace(`./#clientDashboard`);
+                    window.location.replace(`./clientDashboard`);
                     common.displayAlertDialog('Pet added')
                 }            
             })
@@ -168,10 +170,10 @@ const pets = (function () {
             .then(() => auth.updateCurrentUser())
             .then(() => {
                 if (auth.isProvider()) {
-                    window.location.href = `./#clientDetail/${clientId}`;
+                    window.location.href = `./clientDetail/${clientId}`;
                     common.displayAlertDialog('Pet Deleted');
                 } else {
-                    window.location.href = `./#clientDashboard`;
+                    window.location.href = `./clientDashboard`;
                     common.displayAlertDialog('Pet Deleted');
                 }
             })

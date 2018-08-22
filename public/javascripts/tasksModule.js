@@ -9,7 +9,7 @@ const tasks = (function () {
     }
     function _generateTaskHTML(task) {
     //     return `
-    // <div class='boxedInfoItem'><a href='#deleteTask/${task._id}'><img src='images/delete.svg' alt='Task'></a>
+    // <div class='boxedInfoItem'><a href='deleteTask/${task._id}'><img src='images/delete.svg' alt='Task'></a>
     // <p>${task.description}</p></div>`;
         return `
     <div class='boxedInfoItem'><a class='js-delete-task' href='#' data-id='${task._id}'><img src='images/delete.svg' alt='Task'></a>
@@ -40,10 +40,10 @@ const tasks = (function () {
         // .then(auth.updateCurrentUser())
         .then(() => {
             if (auth.isProvider()) {
-                window.location.replace(`./#clientDetail/${taskData.clientId}`);
+                window.location.replace(`./clientDetail/${taskData.clientId}`);
                 common.displayAlertDialog('Task added')
             } else {
-                window.location.replace('./#clientDashboard');
+                window.location.replace('./clientDashboard');
                 common.displayAlertDialog('Task added')
             }
         })
@@ -68,14 +68,15 @@ const tasks = (function () {
     function _deleteTask(taskId, clientId) {
         let userData = '';
         api.deleteTask(taskId)
-            .then(auth.updateCurrentUser())
+            .then(() => auth.updateCurrentUser())
             .then(() => {
-                userData = auth.getCurrentUser().tasks;
                 if (auth.isProvider()) {
-                    window.location.replace(`./#clientDetail/${clientId}`);
+                    // window.location(`./clientDetail/${clientId}`);
+                    common.displayCompactSiteHeader();
+                    common.displayClientDetail(clientId); 
                     common.displayAlertDialog('Task Deleted');
                 } else {
-                    window.location.replace('./#clientDashboard');
+                    window.location.replace('./clientDashboard');
                     common.displayAlertDialog('Task Deleted');
                 }
             }) 

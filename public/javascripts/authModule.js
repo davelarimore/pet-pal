@@ -1,4 +1,5 @@
 const auth = (function () {
+
     let currentUser = {};
 
     const _setToken = token => {

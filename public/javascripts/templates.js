@@ -10,7 +10,7 @@ const templates = {
                     <input type="submit" value="Continue" class="button">
                 </fieldset>
             </form>
-        <a href="./#providerSignup">Pet Care Provider Sign Up</a>`,
+        <a href="./providerSignup">Pet Care Provider Sign Up</a>`,
     clientSignupForm: `
         <div class="boxed">
         <h2>Create an account</h2>
@@ -82,23 +82,23 @@ const templates = {
         </div>`,
     compactHeaderClient: `
         <div class="compactHeader">
-        <a href="#logout" class="navLink">Logout</a>
-        <a href="#clientDashboard" class="navLink">Dashboard</a>
-        <a href="#clientDashboard">
-                <img src="images/logo.svg" alt="Pet Pal">
+        <a href="logout" class="navLink">Logout</a>
+        <a href="clientDashboard" class="navLink">Dashboard</a>
+        <a href="clientDashboard">
+                <img src="images/logo.svg" alt="Pet Pals">
             </a>
-            <h1>Pet Pal</h1>
+            <h1>Pet Pals</h1>
         </div>`,
     compactHeaderProvider: `
         <div class="compactHeader">
-        <a href="#logout" class="navLink">Logout</a>
-        <a href="#clients" class="navLink">Clients</a>
-        <a href="#visits" class="navLink">Visits</a>
-        <a href="#providerDashboard" class="navLink">Dashboard</a>
-        <a href="#providerDashboard">
-                <img src="images/logo.svg" alt="Pet Pal">
+        <a href="logout" class="navLink">Logout</a>
+        <a href="clients" class="navLink">Clients</a>
+        <a href="visits" class="navLink">Visits</a>
+        <a href="providerDashboard" class="navLink">Dashboard</a>
+        <a href="providerDashboard">
+                <img src="images/logo.svg" alt="Pet Pals">
             </a>
-            <h1>Pet Pal</h1>
+            <h1>Pet Pals</h1>
         </div>`,
     addPetForm: `
         <div class="boxed">
@@ -147,13 +147,13 @@ const templates = {
         <div class="boxed">
         <h2>Upcoming Visits</h2>
         <div id="js-visits-list"></div>
-        <a class="buttonSmall" id="js-all-visits-button" href="#visits">View All</a>
-        <a class="buttonSmall" id="js-add-visit-button" href="#addVisit">Add</a>
+        <a class="buttonSmall" id="js-all-visits-button" href="visits">View All</a>
+        <a class="buttonSmall" id="js-add-visit-button" href="addVisit">Add</a>
         </div>
         <div class="boxed">
         <h2>Clients</h2>
-        <a class="buttonSmall" id="js-all-clients-button" href="#clients">View All</a>
-        <a class="buttonSmall" id="js-add-client-button" href="#addClient">Add</a>
+        <a class="buttonSmall" id="js-all-clients-button" href="clients">View All</a>
+        <a class="buttonSmall" id="js-add-client-button" href="addClient">Add</a>
         </div>`,
     addVisitForm: `
         <div class="boxed">
@@ -175,9 +175,9 @@ const templates = {
         </div>`,
     fullHeader: `<div class="fullHeader">
             <a href="index.html">
-                <img src="images/logo.svg" alt="Pet Pal">
+                <img src="images/logo.svg" alt="Pet Pals">
             </a>
-            <h1>Pet Pal</h1>
-            <p>Pet Pal allows pet care providers and their clients to share and update their information</p>
+            <h1>Pet Pals</h1>
+            <p>Pet Pals allows pet care providers and their clients to share and update their information</p>
         </div>`
 }

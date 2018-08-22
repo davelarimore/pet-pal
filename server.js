@@ -24,9 +24,9 @@ mongoose.Promise = global.Promise;
 const { DATABASE_URL, PORT } = require('./config');
 
 
-app.get("/", (req, res) => {
-  res.sendFile(__dirname + "/views/index.html");
-});
+// app.get("/", (req, res) => {
+//   res.sendFile(__dirname + "/public/");
+// });
 
 //App
 app.use('/auth', require('./routes/authRouter'))
@@ -38,6 +38,8 @@ app.use('/api', [
   require('./routes/visitsRouter'),
   require('./routes/tasksRouter'),
 ]);
+
+app.all('*', (req, res) => { res.sendFile(__dirname + "/public/")});
 
 function runServer(databaseUrl, port = PORT) {
   return new Promise((resolve, reject) => {

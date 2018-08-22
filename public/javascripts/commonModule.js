@@ -4,7 +4,7 @@ const common = (function () {
     //Login screen
     ///////////////////////////////////////////
     function _displayLoginForm() {
-        auth.logout();
+        // auth.logout();
         $('#js-main').html(templates.loginForm);
     }
     function _handleLoginSubmit() {
@@ -15,8 +15,8 @@ const common = (function () {
             auth.login(email, password)
                 .then(() => {
                     return auth.isProvider()
-                        ? window.location.href = `./#providerDashboard`
-                        : window.location.href = `./#clientDashboard`;
+                        ? window.location.href = `./providerDashboard`
+                        : window.location.href = `./clientDashboard`;
                 })
                 .catch(() => {
                     _displayAlertDialog('Login Error', 'Incorrect email or password.')
@@ -85,7 +85,7 @@ const common = (function () {
                 .then(() => {
                     auth.login(userData.email, userData.password)
                 .then(() => {
-                        window.location.href = `./#clientDashboard`
+                        window.location.href = `./clientDashboard`
                 });
                 })
         });
@@ -118,7 +118,7 @@ const common = (function () {
                 .then(() => {
                     auth.login(userData.email, userData.password)
                         .then(() => {
-                            window.location.href = `./#providerDashboard`
+                            window.location.href = `./providerDashboard`
                         });
             });
         })
@@ -137,9 +137,9 @@ const common = (function () {
         $('#js-main').html(`
         ${clientHeader}${clientInfo}
         <div class='petsList'>${petsList}</div>
-        <a class='button' href='#addPet/${userData._id}'>Add Pet</a>
+        <a class='button' href='addPet/${userData._id}'>Add Pet</a>
         <div id='js-tasks'>${tasksList}</div>
-        <a class='button' href='#addTask/${userData._id}'>Add Task</a>
+        <a class='button' href='addTask/${userData._id}'>Add Task</a>
         `);
     }
     // Client Info
@@ -173,18 +173,18 @@ const common = (function () {
         if (auth.isProvider()) {
             const nextVisit = userData.visits && userData.visits.length > 0
                 ? `<p>Next Visit: ${visits.formatDate(userData.visits[0].startTime, userData.visits[0].endTime)}</p></div>`
-                : `<p>No visits scheduled. <a href='#addVisit'>Add a visit</a></p>`;
+                : `<p>No visits scheduled. <a href='addVisit'>Add a visit</a></p>`;
             return `<div class='clientHeader' data-id='${userData._id}'>
                 <a class="buttonSmall" id="js-delete-client" href="#" data-id="${userData._id}">Delete</a>  
-                <a class='buttonSmall' href='#updateClient/${userData._id}'>Edit</a>
-                <h2><a href='#clientDetail/${userData._id}'>${userData.firstName} ${userData.lastName}</a></h2>
+                <a class='buttonSmall' href='updateClient/${userData._id}'>Edit</a>
+                <h2><a href='clientDetail/${userData._id}'>${userData.firstName} ${userData.lastName}</a></h2>
                 ${nextVisit}</div>`;
         } else {
             const nextVisit = userData.visits && userData.visits.length > 0
                 ? `<p>Next Visit: ${visits.formatDate(userData.visits[0].startTime, userData.visits[0].endTime)}</p></div>`
                 : `<p>No visits scheduled.</p>`;
             return `<div class='clientHeader' data-id='${userData._id}'>
-                <a class='buttonSmall' href='#updateClient/${userData._id}'>Edit</a>
+                <a class='buttonSmall' href='updateClient/${userData._id}'>Edit</a>
                 <h2>${userData.firstName} ${userData.lastName}</h2>
                 ${nextVisit}</div>`;
         }
@@ -196,7 +196,7 @@ const common = (function () {
     function _generateProviderHeaderHTML(userData) {
         return `
         <div class='providerHeader'>
-        <a class='buttonSmall' id="js-update-profile-button" href='#updateProvider'>Edit</a>
+        <a class='buttonSmall' id="js-update-profile-button" href='updateProvider'>Edit</a>
                 <h2>${userData.companyName}</h2>
                 <p>${userData.firstName} ${userData.lastName}</div>`;
     }
@@ -258,7 +258,7 @@ const common = (function () {
     function _updateProviderAndDisplayAlertDialog(userData) {
         api.updateUser(userData)
         .then(() => {
-            window.location.href = `./#providerDashboard`;
+            window.location.href = `./providerDashboard`;
             common.displayAlertDialog('Profile updated');
         })
         .catch(() => console.error('Error updating profile'));
@@ -280,7 +280,7 @@ const common = (function () {
             <div id='js-clients-list'>
                 ${clientsListHTML}
             </div>
-            <a class='button' href='#addClient'>Add Client</a>
+            <a class='button' href='addClient'>Add Client</a>
         </div>`);
     }
     function _generateAllClientsHTML(clientsData) {
@@ -289,7 +289,7 @@ const common = (function () {
     }
     function _generateClientItemHTML(client) {
         return `
-        <a href='#clientDetail/${client._id}/' class='listItemLink'><div class='listItem'>
+        <a href='clientDetail/${client._id}' class='listItemLink'><div class='listItem'>
                     <img src='images/arrow.svg' title='View Client' alt='View Client' />
                     <h3>${client.firstName} ${client.lastName}</h3>
                     <p>${client.addressString}</p>
@@ -326,7 +326,7 @@ const common = (function () {
             api.addUser(userData)
             .then((response) => createdClientId = response._id)
             .then(() => auth.updateCurrentUser())
-            .then(() => window.location.href = `./#clientDetail/${createdClientId}`)
+            .then(() => window.location.href = `./clientDetail/${createdClientId}`)
         });
     }
     $(_handleAddClientSubmit);
@@ -427,10 +427,10 @@ const common = (function () {
         .then(() => auth.updateCurrentUser())
         .then(() => {
             if (auth.isProvider()) {
-                window.location.href = `./#clientDetail/${userData._id}`;
+                window.location.href = `./clientDetail/${userData._id}`;
                 common.displayAlertDialog('User updated');
             } else {
-                window.location.href = `./#clientDashboard`;
+                window.location.href = `./clientDashboard`;
                 common.displayAlertDialog('Profile updated');
             }
         })
