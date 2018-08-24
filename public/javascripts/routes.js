@@ -129,12 +129,12 @@ router.on(
 router.on(
     'logout', () => {
         auth.logout();
-        router.navigate('./');
+        router.navigate('./login');
         // window.location.href = './';
     },
     { before: checkLoggedIn }
 )
-.resolve();
+// .resolve();
 
 router.on(function () {
     console.log('root route');

@@ -39,6 +39,7 @@ const auth = (function () {
 
     function _logout() {
         window.localStorage.removeItem("AUTH_TOKEN");
+        
     }
 
     return {
