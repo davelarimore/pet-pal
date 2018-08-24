@@ -5,6 +5,7 @@ const common = (function () {
     ///////////////////////////////////////////
     function _displayLoginForm() {
         auth.logout();
+        $('#js-header').find('h1').remove();
         $('#js-main').html(templates.loginForm);
     }
     function _handleLoginSubmit() {
@@ -32,6 +33,7 @@ const common = (function () {
         auth.logout();
         api.getProviders()
             .then(providers => {
+                $('#js-header').find('h1').remove();
                 const providerListHTML = _generateProviderListHTML(providers);
                 const element = $(templates.signupTypeForm);
                 element.find('#js-provider-list').append(providerListHTML);
@@ -134,18 +136,25 @@ const common = (function () {
         const clientInfo = _generateClientInfoHTML(userData);
         const petsList = pets.generatePetsHTML(userData.pets);
         const tasksList = tasks.generateTasksHTML(userData.tasks);
+        $("#js-main").addClass("dark");
         $('#js-main').html(`
         ${clientHeader}${clientInfo}
-        <div class='petsList'>${petsList}</div>
+        <div class="boxed"><div class='petsList'>${petsList}</div></div>
         <a class='button' href='#addPet/${userData._id}'>Add Pet</a>
-        <div id='js-tasks'>${tasksList}</div>
+        <div class="boxed" id='js-tasks'>${tasksList}</div>
         <a class='button' href='#addTask/${userData._id}'>Add Task</a>
         `);
     }
     // Client Info
     function _generateClientInfoHTML(client) {
+        let entryNote = '';
+        let vetInfo = '';
+        if (client.entryNote) { entryNote = `<p>${client.entryNote}</p>`}
+        else { entryNote = `<p><span>No special entry notes</span></p>`};
+        if (client.vetInfo) { vetInfo = `<p>${client.vetInfo}</p>`}
+        else { vetInfo = `<p><span>No veterinarian specified</span></p>`};
         return `
-        <div><a class='boxedInfoItem' href='tel:${client.phone}'>
+        <div class="boxed"><a class='boxedInfoItem' href='tel:${client.phone}'>
                     <img src='images/phone.svg' alt='Phone'>
                     <p>${client.phone}</p>
                 </a>
@@ -159,11 +168,11 @@ const common = (function () {
                 </a>
                 <div class='boxedInfoItem'>
                     <img src='images/house.svg' alt='Entry Note'>
-                    <p>${client.entryNote}</p>
+                    ${entryNote}
                 </div>           
                 <div class='boxedInfoItem'>
                     <img src='images/vet.svg' alt='Veterinarian'>
-                    <p>${client.vetInfo}</p>
+                    ${vetInfo}
                 </div></div>`;
     }
     ///////////////////////////////////////////
@@ -172,21 +181,31 @@ const common = (function () {
     function _generateClientHeaderHTML(userData) {
         if (auth.isProvider()) {
             const nextVisit = userData.visits && userData.visits.length > 0
-                ? `<p>Next Visit: ${visits.formatDate(userData.visits[0].startTime, userData.visits[0].endTime)}</p></div>`
-                : `<p>No visits scheduled. <a href='#addVisit'>Add a visit</a></p>`;
+                ? `<p>Next Visit: ${visits.formatDate(userData.visits[0].startTime, userData.visits[0].endTime)}</p>`
+                : `<p><span>No visits scheduled.</span>&nbsp;&nbsp;<a href='#addVisit'>Add a visit</a></p>`;
             return `<div class='clientHeader' data-id='${userData._id}'>
-                <a class="buttonSmall" id="js-delete-client" href="#" data-id="${userData._id}">Delete</a>  
-                <a class='buttonSmall' href='#updateClient/${userData._id}'>Edit</a>
-                <h2><a href='#clientDetail/${userData._id}'>${userData.firstName} ${userData.lastName}</a></h2>
-                ${nextVisit}</div>`;
+                <div class="clientHeaderInfo">
+                <h1><a href='#clientDetail/${userData._id}'>${userData.firstName} ${userData.lastName}</a></h1>
+                ${nextVisit}
+                </div>
+                <div class="clientHeaderButtons">
+                <a class='button' href='#updateClient/${userData._id}'>Edit</a>
+                <a class="buttonGhost" id="js-delete-client" href="#" data-id="${userData._id}">Delete</a>  
+                </div>
+                </div>`;
         } else {
             const nextVisit = userData.visits && userData.visits.length > 0
-                ? `<p>Next Visit: ${visits.formatDate(userData.visits[0].startTime, userData.visits[0].endTime)}</p></div>`
-                : `<p>No visits scheduled.</p>`;
+                ? `<p>Next Visit: ${visits.formatDate(userData.visits[0].startTime, userData.visits[0].endTime)}</p>`
+                : `<p><span>No visits scheduled.</span></p>`;
             return `<div class='clientHeader' data-id='${userData._id}'>
-                <a class='buttonSmall' href='#updateClient/${userData._id}'>Edit</a>
-                <h2>${userData.firstName} ${userData.lastName}</h2>
-                ${nextVisit}</div>`;
+                <div class="clientHeaderInfo">
+                <h1>${userData.firstName} ${userData.lastName}</h1>
+                ${nextVisit}
+                </div>
+                <div class="clientHeaderButtons">
+                <a class='button' href='#updateClient/${userData._id}'>Edit</a>
+                </div>
+                </div>`;
         }
     }
 
@@ -196,9 +215,14 @@ const common = (function () {
     function _generateProviderHeaderHTML(userData) {
         return `
         <div class='providerHeader'>
-        <a class='buttonSmall' id="js-update-profile-button" href='#updateProvider'>Edit</a>
-                <h2>${userData.companyName}</h2>
-                <p>${userData.firstName} ${userData.lastName}</div>`;
+            <div class="providerHeaderInfo">
+                <h1>${userData.companyName}</h1>
+                <p>${userData.firstName} ${userData.lastName}</p>
+            </div>
+            <div class="providerHeaderButtons">
+                <a class='button' id="js-update-profile-button" href='#updateProvider'>Edit</a>
+            </div>
+        </div>`;
     }
 
     ///////////////////////////////////////////
@@ -212,6 +236,7 @@ const common = (function () {
             : `<p>No visits scheduled</p>`;
         const element = $(templates.providerDashboard);
         element.find('#js-visits-list').html(recentVisitsHTML);
+        $("#js-main").addClass("dark");
         $('#js-main').html(providerHeader);
         $('#js-main').append(element);
     }
@@ -269,12 +294,10 @@ const common = (function () {
     ///////////////////////////////////////////
     function _displayAllClients() {
         providerData = auth.getCurrentUser();
-        const providerHeader = _generateProviderHeaderHTML(providerData);
         const clientsListHTML = providerData.clients && providerData.clients.length > 0
             ? _generateAllClientsHTML(providerData.clients)
             : `<p>No clients found</p>`;
         $('#js-main').html(`
-        ${providerHeader}
         <div class='boxed'>
             <h2>Clients</h2>
             <div id='js-clients-list'>
@@ -290,9 +313,11 @@ const common = (function () {
     function _generateClientItemHTML(client) {
         return `
         <a href='#clientDetail/${client._id}/' class='listItemLink'><div class='listItem'>
-                    <img src='images/arrow.svg' title='View Client' alt='View Client' />
+                <div class="listItemInfo">
                     <h3>${client.firstName} ${client.lastName}</h3>
                     <p>${client.addressString}</p>
+                </div>
+                    <img src='images/arrow.svg' title='View Client' alt='View Client' />
                 </div></a>`;
     }
 
@@ -300,16 +325,24 @@ const common = (function () {
     //Add Client Screen
     ///////////////////////////////////////////
     function _displayAddClientForm() {
-        let createdClientId = '';
         const element = $(templates.clientSignupForm);
+        element.find('h2').text('Add Client');
         element.find('#provider').data('id', auth.getCurrentUser()._id);
         element.find('#js-client-signup-form').attr('id', 'js-add-client-form');
+        element.find('#firstName').attr('placeholder', 'Client first name');
+        element.find('#lastName').attr('placeholder', 'Client last name');
+        element.find('#email').attr('placeholder', 'Client email');
+        element.find('#phone').attr('placeholder', 'Client phone');
+        element.find('#streetAddress').attr('placeholder', 'Client street address');
+        element.find('#vetInfo').attr('placeholder', "Client's veterinarian");
+        element.find('#confirmPassword').attr('placeholder', 'Confirm client password');
         $('#js-main').html(element);
         new google.maps.places.Autocomplete((document.getElementById('streetAddress')), {
             types: ['geocode']
         });
     };
     function _handleAddClientSubmit() {
+        let createdClientId = '';
         $('#js-main').on('submit', '#js-add-client-form', event => {
             event.preventDefault();
             let userData = {
@@ -386,7 +419,7 @@ const common = (function () {
     function _generateClientUpdateFormHTML(clientData) {
         const element = $(templates.clientSignupForm);
         element.find('#js-client-signup-form').attr('id', 'js-client-update-form');
-        element.find('h2').text('Update Profile');
+        element.find('h2').text('Update Client Profile');
         //pre-fill form
         element.find('#clientId').val(clientData._id);
         element.find('#firstName').val(clientData.firstName);
@@ -458,12 +491,9 @@ const common = (function () {
     ///////////////////////////////////////////
     function _displayConfirmDialog(message, yesCallback, noCallback) {
         const confirmHTML = `
-        <div class="popupContent">
-            <h2>Confirm</h2>
-            <p>${message}</p>
+            <h2>${message}</h2>
             <button class="button confirm">OK</button>
-            <button class="button cancel">Cancel</button>
-        </div>`
+            <button class="buttonGhost cancel">Cancel</button>`
         $('.md-content').html(confirmHTML);
         $(".md-modal").addClass("md-show");
         $('.confirm').on('click', function () {

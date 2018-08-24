@@ -4,10 +4,8 @@ const visits = (function () {
     //All Visits Screen
     ///////////////////////////////////////////
     function _displayAllVisits() {
-        const providerHeader = common.generateProviderHeaderHTML(auth.getCurrentUser());
         const visitsListHTML = _generateAllVisitsHTML(auth.getCurrentUser().visits);
         $('#js-main').html(`
-        ${providerHeader}
         <div class='boxed'>
             <h2>All Visits</h2>
             <div id='js-visits-list'>
@@ -24,10 +22,11 @@ const visits = (function () {
         const formattedStartTime = _formatDate(visit.startTime, visit.endTime)
         return `
         <div class='listItem'>
+            <div class="listItemInfo">
+                <h3>${formattedStartTime}</h3>
+                <p><span><a href='#clientDetail/${visit.client._id}/'>${visit.client.firstName} ${visit.client.lastName}&nbsp;&nbsp;-</a>&nbsp;&nbsp;</span><a href='https://www.google.com/maps/search/${visit.client.addressString}'>${visit.client.addressString}</a></p>
+            </div>
             <a href='#' class='js-delete-visit' data-id='${visit._id}'><img src='images/delete.svg' title='Delete Visit' alt='Delete Visit' /></a>
-            <h3>${formattedStartTime}</h3>
-            <p><a href='#clientDetail/${visit.client._id}/'>${visit.client.firstName} ${visit.client.lastName}</a></p>
-            <p><a href='https://www.google.com/maps/search/${visit.client.addressString}'>${visit.client.addressString}</a></p>
         </div>`;
     }
 

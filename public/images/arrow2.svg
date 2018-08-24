@@ -4,13 +4,7 @@
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 width="43px" height="43px" viewBox="0 0 43 43" enable-background="new 0 0 43 43" xml:space="preserve">
 <g>
-	<g>
-		
-			<rect x="20.816" y="4.057" transform="matrix(0.7071 0.7071 -0.7071 0.7071 21.4988 -8.8992)" fill="#FFFFFF" width="1.351" height="34.89"/>
-	</g>
-	<g>
-		
-			<rect x="4.062" y="20.823" transform="matrix(0.7071 0.7071 -0.7071 0.7071 21.5022 -8.9111)" fill="#FFFFFF" width="34.891" height="1.351"/>
-	</g>
+	<polygon fill="#FFFFFF" points="15.616,9.641 16.571,8.688 26.657,18.771 26.657,18.771 29.384,21.499 25.325,25.557 
+		25.325,25.559 16.571,34.313 15.616,33.357 27.477,21.5 	"/>
 </g>
 </svg>

@@ -21,20 +21,22 @@ const pets = (function () {
     }
     function _generatePetInfoHTML(pet) {
         return `
-    <div class='petsList'>
-            <a href=#user/${pet.clientId}/pet/${pet._id}/add class='petThumbnail'>
-                <div>
-                    <img src='images/logo.svg' alt='Fluffy'>
-                    <p>${pet.name}</p>
-                </div>
-            </a>
-        </div>
-        <div>
-            <div class='boxedInfoItem'><p>Name: ${pet.name}</p></div>
-            <div class='boxedInfoItem'><p>Type: ${pet.type}</p></div>
-            <div class='boxedInfoItem'><p>Breed: ${pet.breed}</p></div>
-            <div class='boxedInfoItem'><p>Color: ${pet.color}</p></div>
-            <div class='boxedInfoItem'><p>Food: ${pet.food}</p></div>
+        <div class="boxed">
+            <div class='petsList'>
+                <a href=#user/${pet.clientId}/pet/${pet._id}/add class='petThumbnail'>
+                    <div>
+                        <img src='images/${pet.type}.svg' alt='${pet.name}'>
+                        <p>${pet.name}</p>
+                    </div>
+                </a>
+            </div>
+            <div>
+                <div class='boxedInfoItem'><p><span>Name:</span>&nbsp;&nbsp;${pet.name}</p></div>
+                <div class='boxedInfoItem'><p><span>Type:</span>&nbsp;&nbsp;${pet.type}</p></div>
+                <div class='boxedInfoItem'><p><span>Breed:</span>&nbsp;&nbsp;${pet.breed}</p></div>
+                <div class='boxedInfoItem'><p><span>Color:</span>&nbsp;&nbsp;${pet.color}</p></div>
+                <div class='boxedInfoItem'><p><span>Food:</span>&nbsp;&nbsp;${pet.food}</p></div>
+            </div>
         </div>`;
     }
     function _generatePetDetail(userData, petData) {
@@ -43,19 +45,23 @@ const pets = (function () {
         $('#js-main').html(`
         ${clientHeader}
         ${petDetail}
-        <a class='button' href='#updatePet/${petData._id}'>Update Pet</a>
-        <a class='button' id='js-delete-pet' href='#' data-id='${petData._id}'>Delete Pet</a>`
+        <a class='button' href='#updatePet/${petData._id}'>Edit</a>
+        <a class='buttonGhost' id='js-delete-pet' href='#' data-id='${petData._id}'>Delete</a>`
         );
     }
 
     function _generatePetsHTML(petsData) {
-        const items = petsData.map((item, index) => _generatePetHTML(item, index));
-        return items.join('');
+        if (petsData && petsData.length > 0) {
+            const items = petsData.map((item, index) => _generatePetHTML(item, index));
+            return items.join('');
+        } else {
+            return `<div class="noPet"><p><span>No pets</span></p></div>`
+        }
     }
     function _generatePetHTML(pet) {
         return `
     <a href='#pet/${pet._id}/' class='petThumbnail'>
-    <div><img src='images/logo.svg' alt='${pet.name}'><p>${pet.name}</p></div></a>`;
+    <div><img src='images/${pet.type}.svg' alt='${pet.name}'><p>${pet.name}</p></div></a>`;
     }
 
     ///////////////////////////////////////////
