@@ -31,7 +31,6 @@ const auth = (function () {
     function _updateCurrentUser() {
         return api.getMe()
         .then(response => {
-            console.log('Updated user: ', response);
             currentUser = response;
         })
     }

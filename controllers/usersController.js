@@ -44,7 +44,6 @@ exports.usersPut = (req, res) => {
                 return res.status(400).send(message);
             }
         }
-        console.log(`Updating user item \`${req.body._id}\``);
         Users.findOneAndUpdate({
             _id: req.body._id
             },
@@ -72,7 +71,6 @@ exports.usersPut = (req, res) => {
 //DELETE: delete client of provider
 exports.usersDelete = (req, res) => {
     if (req.user.clients.includes(req.params.id)) {
-        console.log(`Deleting user item \`${req.params.id}\``);
         Users.findByIdAndRemove(req.params.id)
             .then(() => {
                 res.status(204).json({ message: 'User deleted' });

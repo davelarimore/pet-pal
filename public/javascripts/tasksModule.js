@@ -4,15 +4,16 @@ const tasks = (function () {
     //Display task
     ///////////////////////////////////////////
     function _generateTasksHTML(tasksList) {
-        const items = tasksList.map((item, index) => _generateTaskHTML(item, index));
-        return items.join('');
+        if (tasksList && tasksList.length > 0) {
+            const items = tasksList.map((item, index) => _generateTaskHTML(item, index));
+            return items.join('');
+        } else {
+            return `<p><span>No tasks</span></p>`
+        }
     }
     function _generateTaskHTML(task) {
-    //     return `
-    // <div class='boxedInfoItem'><a href='#deleteTask/${task._id}'><img src='images/delete.svg' alt='Task'></a>
-    // <p>${task.description}</p></div>`;
         return `
-    <div class='boxedInfoItem'><a class='js-delete-task' href='#' data-id='${task._id}'><img src='images/delete.svg' alt='Task'></a>
+    <div class='boxedInfoItem'><a class='deleteTask js-delete-task' href='#' data-id='${task._id}'><img src='images/delete.svg' alt='Task'></a>
     <p>${task.description}</p></div>`;
     }
     
@@ -21,7 +22,11 @@ const tasks = (function () {
     ///////////////////////////////////////////
     function _displayAndHandleAddTaskForm(clientId) {
         const element = $(templates.addTaskForm);
+        const cancelHref = auth.isProvider()
+            ? `/#clientDetail/${clientId}`
+            : `/#clientDashboard`
         element.find('#clientId').val(clientId);
+        element.find('#js-add-task-cancel').attr('href', cancelHref);
         $('#js-main').html(element);
     }
     function _handleAddTask() {

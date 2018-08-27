@@ -10,7 +10,7 @@ app.use(express.json());
 
 //catch for unhandled promise rejections
 process.on('unhandledRejection', error => {
-  console.log('unhandledRejection', error.message);
+  console.error('unhandledRejection', error.message);
 });
 
 //Auth
