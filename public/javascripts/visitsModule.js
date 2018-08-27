@@ -101,7 +101,8 @@ const visits = (function () {
         api.deleteVisit(visitId)
             .then(() => auth.updateCurrentUser())
             .then(() => {
-                window.location.href = `./#visits`;
+                common.displayCompactSiteHeader();
+                visits.displayAllVisits(); 
                 common.displayAlertDialog('Visit Deleted')
             })
     }
@@ -115,7 +116,7 @@ const visits = (function () {
         const monthNames = ["Jan.", "Feb.", "March", "April", "May", "June",
             "July", "Aug.", "Sept.", "Oct.", "Nov.", "Dec."
         ];
-        return (monthNames[startDate.getMonth() + 1]) +
+        return (monthNames[startDate.getMonth()]) +
             ' ' + startDate.getDate() +
             ', ' + startDate.toTimeString().substr(0, 5) + '-' + endDate.toTimeString().substr(0, 5);
     }

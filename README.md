@@ -3,6 +3,10 @@
 ## About:
 Pet Pals helps pet care providers and their clients share information about their pets and services. Users can sign up as either a client or a provider (dog walker, pet sitter). The app is especially helpful for providers, since they can access client and pet details at all times via their mobile device.
 
+!["Desktop"](public/images/pet-pals-desktop.jpg "Desktop")
+!["Mobile"](public/images/pet-pals-mobile.jpg "Mobile")
+
+
 ### Client features:
 * Can update their user profile and contact information
 * Can add, edit and delete pets
@@ -19,25 +23,35 @@ Pet Pals helps pet care providers and their clients share information about thei
 ### Achitecture highlights:
 * The Mongo database has separate models for users, pets, visits and tasks. The models utilize relationships to manage ownership of records.
 * Navigo provides front-end routing for the one-page app
+* The client uses js modules with public and private functions
 
 ## Technology used:
-* bcryptjs
-* Chai/Chai-http
+
+### Front-end
 * CSS
-* Express.js
-* Git/GitHub
-* Heroku
 * HTML
 * JavaScript
-* JSON Web Token
 * jQuery
-* mLab
+* Navigo.js
+* Google places autocomplete api
+* jQuery Timepicker Addon
+
+### Back-end
+* bcryptjs
+* Express.js
+* JSON Web Token
 * Mocha
 * Mongo DB
 * Mongoose
-* Navigo.js
 * Node.js
 * Passport.js
+
+### Development/Deployment
+* Chai/Chai-http
+* Git/GitHub
+* Heroku
+* mLab
+* Mocha
 * Postman
 * Travis CI
 

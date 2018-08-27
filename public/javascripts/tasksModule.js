@@ -77,12 +77,10 @@ const tasks = (function () {
             .then(() => {
                 userData = auth.getCurrentUser().tasks;
                 if (auth.isProvider()) {
-                    // window.location.replace(`./#clientDetail/${clientId}`);
                     common.displayCompactSiteHeader();
                     common.displayClientDetail(clientId); 
                     common.displayAlertDialog('Task Deleted');
                 } else {
-                    // window.location.replace('./#clientDashboard');
                     common.displayCompactSiteHeader();
                     common.displayClientDashboard();
                     common.displayAlertDialog('Task Deleted');
