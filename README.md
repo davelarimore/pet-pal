@@ -17,7 +17,7 @@ Pet Pals helps pet care providers and their clients share information about thei
 * Can add and delete visits for their clients
 
 ### Achitecture highlights:
-* The Monogo database has separate models for users, pets, visits and tasks. The models utilize relationships to manage ownership of records.
+* The Mongo database has separate models for users, pets, visits and tasks. The models utilize relationships to manage ownership of records.
 * Navigo provides front-end routing for the one-page app
 
 ## Technology used:
