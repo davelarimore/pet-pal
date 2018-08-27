@@ -1,25 +1,22 @@
 ///////////////////////////////////////////
 //Client Routes
 ///////////////////////////////////////////
-const router = new Navigo('localhost:8080', true, '#!');
+const router = new Navigo(null, true, '#!');
 
-const checkLoggedIn = function(done) {
+const checkLoggedIn = function (done) {
     if (!window.localStorage.getItem('AUTH_TOKEN')) {
-        window.location.replace('../');
+        window.location.replace('./#login');
+        common.displayFullSiteHeader();
+        common.displayLoginForm();
         done(false);
     } else {
-        auth.updateCurrentUser()
-        .then(() => done())
+        return auth.updateCurrentUser()
+            .then(() => done())
     }
 }
 
-//public routes
 router
     .on({
-        'login': () => {
-            common.displayFullSiteHeader();
-            common.displayLoginForm();
-        },
         'signup': () => {
             common.displayFullSiteHeader();
             common.displaySignupTypeForm();
@@ -28,10 +25,13 @@ router
             common.displayFullSiteHeader();
             common.displayProviderSignupForm();
         },
-    })
-    .resolve();
+});
 
-//authenticated routes
+router.on(
+    'login', () => {
+    },
+    { before: checkLoggedIn }
+);
 router.on(
     'clientDashboard', () => {
         common.displayCompactSiteHeader();
@@ -130,3 +130,18 @@ router.on(
     },
     { before: checkLoggedIn }
 );
+
+//root route
+router.on (
+    () => {
+    if (auth.isProvider()) {
+        common.displayCompactSiteHeader();
+        common.displayProviderDashboard();
+    } else {
+        common.displayCompactSiteHeader();
+        common.displayClientDashboard();
+    }
+},
+    { before: checkLoggedIn }
+)
+.resolve()

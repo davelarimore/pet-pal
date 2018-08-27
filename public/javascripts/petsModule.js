@@ -25,8 +25,8 @@ const pets = (function () {
             <div class='petsList'>
                 <a href=#user/${pet.clientId}/pet/${pet._id}/add class='petThumbnail'>
                     <div>
-                        <img src='images/${pet.type}.svg' alt='${pet.name}'>
                         <p>${pet.name}</p>
+                        <img src='images/${pet.type}.jpg' alt='${pet.name}'>
                     </div>
                 </a>
             </div>
@@ -61,7 +61,7 @@ const pets = (function () {
     function _generatePetHTML(pet) {
         return `
     <a href='#pet/${pet._id}/' class='petThumbnail'>
-    <div><img src='images/${pet.type}.svg' alt='${pet.name}'><p>${pet.name}</p></div></a>`;
+    <div><p>${pet.name}</p><img src='images/${pet.type}.jpg' alt='${pet.name}'></div></a>`;
     }
 
     ///////////////////////////////////////////
@@ -69,7 +69,11 @@ const pets = (function () {
     ///////////////////////////////////////////
     function _displayAndHandleAddPetForm(clientId) {
         const element = $(templates.addPetForm);
-        element.find('#clientId').val(clientId);
+        const cancelHref = auth.isProvider()
+            ? `/#clientDetail/${clientId}`
+            : `/#clientDashboard`
+            element.find('#clientId').val(clientId);
+            element.find('#js-add-pet-cancel').attr('href', cancelHref);
         $('#js-main').html(element);
     }
     function _handleAddMyPetSubmit() {

@@ -150,9 +150,9 @@ const common = (function () {
         let entryNote = '';
         let vetInfo = '';
         if (client.entryNote) { entryNote = `<p>${client.entryNote}</p>`}
-        else { entryNote = `<p><span>No special entry notes</span></p>`};
+        else { entryNote = `<p class="notFound"><span>No special entry notes</span></p>`};
         if (client.vetInfo) { vetInfo = `<p>${client.vetInfo}</p>`}
-        else { vetInfo = `<p><span>No veterinarian specified</span></p>`};
+        else { vetInfo = `<p class="notFound"><span>No veterinarian specified</span></p>`};
         return `
         <div class="boxed"><a class='boxedInfoItem' href='tel:${client.phone}'>
                     <img src='images/phone.svg' alt='Phone'>
@@ -336,6 +336,9 @@ const common = (function () {
         element.find('#streetAddress').attr('placeholder', 'Client street address');
         element.find('#vetInfo').attr('placeholder', "Client's veterinarian");
         element.find('#confirmPassword').attr('placeholder', 'Confirm client password');
+        element.find('fieldset').append(`
+            <a class="buttonGhost" href="./#clients">Cancel</a>`
+        )
         $('#js-main').html(element);
         new google.maps.places.Autocomplete((document.getElementById('streetAddress')), {
             types: ['geocode']

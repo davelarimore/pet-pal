@@ -68,17 +68,21 @@ const templates = {
             </fieldset>
         </form>
         </div>`,
-    loginForm: `<div class="boxed">
-        <h1>Login</h1>
-        <form id="js-login-form">
-            <fieldset name="login">
-                <label for="email">Email*</label>
-                <input type="email" id="email" title="Email address" placeholder="Your email address" required></input>
-                <label for="password">Pasword*</label>
-                <input type="password" id="password" title="Password" placeholder="Your password" required></input>
-                <input type="submit" value="Submit" class="button">
-            </fieldset>
-        </form>
+    loginForm: `
+        <div class="boxed">
+            <div class="tagline">
+                <h1>Pet Pals helps pet care providers and their clients share information about their pets and services.</h1>
+            </div>
+            <form id="js-login-form">
+                <fieldset name="login">
+                    <label for="email">Email*</label>
+                    <input type="email" id="email" title="Email address" placeholder="Your email address" required></input>
+                    <label for="password">Pasword*</label>
+                    <input type="password" id="password" title="Password" placeholder="Your password" required></input>
+                    <input type="submit" value="Log In" class="button">
+                    <a class="buttonGhost" href="./#signup">Sign Up</a>
+                </fieldset>
+            </form>
         </div>`,
     compactHeaderClient: `
         <div class="compactHeader">
@@ -122,6 +126,7 @@ const templates = {
                             <option value="Turtle">Turtle</option>
                             <option value="Lizard">Lizard</option>
                             <option value="Rodent">Rodent</option>
+                            <option value="Insect">Insect</option>
                             <option value="Other">Other</option>
                         </select> 
                     <label for="petBreed">Breed</label>
@@ -131,6 +136,7 @@ const templates = {
                     <label for="petFood">Food</label>
                     <input type="text" id="petFood" title="Food" placeholder="Pet food details"></input>
                     <input type="submit" value="Submit" class="button">
+                    <a id="js-add-pet-cancel" class="buttonGhost" href="">Cancel</a>
                 </fieldset>
             </form>
         </div>`,
@@ -143,6 +149,7 @@ const templates = {
                 <label for="taskDescription">Description*</label>
                 <input type="text" id="taskDescription" title="Task Description" placeholder="Task description" required></input>                  
                 <input type="submit" value="Submit" class="button">
+                <a id="js-add-task-cancel" class="buttonGhost" href="">Cancel</a>
             </fieldset>
         </form>
         </div>`,
@@ -167,7 +174,8 @@ const templates = {
                 <input type="text" id="startTime" title="Start Time" placeholder="Start date and time" autocomplete="off" required></input>
                 <label for="endTime" >End Time*</label>
                 <input type="text" id="endTime" title="End Time" placeholder="End date and time" autocomplete="off" required></input>
-                <input type="submit" value="Submit" class="button" placeholder="">
+                <input type="submit" value="Submit" class="button">
+                <a class="buttonGhost" href="./#visits">Cancel</a>
             </fieldset>
         </form>
         </div>`,

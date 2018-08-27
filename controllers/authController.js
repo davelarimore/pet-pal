@@ -27,8 +27,6 @@ exports.authenticate = (req, res, next) => {
 // Signup
 exports.signup = (req, res) => {
 
-    console.log('Initiating signup', req.body);
-
     const requiredFields = ['email', 'password'];
     const missingField = requiredFields.find(field => !(field in req.body));
 
@@ -163,7 +161,6 @@ exports.signup = (req, res) => {
             return res.status(201).json(user.serialize());
         })
         .catch(err => {
-            console.log(err);
             // Forward validation errors on to the client, otherwise give a 500
             // error because something unexpected has happened
             if (err.reason === 'ValidationError') {

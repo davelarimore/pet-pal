@@ -7,6 +7,7 @@ html, body {
 }
 
 body {
+  background-image: url('../images/washed-blue.png');
   padding: 0;
   margin: 0;
   font-family: 'Lato', sans-serif;
@@ -20,6 +21,10 @@ a {
   opacity: 0.7;
   color: white;
   text-decoration: none;
+  transition: opacity .3s ease-out;
+  -moz-transition: opacity .3s ease-out;
+  -webkit-transition: opacity .3s ease-out;
+  -o-transition: opacity .3s ease-out;
 }
 
 a:hover {
@@ -93,6 +98,12 @@ a.navLink:hover {
 }
 
 .tagline {
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.tagline h1 {
   font-weight: 300;
   font-size: 24px;
   line-height: 1.4em;
@@ -160,6 +171,10 @@ p span {
   min-width: 150px;
   padding: 12px 30px 14px;
   cursor: pointer;
+  transition: background-color .3s ease-out;
+  -moz-transition: background-color .3s ease-out;
+  -webkit-transition: background-color .3s ease-out;
+  -o-transition: background-color .3s ease-out;
 }
 
 .button {
@@ -168,14 +183,18 @@ p span {
   border: 1px solid transparent;
 }
 
+.button:focus, .buttonGhost:focus {
+  border-radius: 500px;
+}
+
 .button:hover {
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: rgba(255, 255, 255, 0.8);
   border: 1px solid #FFF;
   text-decoration: none;
 }
 
 .buttonGhost:hover {
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: rgba(0, 0, 0, 0.2);
   border: 1px solid #FFF;
   text-decoration: none;
 }
@@ -184,6 +203,10 @@ p span {
   color: #FFF;
   background-color: transparent;
   border: 1px solid #FFF;
+}
+
+fieldset>.buttonGhost {
+  margin-left: 14px;
 }
 
 .fullHeader>.button, main>.button, .boxed>.button, .fullHeader>.buttonGhost, main>.buttonGhost, .boxed>.buttonGhost {
@@ -340,7 +363,11 @@ select:invalid {
   background-color: #398F78;
   padding: 26px;
   margin: 0 0 20px 0;
-  border-bottom: 2px solid #1f4255;
+  border-bottom: 2px solid #1B3A4B;
+  transition: background-color .3s ease-out;
+  -moz-transition: background-color .3s ease-out;
+  -webkit-transition: background-color .3s ease-out;
+  -o-transition: background-color .3s ease-out;
 }
 
 .listItem img {
@@ -348,6 +375,10 @@ select:invalid {
   width: 40px;
   height: 40px;
   margin-left: 10px;
+  transition: opacity .3s ease-out;
+  -moz-transition: opacity .3s ease-out;
+  -webkit-transition: opacity .3s ease-out;
+  -o-transition: opacity .3s ease-out;
 }
 
 .listItem img:hover {
@@ -361,6 +392,10 @@ select:invalid {
 
 .listItem a {
   opacity: 0.6;
+  transition: opacity .3s ease-out;
+  -moz-transition: opacity .3s ease-out;
+  -webkit-transition: opacity .3s ease-out;
+  -o-transition: opacity .3s ease-out;
 }
 
 .listItem a:hover {
@@ -375,7 +410,11 @@ select:invalid {
   padding: 10px;
   background-color: #398F78;
   margin-bottom: 12px;
-  border-bottom: 2px solid #1f4255;
+  border-bottom: 2px solid #1B3A4B;
+  transition: background-color .3s ease-out;
+  -moz-transition: background-color .3s ease-out;
+  -webkit-transition: background-color .3s ease-out;
+  -o-transition: background-color .3s ease-out;
 }
 
 a.boxedInfoItem:hover, a:hover>.listItem, a:hover>.listItem>h3 p {
@@ -386,10 +425,13 @@ a.boxedInfoItem:hover, a:hover>.listItem, a:hover>.listItem>h3 p {
 
 .boxedInfoItem img {
   opacity: 0.6;
-  /* float: left; */
   width: 36px;
   height: 36px;
   margin-right: 20px;
+  transition: opacity .3s ease-out;
+  -moz-transition: opacity .3s ease-out;
+  -webkit-transition: opacity .3s ease-out;
+  -o-transition: opacity .3s ease-out;
 }
 
 .boxedInfoItem img:hover {
@@ -407,6 +449,15 @@ a.boxedInfoItem:hover, a:hover>.listItem, a:hover>.listItem>h3 p {
   font-weight: 700;
 }
 
+.boxedInfoItem .notFound span {
+  font-style: italic;
+  font-weight: 400;
+}
+
+.deleteTask {
+  height: 36px;
+}
+
 .petsList {
   display: flex;
   flex-wrap: wrap;
@@ -419,10 +470,15 @@ a.boxedInfoItem:hover, a:hover>.listItem, a:hover>.listItem>h3 p {
   flex-shrink: 0;
   flex-basis: 30%;
   height: 120px;
-  padding: 10px;
   margin: 0 12px 12px 0;
   text-decoration: none;
   background-color: #398F78;
+  border-bottom: 2px solid #1B3A4B;
+  overflow: hidden;
+  transition: background-color .3s ease-out;
+  -moz-transition: background-color .3s ease-out;
+  -webkit-transition: background-color .3s ease-out;
+  -o-transition: background-color .3s ease-out;
 }
 
 .noPet {
@@ -432,13 +488,22 @@ a.boxedInfoItem:hover, a:hover>.listItem, a:hover>.listItem>h3 p {
 }
 
 a.petThumbnail:hover {
-  background-color: #33806B;
+  background-color: #2C6D5C;
   text-decoration: none;
   color: #FFF;
 }
 
 .petThumbnail img {
-  height: 70px;
+  position: relative;
+  margin-top: -30%;
+  width: 100%;
+  opacity: 0.5;
+}
+
+.petThumbnail p {
+  position: relative;
+  top: 48px;
+  z-index: 10;
 }
 
 /* Modal dialogs */
@@ -549,6 +614,7 @@ a.petThumbnail:hover {
   }
   .fullHeader img {
     width: 250px;
+    margin-bottom: 20px;
   }
   .dark {
     padding-top: 0;
@@ -567,9 +633,9 @@ a.petThumbnail:hover {
   input[type='submit'] {
     margin-top: 20px;
   }
-  .tagline {
+  .tagline h1 {
     font-size: 20px;
-    margin: 0 0 50px 0;
+    margin: 0 0 30px 0;
   }
   h1 {
     font-size: 24px;
@@ -593,6 +659,15 @@ a.petThumbnail:hover {
   }
   .boxedInfoItem p {
     line-height: 24px;
+  }
+  .deleteTask {
+    height: 24px;
+  }
+  .petThumbnail {
+    flex-basis: 45%;
+  }
+  .petThumbnail img {
+    margin-top: -25%;
   }
   .md-content {
     padding: 30px;
@@ -620,7 +695,7 @@ a.petThumbnail:hover {
   .navLink {
     margin-left: 15px;
   }
-  .tagline {
+  .tagline h1 {
     font-size: 18px;
     margin: 0 0 20px 0;
   }
