@@ -129,10 +129,10 @@ const visits = (function () {
         const bounds = new google.maps.LatLngBounds();
 
         for (i = 0; i < locations.length; i++) {
-            const iconIndex = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
+            const iconIndex = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'];
             const iconPath = i===0
-                ? `images/map-markers/green_marker${iconIndex[i]}.png`
-                : `images/map-markers/yellow_marker${iconIndex[i]}.png`;
+                ? `images/map-markers/green_marker_${iconIndex[i]}.png`
+                : `images/map-markers/yellow_marker_${iconIndex[i]}.png`;
             const clientLatLng = new google.maps.LatLng(locations[i][1], locations[i][2])
             marker = new google.maps.Marker({
                 position: clientLatLng,
