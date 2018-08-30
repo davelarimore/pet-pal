@@ -2,19 +2,19 @@ const auth = (function () {
     let currentUser = {};
 
     const _setToken = token => {
-        window.localStorage.setItem("AUTH_TOKEN", token);
+        window.localStorage.setItem('AUTH_TOKEN', token);
     };
 
     const _getToken = token => {
-        return window.localStorage.getItem("AUTH_TOKEN");
+        return window.localStorage.getItem('AUTH_TOKEN');
     };
 
     function _login(email, password) {
         return $
             .ajax({
-                method: "POST",
+                method: 'POST',
                 headers: {
-                    "Content-Type": "application/json"
+                    'Content-Type': 'application/json'
                 },
                 url: 'auth/login',
                 data: JSON.stringify({ email: email, password: password })
@@ -36,7 +36,7 @@ const auth = (function () {
     }
 
     function _logout() {
-        window.localStorage.removeItem("AUTH_TOKEN");
+        window.localStorage.removeItem('AUTH_TOKEN');
     }
 
     return {
@@ -45,7 +45,7 @@ const auth = (function () {
         getToken: _getToken,
         updateCurrentUser: _updateCurrentUser,
         isProvider: function () {
-            return currentUser.role === "provider";
+            return currentUser.role === 'provider';
         },
         getCurrentUser: function () {
             return currentUser;

@@ -18,7 +18,7 @@ exports.tasksPost = (req, res) => {
                     })
                     .catch(err => {
                         console.error(err);
-                        res.status(500).json({ message: "Internal server error" });
+                        res.status(500).json({ message: 'Internal server error' });
                     });
             } else {
                 res.status(403).json('Not authorized to access resource');

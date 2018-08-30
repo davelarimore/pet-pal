@@ -21,7 +21,7 @@ const pets = (function () {
     }
     function _generatePetInfoHTML(pet) {
         return `
-        <div class="boxed">
+        <div class='boxed'>
             <div class='petsList'>
                 <a href=#user/${pet.clientId}/pet/${pet._id}/add class='petThumbnail'>
                     <div>
@@ -55,7 +55,7 @@ const pets = (function () {
             const items = petsData.map((item, index) => _generatePetHTML(item, index));
             return items.join('');
         } else {
-            return `<div class="noPet"><p><span>No pets</span></p></div>`
+            return `<div class='noPet'><p><span>No pets</span></p></div>`
         }
     }
     function _generatePetHTML(pet) {

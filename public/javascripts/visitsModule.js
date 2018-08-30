@@ -4,7 +4,7 @@ const visits = (function () {
     //All Visits Screen
     ///////////////////////////////////////////
     function _displayAllVisits() {
-        const visitsListHTML = _generateAllVisitsHTML(auth.getCurrentUser().visits) || `<p class="noVisit">No visits scheduled</p>`;
+        const visitsListHTML = _generateAllVisitsHTML(auth.getCurrentUser().visits) || `<p class='noVisit'>No visits scheduled</p>`;
         $('#js-main').html(`
         <div class='boxed'>
             <h2>All Visits</h2>
@@ -22,7 +22,7 @@ const visits = (function () {
         const formattedStartTime = _formatDate(visit.startTime, visit.endTime)
         return `
         <div class='listItem'>
-            <div class="listItemInfo">
+            <div class='listItemInfo'>
                 <h3>${formattedStartTime}</h3>
                 <p><span><a href='#clientDetail/${visit.client._id}/'>${visit.client.firstName} ${visit.client.lastName}&nbsp;&nbsp;-</a>&nbsp;&nbsp;</span><a href='https://www.google.com/maps/search/${visit.client.addressString}'>${visit.client.addressString}</a></p>
             </div>
@@ -35,8 +35,8 @@ const visits = (function () {
     ///////////////////////////////////////////
     function _generateUpcomingVisitsHTML(visitsData) {
         const mapHTML = `
-        <div id="map" class="visitsMap"></div>
-        <a class="button openMap" id="js-open-map" target="_blank" href="">Open in Google maps</a>
+        <div id='map' class='visitsMap'></div>
+        <a class='button openMap' id='js-open-map' target='_blank' href=''>Open in Google maps</a>
         `;
         //first three items only
         const visitsHTML = visitsData.slice(0, 3).map((item, index) => _generateVisitItemHTML(item, index));
@@ -49,9 +49,9 @@ const visits = (function () {
 
     function _mapsSelector() {
         //If we're on iOS, open in Apple Maps 
-        if ((navigator.platform.indexOf("iPhone") != -1) ||
-        (navigator.platform.indexOf("iPod") != -1) ||
-        (navigator.platform.indexOf("iPad") != -1))
+        if ((navigator.platform.indexOf('iPhone') != -1) ||
+        (navigator.platform.indexOf('iPod') != -1) ||
+        (navigator.platform.indexOf('iPad') != -1))
             return 'maps://www.google.com/maps/dir/?api=1&travelmode=driving';
         //Else use Google
         else 
@@ -261,8 +261,8 @@ const visits = (function () {
     function _formatDate(startIsoDate, endIsoDate) {
         const startDate = new Date(startIsoDate);
         const endDate = new Date(endIsoDate);
-        const monthNames = ["Jan.", "Feb.", "March", "April", "May", "June",
-            "July", "Aug.", "Sept.", "Oct.", "Nov.", "Dec."
+        const monthNames = ['Jan.', 'Feb.', 'March', 'April', 'May', 'June',
+            'July', 'Aug.', 'Sept.', 'Oct.', 'Nov.', 'Dec.'
         ];
         return (monthNames[startDate.getMonth()]) +
             ' ' + startDate.getDate() +

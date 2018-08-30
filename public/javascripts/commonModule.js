@@ -5,6 +5,7 @@ const common = (function () {
     ///////////////////////////////////////////
     function _displayLoginForm() {
         auth.logout();
+        $('#js-main').removeClass('dark');
         $('#js-header').find('h1').remove();
         $('#js-main').html(templates.loginForm);
     }
@@ -86,8 +87,11 @@ const common = (function () {
                     auth.login(userData.email, userData.password)
                         .then(() => {
                             window.location.href = `./#dashboard`
-                        });
+                        })
                 })
+                .catch(() => {
+                    _displayAlertDialog('Sign Up Error', `There is already an account for ${userData.email}`)
+                });
         });
     }
     $(_handleClientSignupSubmit);
@@ -119,7 +123,10 @@ const common = (function () {
                     auth.login(userData.email, userData.password)
                         .then(() => {
                             window.location.href = `./#dashboard`
-                        });
+                        })
+                })
+                .catch(() => {
+                    _displayAlertDialog('Sign Up Error', `There is already an account for ${userData.email}`)
                 });
         })
     }
@@ -134,12 +141,12 @@ const common = (function () {
         const clientInfo = _generateClientInfoHTML(userData);
         const petsList = pets.generatePetsHTML(userData.pets);
         const tasksList = tasks.generateTasksHTML(userData.tasks);
-        $("#js-main").addClass("dark");
+        $('#js-main').addClass('dark');
         $('#js-main').html(`
         ${clientHeader}${clientInfo}
-        <div class="boxed"><div class='petsList'>${petsList}</div></div>
+        <div class='boxed'><div class='petsList'>${petsList}</div></div>
         <a class='button' href='#addPet/${userData._id}'>Add Pet</a>
-        <div class="boxed" id='js-tasks'>${tasksList}</div>
+        <div class='boxed' id='js-tasks'>${tasksList}</div>
         <a class='button' href='#addTask/${userData._id}'>Add Task</a>
         `);
     }
@@ -148,11 +155,11 @@ const common = (function () {
         let entryNote = '';
         let vetInfo = '';
         if (client.entryNote) { entryNote = `<p>${client.entryNote}</p>` }
-        else { entryNote = `<p class="notFound"><span>No special entry notes</span></p>` };
+        else { entryNote = `<p class='notFound'><span>No special entry notes</span></p>` };
         if (client.vetInfo) { vetInfo = `<p>${client.vetInfo}</p>` }
-        else { vetInfo = `<p class="notFound"><span>No veterinarian specified</span></p>` };
+        else { vetInfo = `<p class='notFound'><span>No veterinarian specified</span></p>` };
         return `
-        <div class="boxed"><a class='boxedInfoItem' href='tel:${client.phone}'>
+        <div class='boxed'><a class='boxedInfoItem' href='tel:${client.phone}'>
                     <img src='images/phone.svg' alt='Phone'>
                     <p>${client.phone}</p>
                 </a>
@@ -182,13 +189,13 @@ const common = (function () {
                 ? `<p>Next Visit: ${visits.formatDate(userData.visits[0].startTime, userData.visits[0].endTime)}</p>`
                 : `<p><span>No visits scheduled.</span>&nbsp;&nbsp;<a href='#addVisit'>Add a visit</a></p>`;
             return `<div class='clientHeader' data-id='${userData._id}'>
-                <div class="clientHeaderInfo">
+                <div class='clientHeaderInfo'>
                 <h1><a href='#clientDetail/${userData._id}'>${userData.firstName} ${userData.lastName}</a></h1>
                 ${nextVisit}
                 </div>
-                <div class="clientHeaderButtons">
+                <div class='clientHeaderButtons'>
                 <a class='button' href='#updateClient/${userData._id}'>Edit</a>
-                <a class="buttonGhost" id="js-delete-client" href="#" data-id="${userData._id}">Delete</a>  
+                <a class='buttonGhost' id='js-delete-client' href='#' data-id='${userData._id}'>Delete</a>  
                 </div>
                 </div>`;
         } else {
@@ -196,11 +203,11 @@ const common = (function () {
                 ? `<p>Next Visit: ${visits.formatDate(userData.visits[0].startTime, userData.visits[0].endTime)}</p>`
                 : `<p><span>No visits scheduled.</span></p>`;
             return `<div class='clientHeader' data-id='${userData._id}'>
-                <div class="clientHeaderInfo">
+                <div class='clientHeaderInfo'>
                 <h1>${userData.firstName} ${userData.lastName}</h1>
                 ${nextVisit}
                 </div>
-                <div class="clientHeaderButtons">
+                <div class='clientHeaderButtons'>
                 <a class='button' href='#updateClient/${userData._id}'>Edit</a>
                 </div>
                 </div>`;
@@ -213,12 +220,12 @@ const common = (function () {
     function _generateProviderHeaderHTML(userData) {
         return `
         <div class='providerHeader'>
-            <div class="providerHeaderInfo">
+            <div class='providerHeaderInfo'>
                 <h1>${userData.companyName}</h1>
                 <p>${userData.firstName} ${userData.lastName}</p>
             </div>
-            <div class="providerHeaderButtons">
-                <a class='button' id="js-update-profile-button" href='#updateProvider'>Edit</a>
+            <div class='providerHeaderButtons'>
+                <a class='button' id='js-update-profile-button' href='#updateProvider'>Edit</a>
             </div>
         </div>`;
     }
@@ -232,12 +239,12 @@ const common = (function () {
         const providerData = auth.getCurrentUser();
         const providerHeader = _generateProviderHeaderHTML(providerData);
         $('#js-main').html(providerHeader);
-        $("#js-main").addClass("dark");
+        $('#js-main').addClass('dark');
         const element = $(templates.providerDashboard);
         $('#js-main').append(element);
         if (providerData.visits && providerData.visits.length > 0) {
             const nextVisitDate = _formatNextDate(providerData.visits[0].startTime);
-            $("#js-main").find("h2").html(`Visits for ${nextVisitDate}:`);
+            $('#js-main').find('h2').html(`Visits for ${nextVisitDate}:`);
             visits.getNextDaysLocations(providerData)
                 .then((upcomingVisitLocations) => {
                     upcomingVisitsHTML = visits.generateUpcomingVisitsHTML(providerData.visits);
@@ -245,14 +252,14 @@ const common = (function () {
                     visits.mapUpcomingVisits(upcomingVisitLocations)
                 });
         } else {
-            $('#js-visits-list').html(`<p class="noVisit">No visits scheduled</p>`);
-        }    
+            $('#js-visits-list').html(`<p class='noVisit'>No visits scheduled</p>`);
+        }
     }
 
     function _formatNextDate(startIsoDate) {
         const startDate = new Date(startIsoDate);
-        const monthNames = ["January", "February", "March", "April", "May", "June",
-            "July", "Aug.", "Septemper", "October", "November", "December"
+        const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+            'July', 'Aug.', 'September', 'October', 'November', 'December'
         ];
         return (monthNames[startDate.getMonth()]) + ' ' + startDate.getDate();
     }
@@ -329,7 +336,7 @@ const common = (function () {
     function _generateClientItemHTML(client) {
         return `
         <a href='#clientDetail/${client._id}/' class='listItemLink'><div class='listItem'>
-                <div class="listItemInfo">
+                <div class='listItemInfo'>
                     <h3>${client.firstName} ${client.lastName}</h3>
                     <p>${client.addressString}</p>
                 </div>
@@ -350,10 +357,10 @@ const common = (function () {
         element.find('#email').attr('placeholder', 'Client email');
         element.find('#phone').attr('placeholder', 'Client phone');
         element.find('#streetAddress').attr('placeholder', 'Client street address');
-        element.find('#vetInfo').attr('placeholder', "Client's veterinarian");
+        element.find('#vetInfo').attr('placeholder', 'Client&#39;s veterinarian');
         element.find('#confirmPassword').attr('placeholder', 'Confirm client password');
         element.find('fieldset').append(`
-            <a class="buttonGhost" href="./#clients">Cancel</a>`
+            <a class='buttonGhost' href='./#clients'>Cancel</a>`
         )
         $('#js-main').html(element);
         new google.maps.places.Autocomplete((document.getElementById('streetAddress')), {
@@ -511,17 +518,17 @@ const common = (function () {
     function _displayConfirmDialog(message, yesCallback, noCallback) {
         const confirmHTML = `
             <h2>${message}</h2>
-            <button class="button confirm">OK</button>
-            <button class="buttonGhost cancel">Cancel</button>`
+            <button class='button confirm'>OK</button>
+            <button class='buttonGhost cancel'>Cancel</button>`
         $('.md-content').html(confirmHTML);
-        $(".md-modal").addClass("md-show");
+        $('.md-modal').addClass('md-show');
         $('.confirm').on('click', function () {
-            $(".md-modal").removeClass("md-show");
+            $('.md-modal').removeClass('md-show');
             $('.md-content').html('');
             yesCallback();
         });
         $('.cancel').on('click', function () {
-            $(".md-modal").removeClass("md-show");
+            $('.md-modal').removeClass('md-show');
             $('.md-content').html('');
             if (typeof noCallback === 'function' && noCallback()) {
                 noCallback();
@@ -535,11 +542,11 @@ const common = (function () {
         const alertHTML = `
             <h2>${title}</h2>
             ${messageHTML}
-            <button class="button close">${button || 'OK'}</button>`
+            <button class='button close'>${button || 'OK'}</button>`
         $('.md-content').html(alertHTML);
-        $(".md-modal").addClass("md-show");
-        $(".close").on("click", function () {
-            $(".md-modal").removeClass("md-show");
+        $('.md-modal').addClass('md-show');
+        $('.close').on('click', function () {
+            $('.md-modal').removeClass('md-show');
             $('.md-content').html('');
         });
     }

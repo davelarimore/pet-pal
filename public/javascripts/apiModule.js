@@ -11,7 +11,7 @@ const api = (function () {
                 'Content-Type': 'application/json',
             },
             url: url,
-            data: JSON.stringify(data) || "",
+            data: JSON.stringify(data) || '',
         })
     }
     ///////////////////////////////////////////

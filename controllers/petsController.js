@@ -20,7 +20,7 @@ exports.petsPost = (req, res) => {
                     })
                     .catch(err => {
                         console.error(err);
-                        res.status(500).json({ message: "Internal server error" });
+                        res.status(500).json({ message: 'Internal server error' });
                     });
             } else {
                 res.status(403).json('Not authorized to access resource');
@@ -71,7 +71,6 @@ exports.petsDelete = (req, res) => {
     Users.findById(req.user._id).populate('clients')
         .then((user) => {
             if (user.pets.includes(req.params.id) || user.clients.filter(client => client.pets.includes(req.params.id))) {
-                // if (user._id === req.body.clientId || user.clients.some((client) => { return client.id === req.body.clientId })) {
                 Pets
                     .findByIdAndRemove(req.params.id)
                     .then(() => {

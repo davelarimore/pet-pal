@@ -16,7 +16,7 @@ const userSchema = mongoose.Schema({
     addressString: { type: String, default: '' },
     latLon: { type: String, default: '' },
     entryNote: { type: String, default: '' },
-    role: { type: String, required: true, default: "client" },
+    role: { type: String, required: true, default: 'client' },
     password: { type: String, required: true, select: false },
     pets: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Pets' }],
     visits: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Visits' }],
@@ -26,7 +26,7 @@ const userSchema = mongoose.Schema({
 })
 
 // Virtual to generate full name
-userSchema.virtual("fullName").get(function () {
+userSchema.virtual('fullName').get(function () {
     return `${this.firstName} ${this.lastName}`.trim();
 });
 
