@@ -8,7 +8,7 @@ app.use(morgan('common'));
 app.use(express.static('public'));
 app.use(express.json());
 
-//catch for unhandled promise rejections
+//Catch for unhandled promise rejections
 process.on('unhandledRejection', error => {
   console.error('unhandledRejection', error.message);
 });
@@ -25,8 +25,9 @@ const { DATABASE_URL, PORT } = require('./config');
 
 
 app.get("/", (req, res) => {
-  res.sendFile(__dirname + "/views/index.html");
+  res.sendFile(__dirname + "/public/index.html");
 });
+
 
 //App
 app.use('/auth', require('./routes/authRouter'))
@@ -38,6 +39,17 @@ app.use('/api', [
   require('./routes/visitsRouter'),
   require('./routes/tasksRouter'),
 ]);
+
+//404 handler
+app.use(function (req, res, next) {
+  res.status(404).sendFile(__dirname + "/public/index.html");
+})
+
+// Keep Heroku alive
+var http = require("http");
+setInterval(function () {
+  http.get("http://petpals-app.herokuapp.com");
+}, 300000); // every 5 minutes (300000)
 
 function runServer(databaseUrl, port = PORT) {
   return new Promise((resolve, reject) => {
@@ -70,11 +82,11 @@ function closeServer() {
     });
   });
 }
-  
-  // if server.js is called directly (aka, with `node server.js`), this block
-  // runs. but we also export the runServer command so other code (for instance, test code) can start the server as needed.
-  if (require.main === module) {
-    runServer(DATABASE_URL).catch(err => console.error(err));
-  }
-  
-  module.exports = { app, runServer, closeServer };
+
+// if server.js is called directly (aka, with `node server.js`), this block
+// runs. but we also export the runServer command so other code (for instance, test code) can start the server as needed.
+if (require.main === module) {
+  runServer(DATABASE_URL).catch(err => console.error(err));
+}
+
+module.exports = { app, runServer, closeServer };

@@ -4,7 +4,7 @@ const visits = (function () {
     //All Visits Screen
     ///////////////////////////////////////////
     function _displayAllVisits() {
-        const visitsListHTML = _generateAllVisitsHTML(auth.getCurrentUser().visits);
+        const visitsListHTML = _generateAllVisitsHTML(auth.getCurrentUser().visits) || `<p class="noVisit">No visits scheduled</p>`;
         $('#js-main').html(`
         <div class='boxed'>
             <h2>All Visits</h2>
@@ -34,10 +34,158 @@ const visits = (function () {
     //Upcoming visit
     ///////////////////////////////////////////
     function _generateUpcomingVisitsHTML(visitsData) {
+        const mapHTML = `
+        <div id="map" class="visitsMap"></div>
+        <a class="button openMap" id="js-open-map" target="_blank" href="">Open in Google maps</a>
+        `;
         //first three items only
-        const items = visitsData.slice(0, 3).map((item, index) => _generateVisitItemHTML(item, index));
-        return items.join('');
+        const visitsHTML = visitsData.slice(0, 3).map((item, index) => _generateVisitItemHTML(item, index));
+        return mapHTML + visitsHTML.join('');
     }
+
+    ///////////////////////////////////////////
+    //Map upcoming visits
+    ///////////////////////////////////////////
+
+    function _mapsSelector() {
+        //If we're on iOS, open in Apple Maps 
+        if ((navigator.platform.indexOf("iPhone") != -1) ||
+        (navigator.platform.indexOf("iPod") != -1) ||
+        (navigator.platform.indexOf("iPad") != -1))
+            return 'maps://www.google.com/maps/dir/?api=1&travelmode=driving';
+        //Else use Google
+        else 
+            return 'https://www.google.com/maps/dir/?api=1&travelmode=driving';
+    }
+
+    // Geocode address helper
+    function _geoCodeAddress(address) {
+        return new Promise((resolve, reject) => {
+            let clientLatLng = [];
+            const geocoder = new google.maps.Geocoder();
+            geocoder.geocode({ 'address': address }, function (results, status) {
+                if (status == 'OK') {
+                    clientLatLng = [results[0].geometry.location.lat(), results[0].geometry.location.lng()];
+                    resolve(clientLatLng);
+                } else {
+                    reject('Geocode was not successful for the following reason: ' + status);
+                }
+            });
+        })
+    }
+
+    // Build locations array
+    function _getNextDaysLocations(providerData) {
+        const nextMonth = new Date(providerData.visits[0].startTime).getMonth();
+        const nextDay = new Date(providerData.visits[0].startTime).getDate();
+
+        //Seed the route array with the provider address
+        const providerPromise = _geoCodeAddress(providerData.addressString)
+            .then((latLng) => {
+                return [providerData.companyName, latLng[0], latLng[1], providerData.addressString];
+            });
+        //Add the client addresses
+        const visitPromises = providerData.visits.filter(visit => {
+            const visitMonth = new Date(visit.startTime).getMonth();
+            const visitDay = new Date(visit.startTime).getDate();
+            return visitMonth === nextMonth && visitDay === nextDay;
+        }).map(visit => {
+            const clientFullName = `${visit.client.firstName} ${visit.client.lastName}`;
+            return _geoCodeAddress(visit.client.addressString)
+                .then((clientLatLng) => {
+                    return [
+                        clientFullName,
+                        clientLatLng[0],
+                        clientLatLng[1],
+                        visit.client.addressString,
+                        visit.startTime,
+                        visit.endTime];
+                })
+        });
+        return Promise.all([providerPromise, ...visitPromises]);
+    }
+
+    //Render map with locations
+    function _mapUpcomingVisits(locations) {
+        let openMapURL = _mapsSelector();
+        let openMapURLWaypoints = '&waypoints=';
+        let directionsDisplay = '';
+        const directionsService = new google.maps.DirectionsService();
+
+        directionsDisplay = new google.maps.DirectionsRenderer({ suppressMarkers: true} );
+
+        const visitsMap = new google.maps.Map(document.getElementById('map'), {
+            zoom: 15,
+            center: new google.maps.LatLng(0, 0),
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        });
+        directionsDisplay.setMap(visitsMap);
+        const infowindow = new google.maps.InfoWindow();
+        let marker, i;
+        const request = {
+            travelMode: google.maps.TravelMode.DRIVING
+        };
+
+        const bounds = new google.maps.LatLngBounds();
+
+        for (i = 0; i < locations.length; i++) {
+            const iconIndex = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
+            const iconPath = i===0
+                ? `images/map-markers/green_marker${iconIndex[i]}.png`
+                : `images/map-markers/yellow_marker${iconIndex[i]}.png`;
+            const clientLatLng = new google.maps.LatLng(locations[i][1], locations[i][2])
+            marker = new google.maps.Marker({
+                position: clientLatLng,
+                map: visitsMap,
+                title: locations[i][0],
+                icon: iconPath
+            });
+
+            bounds.extend(clientLatLng);
+
+            //Info windows for markers
+            google.maps.event.addListener(marker, 'click', (function (marker, i) {
+                return function () {
+                    if (locations[i][4]) {
+                        const visitTimes = _formatTime(locations[i][4], locations[i][5]);
+                        infowindow.setContent(`<p><span>${locations[i][0]}</span></p><p>${visitTimes}</p>`);
+                    } else {
+                        infowindow.setContent(`<p><span>${locations[i][0]}</span></p>`);
+                    }
+                    infowindow.open(map, marker);
+                }
+            })(marker, i));
+
+            //Build the map request and the 'open map' URL simultaneously
+            if (i == 0) {
+                request.origin = marker.getPosition();
+                openMapURL = openMapURL + `&origin=${encodeURIComponent(locations[i][3])}`
+            }
+            else if (i == locations.length - 1) {
+                request.destination = marker.getPosition();
+                openMapURL = openMapURL + `&destination=${encodeURIComponent(locations[i][3])}`
+            }
+            else {
+                if (!request.waypoints) request.waypoints = [];
+                openMapURLWaypoints = openMapURLWaypoints + `${encodeURIComponent(locations[i][3])}%7C`
+                request.waypoints.push({
+                    location: marker.getPosition(),
+                    stopover: true
+                });
+            }
+        }
+        visitsMap.fitBounds(bounds);
+        visitsMap.setCenter(bounds.getCenter());
+        directionsService.route(request, function (result, status) {
+            if (status == google.maps.DirectionsStatus.OK) {
+                //Set the 'open map' URL
+                $('#js-open-map').attr('href', openMapURL + openMapURLWaypoints)
+                //Render the map
+                directionsDisplay.setDirections(result);
+            }
+        });
+    }
+
 
     ///////////////////////////////////////////
     //Add Visit Screen
@@ -76,13 +224,13 @@ const visits = (function () {
     $(_handleAddVisitSubmit);
     function _addVisitAndDisplayAlertDialog(data) {
         api.addVisit(data)
-        .then(auth.updateCurrentUser())
-        .then(() => {
-            window.location.href = `./#visits`;
-            common.displayAlertDialog('Visit Added');
-        });
+            .then(auth.updateCurrentUser())
+            .then(() => {
+                window.location.href = `./#visits`;
+                common.displayAlertDialog('Visit Added');
+            });
     }
-    
+
     ///////////////////////////////////////////
     //Delete visit
     ///////////////////////////////////////////
@@ -102,7 +250,7 @@ const visits = (function () {
             .then(() => auth.updateCurrentUser())
             .then(() => {
                 common.displayCompactSiteHeader();
-                visits.displayAllVisits(); 
+                visits.displayAllVisits();
                 common.displayAlertDialog('Visit Deleted')
             })
     }
@@ -120,10 +268,17 @@ const visits = (function () {
             ' ' + startDate.getDate() +
             ', ' + startDate.toTimeString().substr(0, 5) + '-' + endDate.toTimeString().substr(0, 5);
     }
+    function _formatTime(startIsoDate, endIsoDate) {
+        const startDate = new Date(startIsoDate);
+        const endDate = new Date(endIsoDate);
+        return startDate.toTimeString().substr(0, 5) + '-' + endDate.toTimeString().substr(0, 5);
+    }
 
     return {
         displayAllVisits: _displayAllVisits,
         generateUpcomingVisitsHTML: _generateUpcomingVisitsHTML,
+        getNextDaysLocations: _getNextDaysLocations,
+        mapUpcomingVisits: _mapUpcomingVisits,
         displayAddVisitForm: _displayAddVisitForm,
         formatDate: _formatDate
     };

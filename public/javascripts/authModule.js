@@ -30,9 +30,9 @@ const auth = (function () {
 
     function _updateCurrentUser() {
         return api.getMe()
-        .then(response => {
-            currentUser = response;
-        })
+            .then(response => {
+                currentUser = response;
+            })
     }
 
     function _logout() {

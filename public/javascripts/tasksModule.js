@@ -16,7 +16,7 @@ const tasks = (function () {
     <div class='boxedInfoItem'><a class='deleteTask js-delete-task' href='#' data-id='${task._id}'><img src='images/delete.svg' alt='Task'></a>
     <p>${task.description}</p></div>`;
     }
-    
+
     ///////////////////////////////////////////
     //Add task
     ///////////////////////////////////////////
@@ -24,7 +24,7 @@ const tasks = (function () {
         const element = $(templates.addTaskForm);
         const cancelHref = auth.isProvider()
             ? `/#clientDetail/${clientId}`
-            : `/#clientDashboard`
+            : `/#dashboard`
         element.find('#clientId').val(clientId);
         element.find('#js-add-task-cancel').attr('href', cancelHref);
         $('#js-main').html(element);
@@ -42,17 +42,16 @@ const tasks = (function () {
     $(_handleAddTask)
     function _addTask(taskData) {
         api.addTask(taskData)
-        // .then(auth.updateCurrentUser())
-        .then(() => {
-            if (auth.isProvider()) {
-                window.location.replace(`./#clientDetail/${taskData.clientId}`);
-                common.displayAlertDialog('Task added')
-            } else {
-                window.location.replace('./#clientDashboard');
-                common.displayAlertDialog('Task added')
-            }
-        })
-        .catch(() => console.error('Error adding task'));
+            .then(() => {
+                if (auth.isProvider()) {
+                    window.location.replace(`./#clientDetail/${taskData.clientId}`);
+                    common.displayAlertDialog('Task added')
+                } else {
+                    window.location.replace('./#dashboard');
+                    common.displayAlertDialog('Task added')
+                }
+            })
+            .catch(() => console.error('Error adding task'));
     }
 
     ///////////////////////////////////////////
@@ -78,14 +77,14 @@ const tasks = (function () {
                 userData = auth.getCurrentUser().tasks;
                 if (auth.isProvider()) {
                     common.displayCompactSiteHeader();
-                    common.displayClientDetail(clientId); 
+                    common.displayClientDetail(clientId);
                     common.displayAlertDialog('Task Deleted');
                 } else {
                     common.displayCompactSiteHeader();
                     common.displayClientDashboard();
                     common.displayAlertDialog('Task Deleted');
                 }
-            }) 
+            })
     }
 
     return {

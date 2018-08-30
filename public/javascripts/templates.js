@@ -86,21 +86,21 @@ const templates = {
         </div>`,
     compactHeaderClient: `
         <div class="compactHeader">
-            <a href="#clientDashboard">
+            <a href="#dashboard">
             <img src="images/logo-small.png" alt="Pet Pal">
             </a>
             <nav>
-                <a href="#clientDashboard" class="navLink">Dashboard</a>
+                <a href="#dashboard" class="navLink">Dashboard</a>
                 <a href="#logout" class="navLink">Logout</a>
             </nav>
         </div>`,
     compactHeaderProvider: `
         <div class="compactHeader">
-            <a href="#providerDashboard">
+            <a href="#dashboard">
                 <img src="images/logo-small.png" alt="Pet Pal">
             </a>
             <nav>
-                <a href="#providerDashboard" class="navLink">Dashboard</a>
+                <a href="#dashboard" class="navLink">Dashboard</a>
                 <a href="#visits" class="navLink">Visits</a>
                 <a href="#clients" class="navLink">Clients</a>
                 <a href="#logout" class="navLink">Logout</a>
@@ -114,7 +114,7 @@ const templates = {
                     <input type="hidden" id="clientId" title="Client ID"></input> 
                     <input type="hidden" id="_id" title="Pet ID"></input> 
                     <label for="petName">Name*</label>
-                    <input type="text" id="petName" title="Pet Name" placeholder="Your pet's name" required></input>                  
+                    <input type="text" id="petName" title="Pet Name" placeholder="Pet's name" required></input>                  
                     <label for="petType">Type*</label>
                         <select id="petType" title="Pet Type" required>
                             <option value="" disabled selected hidden>Type of pet</option>

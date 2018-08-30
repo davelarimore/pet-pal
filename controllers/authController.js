@@ -53,13 +53,7 @@ exports.signup = (req, res) => {
         });
     }
 
-    // If the email and password aren't trimmed we give an error.  Users might
-    // expect that these will work without trimming (i.e. they want the password
-    // "foobar ", including the space at the end).  We need to reject such values
-    // explicitly so the users know what's happening, rather than silently
-    // trimming them and expecting the user to understand.
-    // We'll silently trim the other fields, because they aren't credentials used
-    // to log in, so it's less of a problem.
+    // Reject untrimed credentials
     const explicityTrimmedFields = ['email', 'password'];
     const nonTrimmedField = explicityTrimmedFields.find(
         field => req.body[field].trim() !== req.body[field]
@@ -80,8 +74,7 @@ exports.signup = (req, res) => {
         },
         password: {
             min: 10,
-            // bcrypt truncates after 72 characters, so let's not give the illusion
-            // of security by storing extra (unused) info
+            // bcrypt truncates after 72 characters
             max: 72
         }
     };
@@ -169,14 +162,6 @@ exports.signup = (req, res) => {
             res.status(500).json({ code: 500, message: 'Internal server error' });
         });
 };
-
-// Refresh Token
-exports.refresh = (req, res) => {
-    res.send('NOT IMPLEMENTED: Refresh token');
-//     const authToken = createAuthToken(req.user);
-//     res.json({ authToken });
-};
-
 
 // GET providers for signup screen
 exports.authGetProviders = (req, res) => {

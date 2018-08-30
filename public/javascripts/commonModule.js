@@ -15,9 +15,7 @@ const common = (function () {
             const password = $(event.currentTarget).find('#password').val();
             auth.login(email, password)
                 .then(() => {
-                    return auth.isProvider()
-                        ? window.location.href = `./#providerDashboard`
-                        : window.location.href = `./#clientDashboard`;
+                    window.location.replace('/#dashboard');
                 })
                 .catch(() => {
                     _displayAlertDialog('Login Error', 'Incorrect email or password.')
@@ -86,9 +84,9 @@ const common = (function () {
             api.addUser(userData)
                 .then(() => {
                     auth.login(userData.email, userData.password)
-                .then(() => {
-                        window.location.href = `./#clientDashboard`
-                });
+                        .then(() => {
+                            window.location.href = `./#dashboard`
+                        });
                 })
         });
     }
@@ -120,9 +118,9 @@ const common = (function () {
                 .then(() => {
                     auth.login(userData.email, userData.password)
                         .then(() => {
-                            window.location.href = `./#providerDashboard`
+                            window.location.href = `./#dashboard`
                         });
-            });
+                });
         })
     }
     $(_handleProviderSignupSubmit);
@@ -149,10 +147,10 @@ const common = (function () {
     function _generateClientInfoHTML(client) {
         let entryNote = '';
         let vetInfo = '';
-        if (client.entryNote) { entryNote = `<p>${client.entryNote}</p>`}
-        else { entryNote = `<p class="notFound"><span>No special entry notes</span></p>`};
-        if (client.vetInfo) { vetInfo = `<p>${client.vetInfo}</p>`}
-        else { vetInfo = `<p class="notFound"><span>No veterinarian specified</span></p>`};
+        if (client.entryNote) { entryNote = `<p>${client.entryNote}</p>` }
+        else { entryNote = `<p class="notFound"><span>No special entry notes</span></p>` };
+        if (client.vetInfo) { vetInfo = `<p>${client.vetInfo}</p>` }
+        else { vetInfo = `<p class="notFound"><span>No veterinarian specified</span></p>` };
         return `
         <div class="boxed"><a class='boxedInfoItem' href='tel:${client.phone}'>
                     <img src='images/phone.svg' alt='Phone'>
@@ -229,16 +227,34 @@ const common = (function () {
     //Provider Dashboard
     ///////////////////////////////////////////
     function _displayProviderDashboard() {
+        let upcomingVisitsHTML = '';
+        let upcomingVisitLocations = '';
         const providerData = auth.getCurrentUser();
         const providerHeader = _generateProviderHeaderHTML(providerData);
-        const recentVisitsHTML = providerData.visits && providerData.visits.length > 0
-            ? visits.generateUpcomingVisitsHTML(providerData.visits)
-            : `<p>No visits scheduled</p>`;
-        const element = $(templates.providerDashboard);
-        element.find('#js-visits-list').html(recentVisitsHTML);
-        $("#js-main").addClass("dark");
         $('#js-main').html(providerHeader);
+        $("#js-main").addClass("dark");
+        const element = $(templates.providerDashboard);
         $('#js-main').append(element);
+        if (providerData.visits && providerData.visits.length > 0) {
+            const nextVisitDate = _formatNextDate(providerData.visits[0].startTime);
+            $("#js-main").find("h2").html(`Visits for ${nextVisitDate}:`);
+            visits.getNextDaysLocations(providerData)
+                .then((upcomingVisitLocations) => {
+                    upcomingVisitsHTML = visits.generateUpcomingVisitsHTML(providerData.visits);
+                    $('#js-visits-list').html(upcomingVisitsHTML)
+                    visits.mapUpcomingVisits(upcomingVisitLocations)
+                });
+        } else {
+            $('#js-visits-list').html(`<p class="noVisit">No visits scheduled</p>`);
+        }    
+    }
+
+    function _formatNextDate(startIsoDate) {
+        const startDate = new Date(startIsoDate);
+        const monthNames = ["January", "February", "March", "April", "May", "June",
+            "July", "Aug.", "Septemper", "October", "November", "December"
+        ];
+        return (monthNames[startDate.getMonth()]) + ' ' + startDate.getDate();
     }
 
     ///////////////////////////////////////////
@@ -277,16 +293,16 @@ const common = (function () {
                 addressString: $(event.currentTarget).find('#streetAddress').val(),
             };
             _updateProviderAndDisplayAlertDialog(userData);
-        }); 
+        });
     }
     $(_handleProviderProfileUpdateSubmit);
     function _updateProviderAndDisplayAlertDialog(userData) {
         api.updateUser(userData)
-        .then(() => {
-            window.location.href = `./#providerDashboard`;
-            common.displayAlertDialog('Profile updated');
-        })
-        .catch(() => console.error('Error updating profile'));
+            .then(() => {
+                window.location.href = `./#dashboard`;
+                common.displayAlertDialog('Profile updated');
+            })
+            .catch(() => console.error('Error updating profile'));
     }
 
     ///////////////////////////////////////////
@@ -307,7 +323,7 @@ const common = (function () {
         </div>`);
     }
     function _generateAllClientsHTML(clientsData) {
-        const items = clientsData.map((item, index) => _generateClientItemHTML(item, index));  
+        const items = clientsData.map((item, index) => _generateClientItemHTML(item, index));
         return items.join('');
     }
     function _generateClientItemHTML(client) {
@@ -360,9 +376,9 @@ const common = (function () {
                 password: $(event.currentTarget).find('#password').val(),
             };
             api.addUser(userData)
-            .then((response) => createdClientId = response._id)
-            .then(() => auth.updateCurrentUser())
-            .then(() => window.location.href = `./#clientDetail/${createdClientId}`)
+                .then((response) => createdClientId = response._id)
+                .then(() => auth.updateCurrentUser())
+                .then(() => window.location.href = `./#clientDetail/${createdClientId}`)
         });
     }
     $(_handleAddClientSubmit);
@@ -402,22 +418,22 @@ const common = (function () {
                 _displayAlertDialog('Client Deleted');
             })
     }
-    
+
     ///////////////////////////////////////////
     //Update Client Profile Screen
     ///////////////////////////////////////////
     function _displayClientUpdateForm(clientId) {
         const userData = auth.getCurrentUser();
-            if (auth.isProvider()) {
-                const clientData = userData.clients.find(client => client._id === clientId);
-                return clientData
-                    ? _generateClientUpdateFormHTML(clientData)
-                    : console.error('User not found')
-            } else {
-                return userData
-                    ? _generateClientUpdateFormHTML(userData)
-                    : console.error('User not found')
-            }
+        if (auth.isProvider()) {
+            const clientData = userData.clients.find(client => client._id === clientId);
+            return clientData
+                ? _generateClientUpdateFormHTML(clientData)
+                : console.error('User not found')
+        } else {
+            return userData
+                ? _generateClientUpdateFormHTML(userData)
+                : console.error('User not found')
+        }
     }
     function _generateClientUpdateFormHTML(clientData) {
         const element = $(templates.clientSignupForm);
@@ -444,35 +460,35 @@ const common = (function () {
     function _handleMyProfileUpdateSubmit() {
         $('#js-main').on('submit', '#js-client-update-form', event => {
             event.preventDefault();
-                const userData = {
-                    _id: $(event.currentTarget).find('#clientId').val(),
-                    firstName: $(event.currentTarget).find('#firstName').val(),
-                    lastName: $(event.currentTarget).find('#lastName').val(),
-                    email: $(event.currentTarget).find('#email').val(),
-                    phone: $(event.currentTarget).find('#phone').val(),
-                    addressString: $(event.currentTarget).find('#streetAddress').val(),
-                    entryNote: $(event.currentTarget).find('#entryNote').val(),
-                    vetInfo: $(event.currentTarget).find('#vetInfo').val(),
-                };
-                _updateClientAndDisplayAlertDialog(userData);
-            })
+            const userData = {
+                _id: $(event.currentTarget).find('#clientId').val(),
+                firstName: $(event.currentTarget).find('#firstName').val(),
+                lastName: $(event.currentTarget).find('#lastName').val(),
+                email: $(event.currentTarget).find('#email').val(),
+                phone: $(event.currentTarget).find('#phone').val(),
+                addressString: $(event.currentTarget).find('#streetAddress').val(),
+                entryNote: $(event.currentTarget).find('#entryNote').val(),
+                vetInfo: $(event.currentTarget).find('#vetInfo').val(),
+            };
+            _updateClientAndDisplayAlertDialog(userData);
+        })
     }
     $(_handleMyProfileUpdateSubmit);
     function _updateClientAndDisplayAlertDialog(userData) {
         api.updateUser(userData)
-        .then(() => auth.updateCurrentUser())
-        .then(() => {
-            if (auth.isProvider()) {
-                window.location.href = `./#clientDetail/${userData._id}`;
-                common.displayAlertDialog('User updated');
-            } else {
-                window.location.href = `./#clientDashboard`;
-                common.displayAlertDialog('Profile updated');
-            }
-        })
-        .catch(() => console.error('Error updating profile'));
+            .then(() => auth.updateCurrentUser())
+            .then(() => {
+                if (auth.isProvider()) {
+                    window.location.href = `./#clientDetail/${userData._id}`;
+                    common.displayAlertDialog('User updated');
+                } else {
+                    window.location.href = `./#dashboard`;
+                    common.displayAlertDialog('Profile updated');
+                }
+            })
+            .catch(() => console.error('Error updating profile'));
     }
-    
+
     ///////////////////////////////////////////
     // Compact Site Header
     ///////////////////////////////////////////
@@ -488,7 +504,7 @@ const common = (function () {
     function _displayFullSiteHeader() {
         $('#js-header').html(templates.fullHeader);
     }
-    
+
     ///////////////////////////////////////////
     //Dialogs
     ///////////////////////////////////////////
@@ -534,9 +550,9 @@ const common = (function () {
     function _handleConfirmPassword() {
         $('#js-main').on('keyup', '#password, #confirmPassword', function () {
             if ($('#password').val() == $('#confirmPassword').val()) {
-                $('#message').html('Passwords match').css('color', 'green');
+                $('#message').html('Passwords match').css('color', 'rgb(100, 200, 100)');
             } else
-                $('#message').html('Passwords do not match').css('color', 'red');
+                $('#message').html('Passwords do not match').css('color', 'rgb(255, 80, 80)');
         });
     }
     $(_handleConfirmPassword)

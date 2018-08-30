@@ -14,9 +14,4 @@ router.put('/users', usersController.usersPut);
 //DELETE: delete a user object
 router.delete('/users/:id', usersController.usersDelete);
 
-////////////////////////////////
-// DEV TESTING ONLY
-////////////////////////////////
-router.get('/users', usersController.usersGetAll);
-
 module.exports = router;

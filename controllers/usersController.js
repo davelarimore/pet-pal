@@ -48,6 +48,7 @@ exports.usersPut = (req, res) => {
             _id: req.body._id
             },
             {
+            companyName: req.body.companyName,
             firstName: req.body.firstName,
             lastName: req.body.lastName,
             phone: req.body.phone,
@@ -83,17 +84,3 @@ exports.usersDelete = (req, res) => {
         res.status(403).json('Not authorized to access resource');
     }
 }
-
-////////////////////////////////
-// DEV ONLY
-////////////////////////////////
-exports.usersGetAll = (req, res) => {
-    Users
-        .find()
-        .then(user => res.json(user))
-        //.then(users => res.json(users.map(user => user.serialize())))
-        .catch(err => {
-            console.error(err);
-            res.status(500).json({ message: 'Inernal server error' })
-        });
-};

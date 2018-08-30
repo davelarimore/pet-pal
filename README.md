@@ -1,7 +1,7 @@
 # Pet Pals
 
 ## About:
-Pet Pals helps pet care providers and their clients share information about their pets and services. Users can sign up as either a client or a provider (dog walker, pet sitter). The app is especially helpful for providers, since they can access client and pet details at all times via their mobile device.
+Pet Pals helps pet care providers and their clients share information about their pets and services. Users can sign up as either a client (pet owner) or a provider (dog walker, pet sitter). The app is especially helpful for providers, since they can access client and pet information at all times via their mobile device.
 
 !["Desktop"](public/images/pet-pals-desktop.jpg "Desktop")
 !["Mobile"](public/images/pet-pals-mobile.jpg "Mobile")
@@ -21,45 +21,45 @@ Pet Pals helps pet care providers and their clients share information about thei
 * Can add and delete visits for their clients
 
 ### Achitecture highlights:
-* The Mongo database has separate models for users, pets, visits and tasks. The models utilize relationships to manage ownership of records.
+* The Mongo database has separate models for users, pets, visits and tasks. The models utilize relationships and middleware to manage ownership of records.
 * Navigo provides front-end routing for the one-page app
 * The client uses js modules with public and private functions
 
 ## Technology used:
 
 ### Front-end
-* CSS
 * HTML
+* CSS
 * JavaScript
 * jQuery
-* Navigo.js
-* Google places autocomplete api
 * jQuery Timepicker Addon
+* Google Place Autocomplete API
+* Navigo.js
 
 ### Back-end
-* bcryptjs
+* Node.js
 * Express.js
+* bcryptjs
 * JSON Web Token
-* Mocha
+* Passport.js
 * Mongo DB
 * Mongoose
-* Node.js
-* Passport.js
 
 ### Development/Deployment
-* Chai/Chai-http
 * Git/GitHub
-* Heroku
-* mLab
+* Chai/Chai-http
 * Mocha
+* mLab
 * Postman
 * Travis CI
+* Heroku
 
 ## API Documentation
+https://documenter.getpostman.com/view/4675682/RWTsrFTE
 
 ## Access and testing:
 Users can access the application at the below URL:
-https://petpals-app.herokuapp.com/
+https://petpals-app.herokuapp.com
 
 Users can create new users in the app or use an existing test user below:
 

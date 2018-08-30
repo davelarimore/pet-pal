@@ -87,5 +87,5 @@ const api = (function () {
         deleteClientsVisits: _deleteClientsVisits,
         addTask: _addTask,
         deleteTask: _deleteTask
-        }
+    }
 })();

@@ -11,7 +11,7 @@ const taskSchema = mongoose.Schema({
         ref: 'Users'
     },
     description: { type: String, required: true },
-    completed: { type: Boolean, default: false},
+    completed: { type: Boolean, default: false },
 })
 
 // Push new task reference to the client's document

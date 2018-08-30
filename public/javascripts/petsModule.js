@@ -26,7 +26,7 @@ const pets = (function () {
                 <a href=#user/${pet.clientId}/pet/${pet._id}/add class='petThumbnail'>
                     <div>
                         <p>${pet.name}</p>
-                        <img src='images/${pet.type}.jpg' alt='${pet.name}'>
+                        <img src='images/${pet.type.toLowerCase()}.jpg' alt='${pet.name}'>
                     </div>
                 </a>
             </div>
@@ -61,7 +61,7 @@ const pets = (function () {
     function _generatePetHTML(pet) {
         return `
     <a href='#pet/${pet._id}/' class='petThumbnail'>
-    <div><p>${pet.name}</p><img src='images/${pet.type}.jpg' alt='${pet.name}'></div></a>`;
+    <div><p>${pet.name}</p><img src='images/${pet.type.toLowerCase()}.jpg' alt='${pet.name}'></div></a>`;
     }
 
     ///////////////////////////////////////////
@@ -71,9 +71,9 @@ const pets = (function () {
         const element = $(templates.addPetForm);
         const cancelHref = auth.isProvider()
             ? `/#clientDetail/${clientId}`
-            : `/#clientDashboard`
-            element.find('#clientId').val(clientId);
-            element.find('#js-add-pet-cancel').attr('href', cancelHref);
+            : `/#dashboard`
+        element.find('#clientId').val(clientId);
+        element.find('#js-add-pet-cancel').attr('href', cancelHref);
         $('#js-main').html(element);
     }
     function _handleAddMyPetSubmit() {
@@ -98,9 +98,9 @@ const pets = (function () {
                     window.location.replace(`./#clientDetail/${petData.clientId}`);
                     common.displayAlertDialog('Pet added');
                 } else {
-                    window.location.replace(`./#clientDashboard`);
+                    window.location.replace(`./#dashboard`);
                     common.displayAlertDialog('Pet added')
-                }            
+                }
             })
             .catch(() => console.error('Error adding pet'));
     }
@@ -155,7 +155,7 @@ const pets = (function () {
     $(_handleUpdatePetFormSubmit);
     function _updatePetAndDisplayAlertDialog(petId, petData) {
         api.updatePet(petId, petData)
-        .then(common.displayAlertDialog('Pet Updated'));
+            .then(common.displayAlertDialog('Pet Updated'));
     }
 
     ///////////////////////////////////////////
@@ -181,7 +181,7 @@ const pets = (function () {
                     window.location.href = `./#clientDetail/${clientId}`;
                     common.displayAlertDialog('Pet Deleted');
                 } else {
-                    window.location.href = `./#clientDashboard`;
+                    window.location.href = `./#dashboard`;
                     common.displayAlertDialog('Pet Deleted');
                 }
             })

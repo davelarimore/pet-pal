@@ -18,11 +18,11 @@ const userSchema = mongoose.Schema({
     entryNote: { type: String, default: '' },
     role: { type: String, required: true, default: "client" },
     password: { type: String, required: true, select: false },
-    pets: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Pets'}],
-    visits: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Visits'}],
-    tasks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tasks'}],
-    providerId: { type: mongoose.Schema.Types.ObjectId, ref: 'Users'},
-    clients: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Users'}]
+    pets: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Pets' }],
+    visits: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Visits' }],
+    tasks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tasks' }],
+    providerId: { type: mongoose.Schema.Types.ObjectId, ref: 'Users' },
+    clients: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Users' }]
 })
 
 // Virtual to generate full name
@@ -63,18 +63,18 @@ userSchema.statics.hashPassword = function (password) {
 userSchema.pre('save', function (next) {
     const user = this;
     if (user.role === 'client' && user.isNew) {
-        user.model('Users').update({ _id: this.providerId}, {
+        user.model('Users').update({ _id: this.providerId }, {
             $push: { clients: user._id }
-        }) 
-        .then(() => {
-            next();
         })
-        .catch((err) => {
-            next(err);
-        })
+            .then(() => {
+                next();
+            })
+            .catch((err) => {
+                next(err);
+            })
     } else {
         next();
-    } 
+    }
 });
 
 // Pull deleted client and visits references from their provider's document
@@ -84,12 +84,12 @@ userSchema.pre('remove', function (next) {
         user.model('Users').update({ _id: this.providerId }, {
             $pull: { clients: user._id },
         })
-        .then(() => {
-            next();
-        })
-        .catch((err) => {
-            next(err);
-        })
+            .then(() => {
+                next();
+            })
+            .catch((err) => {
+                next(err);
+            })
     } else {
         next();
     }

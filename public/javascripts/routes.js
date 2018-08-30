@@ -1,7 +1,7 @@
 ///////////////////////////////////////////
 //Client Routes
 ///////////////////////////////////////////
-const router = new Navigo(null, true, '#!');
+const router = new Navigo('/', true, '#!');
 
 const checkLoggedIn = function (done) {
     if (!window.localStorage.getItem('AUTH_TOKEN')) {
@@ -15,6 +15,7 @@ const checkLoggedIn = function (done) {
     }
 }
 
+//Public Routes
 router
     .on({
         'signup': () => {
@@ -25,24 +26,24 @@ router
             common.displayFullSiteHeader();
             common.displayProviderSignupForm();
         },
-});
+    });
 
+//Authenticated Routes    
 router.on(
     'login', () => {
+        window.location.href = '/#dashboard';
     },
     { before: checkLoggedIn }
 );
 router.on(
-    'clientDashboard', () => {
-        common.displayCompactSiteHeader();
-        common.displayClientDashboard();
-    },
-    { before: checkLoggedIn }
-);
-router.on(
-    'providerDashboard', () => {
-        common.displayCompactSiteHeader();
-        common.displayProviderDashboard();
+    'dashboard', () => {
+        if (auth.isProvider()) {
+            common.displayCompactSiteHeader();
+            common.displayProviderDashboard();
+        } else {
+            common.displayCompactSiteHeader();
+            common.displayClientDashboard();
+        }
     },
     { before: checkLoggedIn }
 );
@@ -91,7 +92,7 @@ router.on(
 router.on(
     'visits', () => {
         common.displayCompactSiteHeader();
-        visits.displayAllVisits();   
+        visits.displayAllVisits();
     },
     { before: checkLoggedIn }
 );
@@ -105,43 +106,36 @@ router.on(
 router.on(
     'clients', () => {
         common.displayCompactSiteHeader();
-        common.displayAllClients();   
+        common.displayAllClients();
     },
     { before: checkLoggedIn }
 );
 router.on(
     'addClient', () => {
         common.displayCompactSiteHeader();
-        common.displayAddClientForm();   
+        common.displayAddClientForm();
     },
     { before: checkLoggedIn }
 );
 router.on(
     'clientDetail/:id', (params) => {
         common.displayCompactSiteHeader();
-        common.displayClientDetail(params.id);  
+        common.displayClientDetail(params.id);
     },
     { before: checkLoggedIn }
 );
 router.on(
     'logout', () => {
         auth.logout();
-        window.location.href = './';
+        window.location.href = './#login';
     },
     { before: checkLoggedIn }
-);
-
-//root route
-router.on (
-    () => {
-    if (auth.isProvider()) {
-        common.displayCompactSiteHeader();
-        common.displayProviderDashboard();
-    } else {
-        common.displayCompactSiteHeader();
-        common.displayClientDashboard();
-    }
-},
+)
+//Root Route, must be last
+router.on(
+    '', () => {
+        window.location.href = '/#dashboard';
+    },
     { before: checkLoggedIn }
 )
 .resolve()

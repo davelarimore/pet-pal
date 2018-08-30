@@ -24,12 +24,12 @@ petSchema.pre('save', function (next) {
         pet.model('Users').update({ _id: this.clientId }, {
             $push: { pets: pet._id }
         })
-        .then(() => {
-            next();
-        })
-        .catch((err) => {
-            next(err);
-        })
+            .then(() => {
+                next();
+            })
+            .catch((err) => {
+                next(err);
+            })
     } else {
         next();
     }
@@ -38,15 +38,15 @@ petSchema.pre('save', function (next) {
 // Remove deleted pet's reference from the client's document
 petSchema.pre('remove', function (next) {
     const pet = this;
-        pet.model('Users').update({ _id: this.clientId }, {
-            $pull: { pets: pet._id }
+    pet.model('Users').update({ _id: this.clientId }, {
+        $pull: { pets: pet._id }
+    })
+        .then(() => {
+            next();
         })
-            .then(() => {
-                next();
-            })
-            .catch((err) => {
-                next(err);
-            })
+        .catch((err) => {
+            next(err);
+        })
 });
 
 module.exports = mongoose.model('Pets', petSchema, 'pets');
