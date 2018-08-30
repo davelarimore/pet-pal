@@ -19,6 +19,7 @@ Pet Pals helps pet care providers and their clients share information about thei
 * Can add, edit and delete pets for their clients
 * Can add and delete tasks for their clients 
 * Can add and delete visits for their clients
+* Dashboard displays a map of the next day's visits, routed in chronilogical order.
 
 ### Achitecture highlights:
 * The Mongo database has separate models for users, pets, visits and tasks. The models utilize relationships and middleware to manage ownership of records.
