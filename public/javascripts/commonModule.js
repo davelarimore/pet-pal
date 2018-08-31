@@ -89,9 +89,6 @@ const common = (function () {
                             window.location.href = `./#dashboard`
                         })
                 })
-                // .catch(() => {
-                //     _displayAlertDialog('Sign Up Error', `There is already an account for ${userData.email}`)
-                // });
         });
     }
     $(_handleClientSignupSubmit);
@@ -125,9 +122,6 @@ const common = (function () {
                             window.location.href = `./#dashboard`
                         })
                 })
-                // .catch(() => {
-                //     _displayAlertDialog('Sign Up Error', `There is already an account for ${userData.email}`)
-                // });
         })
     }
     $(_handleProviderSignupSubmit);
@@ -301,7 +295,6 @@ const common = (function () {
                 window.location.href = `./#dashboard`;
                 common.displayAlertDialog('Profile updated');
             })
-            // .catch(() => console.error('Error updating profile'));
     }
 
     ///////////////////////////////////////////
@@ -489,7 +482,6 @@ const common = (function () {
                     common.displayAlertDialog('Profile updated');
                 }
             })
-            // .catch(() => console.error('Error updating profile'));
     }
 
     ///////////////////////////////////////////
