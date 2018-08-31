@@ -12,6 +12,10 @@ const api = (function () {
             },
             url: url,
             data: JSON.stringify(data) || '',
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            // alert(jqXHR.responseText);
+            common.displayAlertDialog('Error', jqXHR.responseJSON.message)
+
         })
     }
     ///////////////////////////////////////////

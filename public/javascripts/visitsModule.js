@@ -14,10 +14,37 @@ const visits = (function () {
             <a class='button' href='#addVisit'>Add Visit</a>
         </div>`);
     }
+
     function _generateAllVisitsHTML(visitsData) {
-        const items = visitsData.map((item, index) => _generateVisitItemHTML(item, index));
-        return items.join('');
+        let outputHTML = '';
+        for (i = 0; i < visitsData.length; i++) {
+            let items = [];
+            let nextVisitDate = '';
+            //get start day and month of current item
+            const nextMonth = new Date(visitsData[i].startTime).getMonth();
+            const nextDay = new Date(visitsData[i].startTime).getDate();
+            let prevDay = ''
+            if (i > 0) {
+                prevMonth = new Date(visitsData[i - 1].startTime).getMonth();
+                prevDay = new Date(visitsData[i - 1].startTime).getDate();
+            }
+            //if item is the first visit of a new day, build the visits html for that day
+            if (nextDay !== prevDay) {
+                //generate the separator html
+                nextVisitDate = visits.formatNextDate(visitsData[i].startTime);
+                daySeparatorHTML = `<p class='dateSeparator'><span>${nextVisitDate}</span></p>`;
+                //find the visits for current day
+                items = visitsData.filter(visit => {
+                    const visitMonth = new Date(visit.startTime).getMonth();
+                    const visitDay = new Date(visit.startTime).getDate();
+                    return visitMonth === nextMonth && visitDay === nextDay;
+                }).map((item, index) => _generateVisitItemHTML(item, index));
+                outputHTML = outputHTML + daySeparatorHTML + items.join('');
+            }
+        }
+        return outputHTML
     }
+
     function _generateVisitItemHTML(visit) {
         const formattedStartTime = _formatDate(visit.startTime, visit.endTime)
         return `
@@ -28,19 +55,6 @@ const visits = (function () {
             </div>
             <a href='#' class='js-delete-visit' data-id='${visit._id}'><img src='images/delete.svg' title='Delete Visit' alt='Delete Visit' /></a>
         </div>`;
-    }
-
-    ///////////////////////////////////////////
-    //Upcoming visit
-    ///////////////////////////////////////////
-    function _generateUpcomingVisitsHTML(visitsData) {
-        const mapHTML = `
-        <div id='map' class='visitsMap'></div>
-        <a class='button openMap' id='js-open-map' target='_blank' href=''>Open in Google maps</a>
-        `;
-        //first three items only
-        const visitsHTML = visitsData.slice(0, 3).map((item, index) => _generateVisitItemHTML(item, index));
-        return mapHTML + visitsHTML.join('');
     }
 
     ///////////////////////////////////////////
@@ -117,7 +131,11 @@ const visits = (function () {
         const visitsMap = new google.maps.Map(document.getElementById('map'), {
             zoom: 15,
             center: new google.maps.LatLng(0, 0),
-            mapTypeId: google.maps.MapTypeId.ROADMAP
+            mapTypeId: google.maps.MapTypeId.ROADMAP,
+            disableDefaultUI: true,
+            zoomControl: true,
+            fullscreenControl: true,
+            styles: mapStyle
         });
         directionsDisplay.setMap(visitsMap);
         const infowindow = new google.maps.InfoWindow();
@@ -131,8 +149,8 @@ const visits = (function () {
         for (i = 0; i < locations.length; i++) {
             const iconIndex = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'];
             const iconPath = i===0
-                ? `images/map-markers/green_marker_${iconIndex[i]}.png`
-                : `images/map-markers/yellow_marker_${iconIndex[i]}.png`;
+                ? `images/map-markers/green_marker.png`
+                : `images/map-markers/yellow_marker_${iconIndex[i - 1]}.png`;
             const clientLatLng = new google.maps.LatLng(locations[i][1], locations[i][2])
             marker = new google.maps.Marker({
                 position: clientLatLng,
@@ -147,7 +165,7 @@ const visits = (function () {
             google.maps.event.addListener(marker, 'click', (function (marker, i) {
                 return function () {
                     if (locations[i][4]) {
-                        const visitTimes = _formatTime(locations[i][4], locations[i][5]);
+                        const visitTimes = _formatTimeRange(locations[i][4], locations[i][5]);
                         infowindow.setContent(`<p><span>${locations[i][0]}</span></p><p>${visitTimes}</p>`);
                     } else {
                         infowindow.setContent(`<p><span>${locations[i][0]}</span></p>`);
@@ -186,6 +204,24 @@ const visits = (function () {
         });
     }
 
+    ///////////////////////////////////////////
+    //Upcoming visit list below map
+    ///////////////////////////////////////////
+    function _generateUpcomingVisitsHTML(visitsData) {
+        const mapHTML = `
+        <div id='map' class='visitsMap'></div>
+        <a class='button openMap' id='js-open-map' target='_blank' href=''>Open in Google maps</a>
+        `;
+        const nextMonth = new Date(visitsData[0].startTime).getMonth();
+        const nextDay = new Date(visitsData[0].startTime).getDate();
+        //next days visits only
+        const visitsHTML = visitsData.filter(visit => {
+            const visitMonth = new Date(visit.startTime).getMonth();
+            const visitDay = new Date(visit.startTime).getDate();
+            return visitMonth === nextMonth && visitDay === nextDay;
+        }).map((item, index) => _generateVisitItemHTML(item, index));
+        return mapHTML + visitsHTML.join('');
+    }
 
     ///////////////////////////////////////////
     //Add Visit Screen
@@ -212,11 +248,13 @@ const visits = (function () {
     function _handleAddVisitSubmit() {
         $('#js-main').on('submit', '#js-add-visit-form', event => {
             event.preventDefault();
+            const startTimeInput = new Date($(event.currentTarget).find('#startTime').val());
+            const endTimeInput = new Date($(event.currentTarget).find('#endTime').val());
             const visitData = {
                 providerId: $(event.currentTarget).find('#provider').data('id'),
                 client: $(event.currentTarget).find(':selected').data('id'),
-                startTime: $(event.currentTarget).find('#startTime').val(),
-                endTime: $(event.currentTarget).find('#endTime').val(),
+                startTime: startTimeInput.toISOString(),
+                endTime: endTimeInput.toISOString(),
             };
             _addVisitAndDisplayAlertDialog(visitData);
         });
@@ -256,22 +294,40 @@ const visits = (function () {
     }
 
     ///////////////////////////////////////////
-    //Date Formatter
+    //Date and Time Formatters
     ///////////////////////////////////////////
+    function _formatTime(isoDate) {
+        const date = new Date(isoDate);
+        const options = {
+            hour: 'numeric',
+            minute: 'numeric',
+            hour12: true
+        };
+        const timeString = date.toLocaleString('en-US', options);
+        return timeString;
+    }
+
     function _formatDate(startIsoDate, endIsoDate) {
         const startDate = new Date(startIsoDate);
-        const endDate = new Date(endIsoDate);
         const monthNames = ['Jan.', 'Feb.', 'March', 'April', 'May', 'June',
             'July', 'Aug.', 'Sept.', 'Oct.', 'Nov.', 'Dec.'
         ];
         return (monthNames[startDate.getMonth()]) +
             ' ' + startDate.getDate() +
-            ', ' + startDate.toTimeString().substr(0, 5) + '-' + endDate.toTimeString().substr(0, 5);
+            ', ' + _formatTime(startIsoDate) + ' - ' + _formatTime(endIsoDate);
     }
-    function _formatTime(startIsoDate, endIsoDate) {
+
+    function _formatNextDate(startIsoDate) {
         const startDate = new Date(startIsoDate);
-        const endDate = new Date(endIsoDate);
-        return startDate.toTimeString().substr(0, 5) + '-' + endDate.toTimeString().substr(0, 5);
+        const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+            'July', 'Aug.', 'September', 'October', 'November', 'December'
+        ];
+        return (monthNames[startDate.getMonth()]) + ' ' + startDate.getDate();
+    }
+
+    //For map infoboxes
+    function _formatTimeRange(startIsoDate, endIsoDate) {
+        return _formatTime(startIsoDate) + ' - ' + _formatTime(endIsoDate);
     }
 
     return {
@@ -280,6 +336,7 @@ const visits = (function () {
         getNextDaysLocations: _getNextDaysLocations,
         mapUpcomingVisits: _mapUpcomingVisits,
         displayAddVisitForm: _displayAddVisitForm,
-        formatDate: _formatDate
+        formatDate: _formatDate,
+        formatNextDate: _formatNextDate
     };
 })();

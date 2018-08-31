@@ -125,7 +125,7 @@ main {
 h1 {
   font-weight: 900;
   font-size: 28px;
-  margin: 0 0 5px 0;
+  margin: 0 0 2px 0;
 }
 
 h1 a {
@@ -220,7 +220,7 @@ fieldset>.buttonGhost {
   margin-bottom: 20px;
 }
 
-.clientHeaderButtons>.buttonGhost, .providerHeaderButtons>.buttonGhost {
+.clientHeaderButtons>.buttonGhost, .myClientHeaderButtons>.buttonGhost, .providerHeaderButtons>.buttonGhost {
   margin-left: 14px;
   margin-bottom: 0;
 }
@@ -232,7 +232,7 @@ fieldset>.buttonGhost {
   margin-bottom: 20px;
 }
 
-.clientHeader, .providerHeader {
+.clientHeader, .myClientHeader, .providerHeader {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
@@ -243,20 +243,22 @@ fieldset>.buttonGhost {
   margin-right: auto;
 }
 
-.clientHeaderInfo, .providerHeaderInfo {
+.clientHeaderInfo, .myClientHeaderInfo, .providerHeaderInfo {
   flex-grow: 0;
   flex-shrink: 0;
   text-align: left;
-  margin-bottom: 20px;
 }
 
 .clientHeaderButtons, .providerHeaderButtons {
   flex-grow: 0;
   flex-shrink: 0;
+}
+
+.myClientHeaderInfo, .myClientHeaderButtons, .clientHeaderInfo, .clientHeaderButtons {
   margin-bottom: 20px;
 }
 
-.clientHeader>.button, .providerHeader>.button, .clientHeader>.buttonGhost, .providerHeader>.buttonGhost {
+.clientHeader>.button, .myClientHeader>.button, .providerHeader>.button, .clientHeader>.buttonGhost, .myClientHeader>.buttonGhost, .providerHeader>.buttonGhost {
   float: right;
   margin-top: 10px;
   margin-bottom: 0;
@@ -265,7 +267,7 @@ fieldset>.buttonGhost {
   max-width: 150px;
 }
 
-.clientHeader>.buttonGhost, .providerHeader>.buttonGhost {
+.clientHeader>.buttonGhost, .myClientHeader>.buttonGhost, .providerHeader>.buttonGhost {
   margin-left: 15px;
 }
 
@@ -273,6 +275,7 @@ fieldset>.buttonGhost {
   max-width: 800px;
   margin-left: auto;
   margin-right: auto;
+  overflow: hidden;
 }
 
 form {
@@ -457,6 +460,7 @@ a.boxedInfoItem:hover, a:hover>.listItem, a:hover>.listItem>h3 p {
 .boxedInfoItem .notFound span {
   font-style: italic;
   font-weight: 400;
+  margin-left: 0;
 }
 
 .deleteTask {
@@ -532,6 +536,40 @@ a.petThumbnail:hover {
 .visitsMap span {
   font-weight: 700;
   font-style: normal;
+}
+
+.dateSeparator {
+  font-size: 16px;
+  line-height: 0.5;
+  text-align: center;
+  margin-bottom: 20px;
+  opacity: 0.6;
+}
+
+.dateSeparator span {
+  font-style: normal;
+  display: inline-block;
+  position: relative;
+}
+
+.dateSeparator span:before, .dateSeparator span:after {
+  content: "";
+  position: absolute;
+  height: 4px;
+  border-bottom: 1px solid white;
+  /* border-top: 1px solid white; */
+  top: 0;
+  width: 600px;
+}
+
+.dateSeparator span:before {
+  right: 100%;
+  margin-right: 15px;
+}
+
+.dateSeparator span:after {
+  left: 100%;
+  margin-left: 15px;
 }
 
 /* Modal dialogs */
@@ -625,6 +663,10 @@ a.petThumbnail:hover {
   body {
     font-size: 16px;
   }
+  header, main {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
   .compactHeader {
     flex-direction: column;
   }
@@ -655,8 +697,11 @@ a.petThumbnail:hover {
     font-size: 14px;
     padding: 10px 30px 10px;
   }
-  .clientHeaderButtons>.button, .clientHeaderButtons>.buttonGhost, .providerHeaderButtons>.button, .providerHeaderButtons>.buttonGhost {
+  .clientHeaderButtons>.button, .clientHeaderButtons>.buttonGhost, .myClientHeaderButtons>.button, .myClientHeaderButtons>.buttonGhost, .providerHeaderButtons>.button, .providerHeaderButtons>.buttonGhost {
     min-width: 100px;
+  }
+  .myClientHeaderInfo {
+    text-align: center;
   }
   input[type='submit'] {
     margin-top: 20px;
@@ -705,11 +750,8 @@ a.petThumbnail:hover {
   .md-content {
     padding: 30px;
   }
-  .clientHeader {
+  .myClientHeader {
     flex-direction: column;
-  }
-  .clientHeaderInfo {
-    text-align: center;
   }
 }
 
@@ -740,7 +782,7 @@ a.petThumbnail:hover {
     margin-bottom: 20px;
   }
   h3 {
-    font-size: 18px;
+    font-size: 15px;
     margin-bottom: 5px;
   }
   .fullHeader>.button, main>.button, .boxed>.button, .fullHeader>.buttonGhost, main>.buttonGhost, .boxed>.buttonGhost {
@@ -752,13 +794,13 @@ a.petThumbnail:hover {
   .listItem {
     margin-bottom: 15px;
   }
-  .clientHeaderButtons, .providerHeaderButtons {
+  .clientHeaderButtons, .myClientHeaderButtons, .providerHeaderButtons {
+    margin-bottom: 15px;
+  }
+  .clientHeaderInfo, .myClientHeaderInfo, .providerHeaderInfo {
     margin-bottom: 10px;
   }
-  .clientHeaderInfo, .providerHeaderInfo {
-    margin-bottom: 10px;
-  }
-  .providerHeader {
+  .providerHeader, .clientHeader {
     flex-direction: column;
   }
   .providerHeaderInfo {

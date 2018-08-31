@@ -63,7 +63,7 @@ exports.signup = (req, res) => {
         return res.status(422).json({
             code: 422,
             reason: 'ValidationError',
-            message: 'Cannot start or end with whitespace',
+            message: 'Email and password must not contain spaces',
             location: nonTrimmedField
         });
     }
@@ -128,7 +128,7 @@ exports.signup = (req, res) => {
                 return Promise.reject({
                     code: 422,
                     reason: 'ValidationError',
-                    message: 'Email already taken',
+                    message: 'Email is already taken',
                     location: 'email'
                 });
             }

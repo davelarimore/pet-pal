@@ -89,9 +89,9 @@ const common = (function () {
                             window.location.href = `./#dashboard`
                         })
                 })
-                .catch(() => {
-                    _displayAlertDialog('Sign Up Error', `There is already an account for ${userData.email}`)
-                });
+                // .catch(() => {
+                //     _displayAlertDialog('Sign Up Error', `There is already an account for ${userData.email}`)
+                // });
         });
     }
     $(_handleClientSignupSubmit);
@@ -125,9 +125,9 @@ const common = (function () {
                             window.location.href = `./#dashboard`
                         })
                 })
-                .catch(() => {
-                    _displayAlertDialog('Sign Up Error', `There is already an account for ${userData.email}`)
-                });
+                // .catch(() => {
+                //     _displayAlertDialog('Sign Up Error', `There is already an account for ${userData.email}`)
+                // });
         })
     }
     $(_handleProviderSignupSubmit);
@@ -188,12 +188,12 @@ const common = (function () {
             const nextVisit = userData.visits && userData.visits.length > 0
                 ? `<p>Next Visit: ${visits.formatDate(userData.visits[0].startTime, userData.visits[0].endTime)}</p>`
                 : `<p><span>No visits scheduled.</span>&nbsp;&nbsp;<a href='#addVisit'>Add a visit</a></p>`;
-            return `<div class='clientHeader' data-id='${userData._id}'>
-                <div class='clientHeaderInfo'>
+            return `<div class='myClientHeader' data-id='${userData._id}'>
+                <div class='myClientHeaderInfo'>
                 <h1><a href='#clientDetail/${userData._id}'>${userData.firstName} ${userData.lastName}</a></h1>
                 ${nextVisit}
                 </div>
-                <div class='clientHeaderButtons'>
+                <div class='myClientHeaderButtons'>
                 <a class='button' href='#updateClient/${userData._id}'>Edit</a>
                 <a class='buttonGhost' id='js-delete-client' href='#' data-id='${userData._id}'>Delete</a>  
                 </div>
@@ -235,7 +235,6 @@ const common = (function () {
     ///////////////////////////////////////////
     function _displayProviderDashboard() {
         let upcomingVisitsHTML = '';
-        let upcomingVisitLocations = '';
         const providerData = auth.getCurrentUser();
         const providerHeader = _generateProviderHeaderHTML(providerData);
         $('#js-main').html(providerHeader);
@@ -243,7 +242,7 @@ const common = (function () {
         const element = $(templates.providerDashboard);
         $('#js-main').append(element);
         if (providerData.visits && providerData.visits.length > 0) {
-            const nextVisitDate = _formatNextDate(providerData.visits[0].startTime);
+            const nextVisitDate = visits.formatNextDate(providerData.visits[0].startTime);
             $('#js-main').find('h2').html(`Visits for ${nextVisitDate}:`);
             visits.getNextDaysLocations(providerData)
                 .then((upcomingVisitLocations) => {
@@ -255,15 +254,7 @@ const common = (function () {
             $('#js-visits-list').html(`<p class='noVisit'>No visits scheduled</p>`);
         }
     }
-
-    function _formatNextDate(startIsoDate) {
-        const startDate = new Date(startIsoDate);
-        const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
-            'July', 'Aug.', 'September', 'October', 'November', 'December'
-        ];
-        return (monthNames[startDate.getMonth()]) + ' ' + startDate.getDate();
-    }
-
+    
     ///////////////////////////////////////////
     //Update Provider Screen
     ///////////////////////////////////////////
@@ -283,6 +274,7 @@ const common = (function () {
         element.find('label[for=email], input#email').remove();
         element.find('label[for=password], input#password').remove();
         element.find('label[for=confirmPassword], input#confirmPassword').remove();
+        element.find('fieldset').append(`<a class='buttonGhost' href='#/dashboard'>Cancel</a>`);
         $('#js-main').html(element);
         new google.maps.places.Autocomplete((document.getElementById('streetAddress')), {
             types: ['geocode']
@@ -309,7 +301,7 @@ const common = (function () {
                 window.location.href = `./#dashboard`;
                 common.displayAlertDialog('Profile updated');
             })
-            .catch(() => console.error('Error updating profile'));
+            // .catch(() => console.error('Error updating profile'));
     }
 
     ///////////////////////////////////////////
@@ -357,7 +349,7 @@ const common = (function () {
         element.find('#email').attr('placeholder', 'Client email');
         element.find('#phone').attr('placeholder', 'Client phone');
         element.find('#streetAddress').attr('placeholder', 'Client street address');
-        element.find('#vetInfo').attr('placeholder', 'Client&#39;s veterinarian');
+        element.find('#vetInfo').attr('placeholder', "Client's veterinarian");
         element.find('#confirmPassword').attr('placeholder', 'Confirm client password');
         element.find('fieldset').append(`
             <a class='buttonGhost' href='./#clients'>Cancel</a>`
@@ -431,18 +423,21 @@ const common = (function () {
     ///////////////////////////////////////////
     function _displayClientUpdateForm(clientId) {
         const userData = auth.getCurrentUser();
+        let cancelURL = '';
         if (auth.isProvider()) {
             const clientData = userData.clients.find(client => client._id === clientId);
+            cancelURL = `/#clientDetail/${clientId}`
             return clientData
-                ? _generateClientUpdateFormHTML(clientData)
+                ? _generateClientUpdateFormHTML(clientData, cancelURL)
                 : console.error('User not found')
         } else {
+            cancelURL = `/#dashboard`;
             return userData
-                ? _generateClientUpdateFormHTML(userData)
+                ? _generateClientUpdateFormHTML(userData, cancelURL)
                 : console.error('User not found')
         }
     }
-    function _generateClientUpdateFormHTML(clientData) {
+    function _generateClientUpdateFormHTML(clientData, cancelURL) {
         const element = $(templates.clientSignupForm);
         element.find('#js-client-signup-form').attr('id', 'js-client-update-form');
         element.find('h2').text('Update Client Profile');
@@ -459,6 +454,7 @@ const common = (function () {
         element.find('label[for=provider], input#provider').remove();
         element.find('label[for=password], input#password').remove();
         element.find('label[for=confirmPassword], input#confirmPassword').remove();
+        element.find('fieldset').append(`<a class='buttonGhost' href='${cancelURL}'>Cancel</a>`);
         $('#js-main').html(element);
         new google.maps.places.Autocomplete((document.getElementById('streetAddress')), {
             types: ['geocode']
@@ -493,7 +489,7 @@ const common = (function () {
                     common.displayAlertDialog('Profile updated');
                 }
             })
-            .catch(() => console.error('Error updating profile'));
+            // .catch(() => console.error('Error updating profile'));
     }
 
     ///////////////////////////////////////////
