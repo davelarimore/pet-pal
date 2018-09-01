@@ -134,6 +134,7 @@ const pets = (function () {
         element.find('#petBreed').val(petData.breed);
         element.find('#petColor').val(petData.color);
         element.find('#petFood').val(petData.food);
+        element.find('#js-add-pet-cancel').attr('href', `/#pet/${petData._id}`);
         $('#js-main').html(element);
     }
     function _handleUpdatePetFormSubmit() {

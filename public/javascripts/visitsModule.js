@@ -287,6 +287,7 @@ const visits = (function () {
         api.deleteVisit(visitId)
             .then(() => auth.updateCurrentUser())
             .then(() => {
+                window.location.replace('/#visits');
                 common.displayCompactSiteHeader();
                 visits.displayAllVisits();
                 common.displayAlertDialog('Visit Deleted')
