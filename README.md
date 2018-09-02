@@ -1,6 +1,9 @@
 # Pet Pals
 
-## About:
+[About](#about) | [Technology Used](#tech) | [API](#api) | [Demo](#demo) | [Installation](#install)
+
+
+## <a name="about"></a>About:
 Pet Pals helps pet care providers and their clients share information about their pets and services. Users can sign up as either a client (pet owner) or a provider (dog walker, pet sitter). The app is especially helpful for providers, since they can access client and pet information at all times via their mobile device.
 
 !["Desktop"](public/images/pet-pals-desktop.jpg "Desktop")
@@ -11,7 +14,7 @@ Pet Pals helps pet care providers and their clients share information about thei
 * Can update their user profile and contact information
 * Can add, edit and delete pets
 * Can add and delete tasks for the pet care provider to complete at each scheduled visit
-* Can view the next visit tht their provider has scheduled
+* Can view the next visit that their provider has scheduled
 
 ### Provider features:
 * Can update their user profile and contact information
@@ -19,18 +22,19 @@ Pet Pals helps pet care providers and their clients share information about thei
 * Can add, edit and delete pets for their clients
 * Can add and delete tasks for their clients 
 * Can add and delete visits for their clients
-* Dashboard displays a map of the next day's visits, routed in chronilogical order.
+* Dashboard displays a map of the next day's visits, routed in chronological order.
 
-### Achitecture highlights:
+### Architecture highlights:
 * The Mongo database has separate models for users, pets, visits and tasks. The models utilize relationships and middleware to manage ownership of records.
-* Navigo provides front-end routing for the one-page app
-* The client uses js modules with public and private functions
+* Navigo front-end routing
+* The client Javascript modules with public and private functions
+* Continuous integration including automated API tests
 
-## Technology used:
+## <a name="tech"></a>Technology used:
 
 ### Front-end
 * HTML
-* CSS
+* CSS with Flexbox
 * JavaScript
 * jQuery
 * jQuery Timepicker Addon
@@ -55,10 +59,10 @@ Pet Pals helps pet care providers and their clients share information about thei
 * Travis CI
 * Heroku
 
-## API Documentation
+## <a name="api"></a>API Documentation
 https://documenter.getpostman.com/view/4675682/RWTsrFTE
 
-## Access and testing:
+## <a name="demo"></a>Demo:
 Users can access the application at the below URL:
 https://petpals-app.herokuapp.com
 
@@ -72,3 +76,10 @@ john@doe.biz
 
 Password for test users:
 1234567890
+
+## <a name="install"></a>Installation Instructions
+Dependencies:
+* Node 10.5.0
+* Mongo 3.1.0
+
+config.js may need to be updated to suit your environment

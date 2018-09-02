@@ -5,7 +5,7 @@
   "scripts": {
     "start": "nodemon server.js",
     "start:debug": "nodemon --inspect server.js",
-    "test": "mocha --exit"
+    "test": "mocha --exit --timeout 15000"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

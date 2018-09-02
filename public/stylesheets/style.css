@@ -310,11 +310,6 @@ input, select {
   margin-bottom: 15px;
   margin-left: auto;
   margin-right: auto;
-  /* make inputs and selects same width */
-  /* -ms-box-sizing:content-box;
-  -moz-box-sizing:content-box;
-  -webkit-box-sizing:content-box; 
-  box-sizing:content-box; */
 }
 
 select, option {
