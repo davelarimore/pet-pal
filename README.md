@@ -31,6 +31,10 @@ Pet Pals helps pet care providers and their clients share information about thei
 * The client Javascript modules with public and private functions
 * Continuous integration including automated API tests
 
+### Future Features:
+* Recurrence option when creating visits
+* Integration with Google Calendar
+
 ## <a name="tech"></a>Technology used:
 
 ### Front-end
