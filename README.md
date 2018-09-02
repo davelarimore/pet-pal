@@ -9,6 +9,7 @@ Pet Pals helps pet care providers and their clients share information about thei
 !["Desktop"](public/images/pet-pals-desktop.jpg "Desktop")
 !["Mobile"](public/images/pet-pals-mobile.jpg "Mobile")
 
+[View wireframes](https://drive.google.com/file/d/1F-8mfV7Z_T9rB_XOKLh2tAonew1ns1UJ/view?usp=sharing)
 
 ### Client features:
 * Can update their user profile and contact information
@@ -40,6 +41,7 @@ Pet Pals helps pet care providers and their clients share information about thei
 * jQuery Timepicker Addon
 * Google Place Autocomplete API
 * Navigo.js
+* Adobe XD, Illustrator and Photoshop
 
 ### Back-end
 * Node.js
