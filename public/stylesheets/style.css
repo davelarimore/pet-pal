@@ -181,6 +181,7 @@ p span {
   color: #2A5C77;
   background-color: white;
   border: 1px solid transparent;
+  -webkit-appearance: none;
 }
 
 .button:focus, .buttonGhost:focus {
@@ -203,6 +204,7 @@ p span {
   color: #FFF;
   background-color: transparent;
   border: 1px solid #FFF;
+  -webkit-appearance: none;
 }
 
 fieldset>.buttonGhost {

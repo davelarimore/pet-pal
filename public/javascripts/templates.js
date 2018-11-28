@@ -83,6 +83,9 @@ const templates = {
                     <a class='buttonGhost' href='./#signup'>Sign Up</a>
                 </fieldset>
             </form>
+            <p>Test Provider: jenny@lane.biz</p>
+            <p>Test Client: john@doe.biz</p>
+            <p>Password for test users: 1234567890</p>
         </div>`,
     compactHeaderClient: `
         <div class='compactHeader'>
